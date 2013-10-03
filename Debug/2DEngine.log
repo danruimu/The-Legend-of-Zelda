@@ -1,0 +1,20 @@
+﻿Build started 03/10/2013 17:23:37.
+     1>Project "C:\Users\Dani\Desktop\The-Legend-of-Zelda\2DEngine.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _VC80_UPGRADE=0x0710 /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt cData.cpp cGame.cpp cScene.cpp cTexture.cpp GLUTMain.cpp
+         GLUTMain.cpp
+     1>c:\users\dani\desktop\the-legend-of-zelda\globals.h(6): fatal error C1083: Cannot open include file: 'gl/glut.h': No such file or directory
+         cTexture.cpp
+     1>c:\users\dani\desktop\the-legend-of-zelda\globals.h(6): fatal error C1083: Cannot open include file: 'gl/glut.h': No such file or directory
+         cScene.cpp
+     1>c:\users\dani\desktop\the-legend-of-zelda\globals.h(6): fatal error C1083: Cannot open include file: 'gl/glut.h': No such file or directory
+         cGame.cpp
+     1>c:\users\dani\desktop\the-legend-of-zelda\globals.h(6): fatal error C1083: Cannot open include file: 'gl/glut.h': No such file or directory
+         cData.cpp
+     1>c:\users\dani\desktop\the-legend-of-zelda\globals.h(6): fatal error C1083: Cannot open include file: 'gl/glut.h': No such file or directory
+         Generating Code...
+     1>Done Building Project "C:\Users\Dani\Desktop\The-Legend-of-Zelda\2DEngine.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:07.81
