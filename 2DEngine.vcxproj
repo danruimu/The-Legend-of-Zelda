@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{002A0EC3-5125-4546-8727-1B636BCEC5E6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>TLOZ</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
