@@ -25,11 +25,17 @@ bool cGame::Init()
 	glEnable(GL_ALPHA_TEST);
 
 	//Scene initialization
-	res = Data.LoadImage(IMG_BLOCKS,"blocks.png",GL_RGBA);
+	res = Data.LoadImage(IMG_BLOCKS,"sprites/blocks.png",GL_RGBA);
 	if(!res) return false;
-	res = Scene.LoadLevel(1);
+	res = Scene.LoadLevel("H8");
 	if(!res) return false;
 
+	res = Data.LoadImage(IMG_PLAYER,"sprites/link.png",GL_RGBA);
+	if(!res) return false;
+	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
+	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
+	Link.SetState(0);
+	Link.SetDirection(0);
 	return res;
 }
 
@@ -45,12 +51,17 @@ bool cGame::Loop()
 
 void cGame::Finalize()
 {
+	exit(0);
 }
 
 //Input
-void cGame::ReadKeyboard(unsigned char key, int x, int y, bool press)
+void cGame::ReadKeyboard(unsigned char key, bool press)
 {
 	keys[key] = press;
+}
+void cGame::ReadSpecialKeyboard(unsigned char specialkey, bool press)
+{
+	specialKeys[specialkey] = press;
 }
 
 void cGame::ReadMouse(int button, int state, int x, int y)
@@ -60,10 +71,25 @@ void cGame::ReadMouse(int button, int state, int x, int y)
 //Process
 bool cGame::Process()
 {
+
 	bool res=true;
 	
 	//Process Input
-	if(keys[27])	res=false;	
+	if(keys[27])	
+		return false;
+	if(keys['d']) {
+		keys['d'] = false;
+		Link.SetDirection((Link.GetDirection()+1)%4);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+	if(keys['s']) {
+		keys['s'] = false;
+		Link.SetState((Link.GetState()+1)%4);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+
 	
 	//Game Logic
 	//...
@@ -79,6 +105,7 @@ void cGame::Render()
 	glLoadIdentity();
 
 	Scene.Draw(Data.GetID(IMG_BLOCKS));
+	Link.Draw(Data.GetID(IMG_PLAYER));
 
 	glutSwapBuffers();
 }

@@ -3,25 +3,25 @@
 
 cScene::cScene(void)
 {
+	id = "H8";
 }
 
 cScene::~cScene(void)
 {
 }
 
-bool cScene::LoadLevel(int level)
+bool cScene::LoadLevel(char* level)
 {
 	bool res;
 	FILE *fd;
 	char file[16];
-	int i,j,px,py;
-	char tile;
+	char coma;
+	int i,j,px,py,tile;
 	float coordx_tile, coordy_tile;
 	px=py=0;
 	res=true;
 
-	if(level<10) sprintf(file,"%s0%d%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
-	else		 sprintf(file,"%s%d%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
+	sprintf(file,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
 
 	fd=fopen(file,"r");
 	if(fd==NULL) return false;
@@ -40,20 +40,22 @@ bool cScene::LoadLevel(int level)
 				py=SCENE_Yo+BLOCK_SIZE*j;
 				for(i=0;i<SCENE_WIDTH;i++)
 				{
-					fscanf(fd,"%c",&tile);
-						map[(j*SCENE_WIDTH)+i] = tile - '0';
-						x = map[(j*SCENE_WIDTH)+i]%TEXTURES_WIDTH;
-						y = map[(j*SCENE_WIDTH)+i]/TEXTURES_WIDTH;
+					fscanf(fd,"%d",&tile);
+					tile--;
+						map[(j*SCENE_WIDTH)+i] = tile;
+						x = tile%TEXTURES_WIDTH;
+						y = tile/TEXTURES_WIDTH;
 						coordx_tile = x*(blockX+bordeX);
 						coordy_tile = y*(blockY+bordeY);
 
-						glTexCoord2f(coordx_tile,coordy_tile+blockY);			glVertex2i(px           ,py           );
+						glTexCoord2f(coordx_tile,coordy_tile+blockY		  );	glVertex2i(px           ,py           );
 						glTexCoord2f(coordx_tile+blockX,coordy_tile+blockY);	glVertex2i(px+BLOCK_SIZE,py           );
 						glTexCoord2f(coordx_tile+blockX,coordy_tile       );	glVertex2i(px+BLOCK_SIZE,py+BLOCK_SIZE);
 						glTexCoord2f(coordx_tile       ,coordy_tile       );	glVertex2i(px           ,py+BLOCK_SIZE);
 						px+=BLOCK_SIZE;
+						fscanf(fd,"%c",&coma);
 				}
-				fscanf(fd,"%c",&tile); //pass enter
+				fscanf(fd,"%c",&coma); //pass enter
 			}
 
 		glEnd();
@@ -71,6 +73,7 @@ void cScene::Draw(int tex_id)
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 }
+
 int* cScene::GetMap()
 {
 	return map;

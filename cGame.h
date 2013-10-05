@@ -2,6 +2,7 @@
 
 #include "cScene.h"
 #include "cData.h"
+#include "cPlayer.h"
 
 class cGame
 {
@@ -14,7 +15,8 @@ public:
 	void Finalize();
 
 	//Input
-	void ReadKeyboard(unsigned char key, int x, int y, bool press);
+	void ReadKeyboard(unsigned char key, bool press);
+	void ReadSpecialKeyboard(unsigned char specialkey, bool press);
 	void ReadMouse(int button, int state, int x, int y);
 	//Process
 	bool Process();
@@ -23,6 +25,8 @@ public:
 
 private:
 	unsigned char keys[256];
+	unsigned char specialKeys[256];
 	cScene Scene;
 	cData Data;
+	cPlayer Link;
 };
