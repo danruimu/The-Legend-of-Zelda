@@ -12,6 +12,9 @@ Debug/cGame.obj
 Debug/cl.command.1.tlog
 Debug/CL.read.1.tlog
 Debug/CL.write.1.tlog
+Debug/GLUTMain.obj
+Debug/cData.obj
+Debug/cGame.obj
 Debug/cScene.obj
 Debug/cTexture.obj
 Debug/GLUTMain.obj
@@ -38,9 +41,10 @@ Debug/2DEngine.pdb
 Debug/2DEngine.unsuccessfulbuild
 Debug/cBicho.obj
 Debug/cl.command.1.tlog
-Debug/CL.read.1.tlog
-Debug/CL.write.1.tlog
-Debug/cPlayer.obj
+Debug/link-cvtres.read.1.tlog
+Debug/link-cvtres.write.1.tlog
+Debug/link-rc.read.1.tlog
+Debug/link-rc.write.1.tlog
 Debug/link.command.1.tlog
 Debug/link.read.1.tlog
 Debug/link.write.1.tlog
