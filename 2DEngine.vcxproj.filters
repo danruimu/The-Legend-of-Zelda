@@ -26,6 +26,12 @@
     <ClCompile Include="GLUTMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cBicho.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cData.h">
@@ -41,6 +47,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cBicho.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
