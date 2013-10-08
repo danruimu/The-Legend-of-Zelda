@@ -36,7 +36,7 @@ bool cGame::Init()
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(0);
 	Link.SetDirection(0);
-	Link.SetSpeed(5);
+	Link.SetSpeed(8);
 	return res;
 }
 

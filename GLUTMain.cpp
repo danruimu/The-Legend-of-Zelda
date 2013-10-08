@@ -42,13 +42,13 @@ void createWindow(bool fullScreen,int x,int y){
 		sprintf(buffer,"%dx%d:32",x,y);
 		glutGameModeString(buffer);
 		glutEnterGameMode();
-		PlaySound("sound\\background.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
+		//PlaySound("sound\\background.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
 	}
 	else{
 		glutInitWindowPosition(x,y);
 		glutInitWindowSize(GAME_WIDTH,GAME_HEIGHT);
 		glutCreateWindow("The Legend of Zelda");
-		PlaySound("sound\\background.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
+		//PlaySound("sound\\background.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
 
 	}
 }
