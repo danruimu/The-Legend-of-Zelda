@@ -17,4 +17,5 @@ public:
 	~cPlayer();
 
 	void Draw(int tex_id);
+	bool tirapalante(int *map);
 };

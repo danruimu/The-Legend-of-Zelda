@@ -59,12 +59,16 @@ public:
 
 	void NextFrame(int max);
 	int  GetFrame();
+
+	int GetSpeed();
+	void SetSpeed(int s);
 	
 private:
 	int x,y;
 	int w,h;
 	int direction;
 	int state;
+	int speed;
 
 	int seq,delay;
 };

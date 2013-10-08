@@ -36,6 +36,7 @@ bool cGame::Init()
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(0);
 	Link.SetDirection(0);
+	Link.SetSpeed(5);
 	return res;
 }
 
@@ -73,19 +74,41 @@ bool cGame::Process()
 {
 
 	bool res=true;
-	
+	int *map = Scene.GetMap();
 	//Process Input
 	if(keys[27])	
 		return false;
-	if(keys['d']) {
-		keys['d'] = false;
-		Link.SetDirection((Link.GetDirection()+1)%4);
+	if(keys['e']) {
+		keys['e'] = false;
+		Link.SetState((Link.GetState()+1)%5);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+	if(keys['w']) {
+		keys['w'] = false;
+		if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);
+		Link.SetDirection(DIRECTION_UP);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+	if(keys['a']) {
+		keys['a'] = false;
+		if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);
+		Link.SetDirection(DIRECTION_LEFT);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['s']) {
 		keys['s'] = false;
-		Link.SetState((Link.GetState()+1)%4);
+		if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);
+		Link.SetDirection(DIRECTION_DOWN);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+	if(keys['d']) {
+		keys['d'] = false;
+		if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);
+		Link.SetDirection(DIRECTION_RIGHT);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
