@@ -34,7 +34,7 @@ bool cGame::Init()
 	if(!res) return false;
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
-	Link.SetState(0);
+	Link.SetState(STATE_IDLE);
 	Link.SetDirection(0);
 	Link.SetSpeed(BLOCK_SIZE/4);	//MUST BE 32/x where x=y^2
 	return res;
