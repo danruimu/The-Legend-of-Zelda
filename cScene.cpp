@@ -3,7 +3,8 @@
 
 cScene::cScene(void)
 {
-	id = "H8";
+	id[0] = 'H';
+	id[1] = '8';
 }
 
 cScene::~cScene(void)
@@ -62,10 +63,14 @@ bool cScene::LoadLevel(char* level)
 	glEndList();
 
 	fclose(fd);
-	
-	id = level;
+	setId(level);
 
 	return res;
+}
+
+void cScene::setId(char Nid[]){
+	id[0] = Nid[0];
+	id[1] = Nid[1];
 }
 
 void cScene::Draw(int tex_id)

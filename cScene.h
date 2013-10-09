@@ -12,6 +12,7 @@ public:
 	void Draw(int tex_id);
 	int *GetMap();
 	char *getId();
+	void setId(char Nid[]);
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
@@ -20,5 +21,5 @@ private:
 	//int left[SCENE_WIDTH * SCENE_HEIGHT];	//scene
 	//int right[SCENE_WIDTH * SCENE_HEIGHT];	//scene
 	int id_DL;								//actual level display list
-	char *id;
+	char id[2];
 };
