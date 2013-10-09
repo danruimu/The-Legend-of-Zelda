@@ -89,6 +89,8 @@ bool cGame::Process()
 		/*if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_UP);
 		Link.tirapalante(map);
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -97,6 +99,8 @@ bool cGame::Process()
 		/*if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_LEFT);
 		Link.tirapalante(map);
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -105,6 +109,8 @@ bool cGame::Process()
 		/*if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_DOWN);
 		Link.tirapalante(map);
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -113,6 +119,8 @@ bool cGame::Process()
 		/*if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_RIGHT);
 		Link.tirapalante(map);
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
