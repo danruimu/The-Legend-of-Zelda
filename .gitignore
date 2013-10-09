@@ -1,8 +1,12 @@
 *
+!.gitignore
 !*.cpp
 !*.h
 !*.lib
 !*.dll
+!sprites
+!levels
+!sounds
 !sprites/*
 !levels/*
 !sounds/*
