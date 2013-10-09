@@ -154,6 +154,47 @@ bool cGame::Process()
 		return true;
 	}
 
+	if(keys['j']) {
+		keys['j'] = false;
+		cPlayer linkSword = Link;
+		int xo, yo; Link.GetPosition(&xo, &yo);
+
+		Link.SetState(STATE_ATTACK_1);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Render();
+		Sleep(100);
+		Link.SetState(STATE_ATTACK_2);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Render();
+		Sleep(100);
+		Link.SetState(STATE_SWORD);
+		if (Link.GetDirection() == DIRECTION_UP) {
+			Link.SetPosition(xo, yo+BLOCK_SIZE);
+		} else if (Link.GetDirection() == DIRECTION_DOWN) {
+			Link.SetPosition(xo, yo-BLOCK_SIZE);
+		} else if (Link.GetDirection() == DIRECTION_RIGHT) {
+			Link.SetPosition(xo+BLOCK_SIZE, yo);
+		} else {
+			Link.SetPosition(xo-BLOCK_SIZE, yo);
+		}
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Render();
+		Link.SetPosition(xo, yo);
+		Sleep(100);
+		Render();
+		Link.SetState(STATE_ATTACK_2);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Sleep(100);
+		Render();
+		Link.SetState(STATE_ATTACK_1);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Sleep(100);
+		Render();
+		Link.SetState(STATE_IDLE);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		return true;
+	}
+
 	
 	//Game Logic
 	//...
