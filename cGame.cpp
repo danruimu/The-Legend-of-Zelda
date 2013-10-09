@@ -94,7 +94,7 @@ bool cGame::Process()
 			char *level = (char*)malloc(4);
 			strcpy(level, Scene.getId());
 			level[1]--;
-			Scene.LoadLevel(level);
+			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
 		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
@@ -111,7 +111,7 @@ bool cGame::Process()
 			char *level = (char*)malloc(4);
 			strcpy(level, Scene.getId());
 			level[0]--;
-			Scene.LoadLevel(level);
+			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
 		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
@@ -128,7 +128,7 @@ bool cGame::Process()
 			char *level = (char*)malloc(4);
 			strcpy(level, Scene.getId());
 			level[1]++;
-			Scene.LoadLevel(level);
+			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
 		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
@@ -145,7 +145,7 @@ bool cGame::Process()
 			char *level = (char*)malloc(4);
 			strcpy(level, Scene.getId());
 			level[0]++;
-			Scene.LoadLevel(level);
+			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
 		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);

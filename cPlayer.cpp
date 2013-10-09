@@ -41,7 +41,6 @@ bool cPlayer::tirapalante(int* map){
 	int x,y;
 	int case1, case2;
 	GetPosition(&x,&y);
-	//TODO: cambio de mapa
 	//TODO colisiones con enemigos
 	switch (GetDirection()) {
 	case DIRECTION_UP:
@@ -49,14 +48,12 @@ bool cPlayer::tirapalante(int* map){
 			SetPosition(x,SCENE_Yo);
 			return false;
 		}
-		if(x%BLOCK_SIZE == 0) {    // We are in a exactly one tile
-			case1 = checkPos(x-BLOCK_SIZE, y, map);
-			case2 = 2;	//true
-		} else {
-			case1 = checkPos(x-BLOCK_SIZE, y,map);
+		case1 = checkPos(x-BLOCK_SIZE, y, map);
+		case2 = 2;
+		if(x%BLOCK_SIZE != 0) {
 			case2 = checkPos(x, y,map);
 		}
-		return isWalkable(case1) && isWalkable(case2);
+		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
 		y+=GetSpeed();
 		if (y > SCENE_HEIGHT*BLOCK_SIZE) return true;
@@ -66,14 +63,13 @@ bool cPlayer::tirapalante(int* map){
 			SetPosition(x,BLOCK_SIZE*SCENE_HEIGHT);
 			return false;
 		}
-		if(x%BLOCK_SIZE == 0) {    // We are in a exactly one tile
-			case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1, map);
-			case2 = 2;
-		} else {
-			case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1,map);
+
+		case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1, map);
+		case2 = 2;
+		if(x%BLOCK_SIZE != 0) {
 			case2 = checkPos(x, y-BLOCK_SIZE-1,map);
 		}
-		return isWalkable(case1) && isWalkable(case2);
+		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
 		y-=GetSpeed();
 		if (y < SCENE_Yo) return true;
@@ -83,14 +79,13 @@ bool cPlayer::tirapalante(int* map){
 			SetPosition(BLOCK_SIZE*SCENE_WIDTH,y);
 			return false;
 		}
-		if(y%BLOCK_SIZE == 0) {    // We are in a exactly one tile
-			case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE, map);
-			case2 = 2;
-		} else {
-			case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE,map);
+
+		case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE, map);
+		case2 = 2;
+		if(y%BLOCK_SIZE != 0) {
 			case2 = checkPos(x-BLOCK_SIZE-1, y,map);
 		}
-		return isWalkable(case1) && isWalkable(case2);
+		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
 		x-=GetSpeed();
 		if (x < SCENE_Xo) return true;
@@ -100,14 +95,13 @@ bool cPlayer::tirapalante(int* map){
 			SetPosition(SCENE_Xo,y);
 			return false;
 		}
-		if(y%BLOCK_SIZE == 0) {    // We are in a exactly one tile
-			case1 = checkPos(x, y-BLOCK_SIZE, map);
-			case2 = 2;
-		} else {
-			case1 = checkPos(x, y-BLOCK_SIZE,map);
+
+		case1 = checkPos(x, y-BLOCK_SIZE, map);
+		case2 = 2;
+		if(y%BLOCK_SIZE != 0) {
 			case2 = checkPos(x, y,map);
 		}
-		return isWalkable(case1) && isWalkable(case2);
+		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
 		x+=GetSpeed();
 		if (x > SCENE_WIDTH*BLOCK_SIZE) return true;
