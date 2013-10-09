@@ -162,11 +162,11 @@ bool cGame::Process()
 		Link.SetState(STATE_ATTACK_1);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		Render();
-		Sleep(100);
+		Sleep(50);
 		Link.SetState(STATE_ATTACK_2);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		Render();
-		Sleep(100);
+		Sleep(50);
 		Link.SetState(STATE_SWORD);
 		if (Link.GetDirection() == DIRECTION_UP) {
 			Link.SetPosition(xo, yo+BLOCK_SIZE);
@@ -180,15 +180,15 @@ bool cGame::Process()
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		Render();
 		Link.SetPosition(xo, yo);
-		Sleep(100);
+		Sleep(50);
 		Render();
 		Link.SetState(STATE_ATTACK_2);
 		Link.Draw(Data.GetID(IMG_PLAYER));
-		Sleep(100);
+		Sleep(50);
 		Render();
 		Link.SetState(STATE_ATTACK_1);
 		Link.Draw(Data.GetID(IMG_PLAYER));
-		Sleep(100);
+		Sleep(50);
 		Render();
 		Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
