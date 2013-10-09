@@ -11,6 +11,7 @@ public:
 	bool LoadLevel(char* level);
 	void Draw(int tex_id);
 	int *GetMap();
+	char *getId();
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene

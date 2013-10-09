@@ -84,11 +84,19 @@ bool cGame::Process()
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
+	//TODO: comprovar que no salimos de los mapas que tenemos
 	if(keys['w']) {
 		keys['w'] = false;
 		/*if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_UP);
-		Link.tirapalante(map);
+		res = Link.tirapalante(map);
+		if (!res) {
+			char *level = (char*)malloc(4);
+			strcpy(level, Scene.getId());
+			level[1]--;
+			Scene.LoadLevel(level);
+			free(level);
+		}
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -96,7 +104,14 @@ bool cGame::Process()
 		keys['a'] = false;
 		/*if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_LEFT);
-		Link.tirapalante(map);
+		res = Link.tirapalante(map);
+		if (!res) {
+			char *level = (char*)malloc(4);
+			strcpy(level, Scene.getId());
+			level[0]--;
+			Scene.LoadLevel(level);
+			free(level);
+		}
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -104,7 +119,14 @@ bool cGame::Process()
 		keys['s'] = false;
 		/*if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_DOWN);
-		Link.tirapalante(map);
+		res = Link.tirapalante(map);
+		if (!res) {
+			char *level = (char*)malloc(4);
+			strcpy(level, Scene.getId());
+			level[1]++;
+			Scene.LoadLevel(level);
+			free(level);
+		}
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -112,7 +134,14 @@ bool cGame::Process()
 		keys['d'] = false;
 		/*if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_RIGHT);
-		Link.tirapalante(map);
+		res = Link.tirapalante(map);
+		if (!res) {
+			char *level = (char*)malloc(4);
+			strcpy(level, Scene.getId());
+			level[0]++;
+			Scene.LoadLevel(level);
+			free(level);
+		}
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}

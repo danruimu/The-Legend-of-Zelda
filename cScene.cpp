@@ -62,6 +62,8 @@ bool cScene::LoadLevel(char* level)
 	glEndList();
 
 	fclose(fd);
+	
+	id = level;
 
 	return res;
 }
@@ -77,4 +79,8 @@ void cScene::Draw(int tex_id)
 int* cScene::GetMap()
 {
 	return map;
+}
+
+char* cScene::getId() {
+	return id;
 }
