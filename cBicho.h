@@ -8,8 +8,8 @@
 #define JUMP_HEIGHT		96
 #define JUMP_STEP		4
 
-#define STATE_MOVE			0
-#define STATE_IDLE			1
+#define STATE_MOVE			1
+#define STATE_IDLE			0
 #define STATE_ATTACK_1		2
 #define STATE_ATTACK_2		3
 #define STATE_SWORD			4
