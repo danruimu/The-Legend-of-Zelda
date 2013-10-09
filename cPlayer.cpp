@@ -22,57 +22,70 @@ void cPlayer::Draw(int tex_id)
    map = vector of tiles
 */
 int checkPos(int x, int y, const int* map) {
-	int auxy = SCENE_HEIGHT*BLOCK_SIZE;
-	auxy -= y;
-	auxy /= BLOCK_SIZE;
-	int auxx = x/BLOCK_SIZE;
-	return map[(y/BLOCK_SIZE)*SCENE_WIDTH + auxx ];
+	int bx,by;
+	bx = x/BLOCK_SIZE;
+	by = y/BLOCK_SIZE;
+	return map[by*SCENE_WIDTH + bx ];
 }
 
-// x esta a la derecha de link
-// y esta debajo de link
 bool cPlayer::tirapalante(int* map){
 	int x,y;
 	int case1, case2;
-	int bx,by,cont;
 	GetPosition(&x,&y);
 	//TODO: cambio de mapa
-	//TODO colisiones con escenario
 	//TODO colisiones con enemigos
 	switch (GetDirection()) {
 	case DIRECTION_UP:
-		if(x%32 != 0) {
-			case1 = checkPos(x-BLOCK_SIZE, y+BLOCK_SIZE-1, map);
-			case2 = checkPos(x, y+BLOCK_SIZE-1, map);
-		} else {
-			case1 = checkPos(x-1, y+BLOCK_SIZE-1,map);
+		if(x%32 == 0) {    // We are in a exactly one tile
+			case1 = checkPos(x-BLOCK_SIZE, y, map);
 			case2 = 2;
+		} else {
+			case1 = checkPos(x-BLOCK_SIZE, y,map);
+			case2 = checkPos(x, y,map);
 		}
 		if(case1 != 2 || case2 != 2) return false;
+
 		y+=GetSpeed();
 		if (y > SCENE_HEIGHT*BLOCK_SIZE) return false;
 		break;
 	case DIRECTION_DOWN:
-		case1 = checkPos(x-BLOCK_SIZE, y-1,map);
-		case2 = checkPos(x, y-BLOCK_SIZE-1,map);
-		if (case1 != 2 || case2 != 2) return false;
+		if(x%32 == 0) {    // We are in a exactly one tile
+			case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1, map);
+			case2 = 2;
+		} else {
+			case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1,map);
+			case2 = checkPos(x, y-BLOCK_SIZE-1,map);
+		}
+		if(case1 != 2 || case2 != 2) return false;
 
 		y-=GetSpeed();
 		if (y < SCENE_Yo) return false;
 		break;
 	case DIRECTION_LEFT:
-		x-=GetSpeed();
+		if(y%32 == 0) {    // We are in a exactly one tile
+			case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE, map);
+			case2 = 2;
+		} else {
+			case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE,map);
+			case2 = checkPos(x-BLOCK_SIZE-1, y,map);
+		}
+		if(case1 != 2 || case2 != 2) return false;
 
+		x-=GetSpeed();
 		if (x < SCENE_Xo) return false;
-		/*if (checkPos(x, y, map) != 2 ) return false;
-		if (checkPos(x, y+BLOCK_SIZE, map) != 2 ) return false;*/
 		break;
 	case DIRECTION_RIGHT:
-		x+=GetSpeed();
+		if(y%32 == 0) {    // We are in a exactly one tile
+			case1 = checkPos(x, y-BLOCK_SIZE, map);
+			case2 = 2;
+		} else {
+			case1 = checkPos(x, y-BLOCK_SIZE,map);
+			case2 = checkPos(x, y,map);
+		}
+		if(case1 != 2 || case2 != 2) return false;
 
+		x+=GetSpeed();
 		if (x > SCENE_WIDTH*BLOCK_SIZE) return false;
-		/*if (checkPos(x+BLOCK_SIZE, y, map) != 2 ) return false;
-		if (checkPos(x+BLOCK_SIZE, y+BLOCK_SIZE, map) != 2 ) return false;*/
 		break;
 	default:
 		break;

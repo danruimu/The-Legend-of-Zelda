@@ -36,7 +36,7 @@ bool cGame::Init()
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(0);
 	Link.SetDirection(0);
-	Link.SetSpeed(8);
+	Link.SetSpeed(16);	//MUST BE 32/x where x=y^2
 	return res;
 }
 
@@ -86,29 +86,33 @@ bool cGame::Process()
 	}
 	if(keys['w']) {
 		keys['w'] = false;
-		if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);
+		/*if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_UP);
+		Link.tirapalante(map);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['a']) {
 		keys['a'] = false;
-		if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);
+		/*if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_LEFT);
+		Link.tirapalante(map);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['s']) {
 		keys['s'] = false;
-		if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);
+		/*if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_DOWN);
+		Link.tirapalante(map);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['d']) {
 		keys['d'] = false;
-		if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);
+		/*if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);*/
 		Link.SetDirection(DIRECTION_RIGHT);
+		Link.tirapalante(map);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
