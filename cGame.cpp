@@ -97,6 +97,8 @@ bool cGame::Process()
 			Scene.LoadLevel(level);
 			free(level);
 		}
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -112,6 +114,8 @@ bool cGame::Process()
 			Scene.LoadLevel(level);
 			free(level);
 		}
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -127,6 +131,8 @@ bool cGame::Process()
 			Scene.LoadLevel(level);
 			free(level);
 		}
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
@@ -142,6 +148,8 @@ bool cGame::Process()
 			Scene.LoadLevel(level);
 			free(level);
 		}
+		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
+		else Link.SetState(STATE_IDLE);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
