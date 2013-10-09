@@ -7,6 +7,8 @@
 !sprites
 !levels
 !sounds
+!images
 !sprites/*
 !levels/*
 !sounds/*
+!images/*

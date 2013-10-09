@@ -36,7 +36,7 @@ bool cGame::Init()
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(0);
 	Link.SetDirection(0);
-	Link.SetSpeed(16);	//MUST BE 32/x where x=y^2
+	Link.SetSpeed(BLOCK_SIZE/4);	//MUST BE 32/x where x=y^2
 	return res;
 }
 
