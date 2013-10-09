@@ -9,12 +9,12 @@ void cPlayer::Draw(int tex_id)
 {	
 	float xo,yo,despx,despy;
 	despx = 1.0/PLAYER_TEXTURE_WIDTH;
-	despy = -1.0/PLAYER_TEXTURE_HEIGHT;
+	despy = 1.0/PLAYER_TEXTURE_HEIGHT;
 	
 	xo = ((float) (GetDirection())) /PLAYER_TEXTURE_WIDTH;
 	yo = ((float) (GetState())) /PLAYER_TEXTURE_HEIGHT; 
 
-	DrawRect(tex_id,xo,yo,xo + despx,yo + despy);
+	DrawRect(tex_id,xo,yo + despy,xo + despx,yo);
 }
 
 /* x = column
@@ -26,6 +26,12 @@ int checkPos(int x, int y, const int* map) {
 	bx = x/BLOCK_SIZE;
 	by = y/BLOCK_SIZE;
 	return map[by*SCENE_WIDTH + bx ];
+}
+
+bool isWalkable(int tile) {
+	if (tile == 2) return true;
+	
+	return false;
 }
 
 // return
@@ -50,7 +56,7 @@ bool cPlayer::tirapalante(int* map){
 			case1 = checkPos(x-BLOCK_SIZE, y,map);
 			case2 = checkPos(x, y,map);
 		}
-		if(case1 != 2 || case2 != 2) return true;
+		return isWalkable(case1) && isWalkable(case2);
 
 		y+=GetSpeed();
 		if (y > SCENE_HEIGHT*BLOCK_SIZE) return true;
@@ -67,7 +73,7 @@ bool cPlayer::tirapalante(int* map){
 			case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1,map);
 			case2 = checkPos(x, y-BLOCK_SIZE-1,map);
 		}
-		if(case1 != 2 || case2 != 2) return true;
+		return isWalkable(case1) && isWalkable(case2);
 
 		y-=GetSpeed();
 		if (y < SCENE_Yo) return true;
@@ -84,7 +90,7 @@ bool cPlayer::tirapalante(int* map){
 			case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE,map);
 			case2 = checkPos(x-BLOCK_SIZE-1, y,map);
 		}
-		if(case1 != 2 || case2 != 2) return true;
+		return isWalkable(case1) && isWalkable(case2);
 
 		x-=GetSpeed();
 		if (x < SCENE_Xo) return true;
@@ -101,7 +107,7 @@ bool cPlayer::tirapalante(int* map){
 			case1 = checkPos(x, y-BLOCK_SIZE,map);
 			case2 = checkPos(x, y,map);
 		}
-		if(case1 != 2 || case2 != 2) return true;
+		return isWalkable(case1) && isWalkable(case2);
 
 		x+=GetSpeed();
 		if (x > SCENE_WIDTH*BLOCK_SIZE) return true;
