@@ -3,7 +3,7 @@
 
 cGame::cGame(void)
 {
-	sound = cSound("sounds\\02_overworld_theme.wav");
+	//sound = cSound("sounds\\02_overworld_theme.wav");
 }
 
 cGame::~cGame(void)
@@ -13,7 +13,7 @@ cGame::~cGame(void)
 bool cGame::Init()
 {
 	bool res=true;
-	sound.playSound();
+	//sound.playSound();
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);

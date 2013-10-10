@@ -6,6 +6,7 @@
 #pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
 cGame Game;
+int inittime;
 
 void AppRender()
 {
@@ -33,7 +34,10 @@ void AppMouse(int button, int state, int x, int y)
 }
 void AppIdle()
 {
-	if(!Game.Loop()) Game.Finalize();
+	if(glutGet(GLUT_ELAPSED_TIME) - inittime > (1./60.)*1000) {
+		inittime = glutGet(GLUT_ELAPSED_TIME);
+		if(!Game.Loop()) Game.Finalize();
+	}
 }
 
 void createWindow(bool fullScreen,int x,int y){
@@ -115,5 +119,6 @@ void main(int argc, char** argv)
 	}
 
 	//Application loop
+	inittime = glutGet(GLUT_ELAPSED_TIME);
 	glutMainLoop();
 }
