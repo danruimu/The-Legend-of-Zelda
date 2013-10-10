@@ -159,6 +159,7 @@ bool cGame::Process()
 		cPlayer linkSword = Link;
 		int xo, yo; Link.GetPosition(&xo, &yo);
 
+		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC);
 		Link.SetState(STATE_ATTACK_1);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		Render();
