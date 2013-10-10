@@ -83,7 +83,7 @@ void cBicho::GetArea(cRect *rc)
 void cBicho::DrawRect(int tex_id,float xo,float yo,float xf,float yf)
 {
 	int screen_x,screen_y;
-
+	
 	screen_x = x;
 	screen_y = y; /*+ (BLOCK_SIZE - TILE_SIZE)*/
 
@@ -211,13 +211,12 @@ void cBicho::Logic(int *map)
 }
 void cBicho::NextFrame(int max)
 {
-	//delay++;
-	//if(delay == FRAME_DELAY)
-	//{
-	//	seq++;
-	//	seq%=max;
-	//	delay = 0;
-	//}
+	delay++;
+	if(delay == FRAME_DELAY)
+	{
+		state = (state+1)%max;
+		delay = 0;
+	}
 }
 int cBicho::GetFrame()
 {
@@ -238,6 +237,7 @@ int  cBicho::GetDirection(){
 
 void cBicho::SetDirection(int d){
 	direction = d;
+	seq = 0;
 }
 
 int cBicho::GetSpeed(){

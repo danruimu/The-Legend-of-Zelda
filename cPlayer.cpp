@@ -8,11 +8,12 @@ cPlayer::~cPlayer(){}
 void cPlayer::Draw(int tex_id)
 {	
 	float xo,yo,despx,despy;
-	despx = 1.0/PLAYER_TEXTURE_WIDTH;
-	despy = 1.0/PLAYER_TEXTURE_HEIGHT;
-	
-	xo = ((float) (GetDirection())) /PLAYER_TEXTURE_WIDTH;
-	yo = ((float) (GetState())) /PLAYER_TEXTURE_HEIGHT; 
+	despx = (TILE_SIZE-1.0)/(TILE_SIZE*PLAYER_TEXTURE_WIDTH);
+	despy = (TILE_SIZE-1.0)/(TILE_SIZE*PLAYER_TEXTURE_HEIGHT);
+	float direction = GetDirection();
+	float state = GetState();
+	xo = direction /PLAYER_TEXTURE_WIDTH;
+	yo = state/PLAYER_TEXTURE_HEIGHT; 
 
 	DrawRect(tex_id,xo,yo + despy,xo + despx,yo);
 }
@@ -110,5 +111,6 @@ bool cPlayer::tirapalante(int* map){
 		break;
 	}
 	SetPosition(x,y);
+	NextFrame(2);
 	return true;
 }

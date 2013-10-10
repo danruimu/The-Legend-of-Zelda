@@ -5,10 +5,11 @@
 #define PLAYER_START_CX		8
 #define PLAYER_START_CY		5
 
-#define PLAYER_TEXTURE_WIDTH	4;
-#define PLAYER_TEXTURE_HEIGHT	5;
+#define PLAYER_TEXTURE_WIDTH	4
+#define PLAYER_TEXTURE_HEIGHT	5
 
 #define STATE_LOOKUP		1
+#define NUM_TRANS			8
 
 class cPlayer: public cBicho
 {

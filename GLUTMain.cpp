@@ -34,8 +34,9 @@ void AppMouse(int button, int state, int x, int y)
 }
 void AppIdle()
 {
-	if(glutGet(GLUT_ELAPSED_TIME) - inittime > (1./60.)*1000) {
-		inittime = glutGet(GLUT_ELAPSED_TIME);
+	int timeAct = glutGet(GLUT_ELAPSED_TIME);
+	if(timeAct - inittime > (1000./FPS)) {
+		inittime = timeAct;
 		if(!Game.Loop()) Game.Finalize();
 	}
 }
@@ -103,7 +104,7 @@ void main(int argc, char** argv)
 	if (!Game.Init()){
 		int msgboxID = MessageBox(
 			NULL,
-			"Error in the init",
+			"Error in the pene",
 			"Error",
 			MB_OKCANCEL | MB_ICONERROR
 		);
