@@ -3,6 +3,7 @@
 #include "cScene.h"
 #include "cData.h"
 #include "cPlayer.h"
+#include "cSound.h"
 
 #define	MAX_N_MONSTERS	10
 
@@ -33,4 +34,5 @@ private:
 	cPlayer Link;
 	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
+	cSound sound;
 };
