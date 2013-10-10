@@ -19,6 +19,14 @@
 #define DIRECTION_RIGHT		3
 #define DIRECTION_LEFT		2
 
+#define	MONSTER_DOWN	0
+#define	MONSTER_RIGHT	1
+#define	MONSTER_UP		2
+#define	MONSTER_LEFT	3
+
+#define	MONSTER_STATE_IDLE	0
+#define	MONSTER_STATE_MOVE	1
+
 class cRect
 {
 public:
@@ -63,6 +71,9 @@ public:
 
 	int GetSpeed();
 	void SetSpeed(int s);
+
+	bool isAlive();
+	void setAlive(bool alive);
 	
 private:
 	int x,y;
@@ -72,4 +83,5 @@ private:
 	int speed;
 
 	int seq,delay;
+	bool alive;
 };

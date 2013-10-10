@@ -247,3 +247,11 @@ int cBicho::GetSpeed(){
 void cBicho::SetSpeed(int s){
 	speed = s;
 }
+
+bool cBicho::isAlive() {
+	return alive;
+}
+
+void cBicho::setAlive(bool alive) {
+	this->alive = alive;
+}

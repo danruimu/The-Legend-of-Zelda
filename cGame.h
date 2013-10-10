@@ -4,6 +4,8 @@
 #include "cData.h"
 #include "cPlayer.h"
 
+#define	MAX_N_MONSTERS	10
+
 class cGame
 {
 public:
@@ -22,7 +24,6 @@ public:
 	bool Process();
 	//Output
 	void Render();
-	void Render2();
 
 private:
 	unsigned char keys[256];
@@ -31,4 +32,5 @@ private:
 	cData Data;
 	cPlayer Link;
 	cPlayer LinkSword;
+	cBicho	monsters[MAX_N_MONSTERS];
 };
