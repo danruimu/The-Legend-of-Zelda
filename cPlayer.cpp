@@ -29,7 +29,7 @@ int checkPos(int x, int y, const int* map) {
 }
 
 bool isWalkable(int tile) {
-	if (tile == 2) return true;
+	if (tile == 2 || tile == 8 || tile == 14) return true;	//suelo
 	
 	return false;
 }

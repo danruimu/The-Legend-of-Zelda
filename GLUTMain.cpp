@@ -42,7 +42,7 @@ void createWindow(bool fullScreen,int x,int y){
 		sprintf(buffer,"%dx%d:32",x,y);
 		glutGameModeString(buffer);
 		glutEnterGameMode();
-		//PlaySound("sound\\background.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
+		//PlaySound("sounds\\02_overworld_theme.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
 	}
 	else{
 		glutInitWindowPosition(x,y);

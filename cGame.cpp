@@ -154,6 +154,48 @@ bool cGame::Process()
 		return true;
 	}
 
+	if(keys['j']) {
+		keys['j'] = false;
+		cPlayer linkSword = Link;
+		int xo, yo; Link.GetPosition(&xo, &yo);
+
+		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC);
+		Link.SetState(STATE_ATTACK_1);
+		Link.Draw(Data.GetID(IMG_PLAYER));
+		Render();
+		Sleep(50);
+		Link.SetState(STATE_ATTACK_2);
+		Render();
+		Sleep(50);
+		//Link.SetState(STATE_SWORD);
+		LinkSword.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
+		LinkSword.SetBlock(xo/BLOCK_SIZE,yo/BLOCK_SIZE);
+		LinkSword.SetDirection(Link.GetDirection());
+		LinkSword.SetState(STATE_SWORD);
+		if (Link.GetDirection() == DIRECTION_UP) {
+			LinkSword.SetPosition(xo, yo+BLOCK_SIZE);
+		} else if (Link.GetDirection() == DIRECTION_DOWN) {
+			LinkSword.SetPosition(xo, yo-BLOCK_SIZE);
+		} else if (Link.GetDirection() == DIRECTION_RIGHT) {
+			LinkSword.SetPosition(xo+BLOCK_SIZE, yo);
+		} else {
+			LinkSword.SetPosition(xo-BLOCK_SIZE, yo);
+		}
+		Render2();
+		Sleep(100);
+		Render();
+		Link.SetState(STATE_ATTACK_2);
+		Sleep(50);
+		Render();
+		Link.SetState(STATE_ATTACK_1);
+		Sleep(50);
+		Render();
+		Link.SetState(STATE_IDLE);
+		Sleep(50);
+		Render();
+		return true;
+	}
+
 	
 	//Game Logic
 	//...
@@ -170,6 +212,19 @@ void cGame::Render()
 
 	Scene.Draw(Data.GetID(IMG_BLOCKS));
 	Link.Draw(Data.GetID(IMG_PLAYER));
+
+	glutSwapBuffers();
+}
+
+void cGame::Render2()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glLoadIdentity();
+
+	Scene.Draw(Data.GetID(IMG_BLOCKS));
+	Link.Draw(Data.GetID(IMG_PLAYER));
+	LinkSword.Draw(Data.GetID(IMG_PLAYER));
 
 	glutSwapBuffers();
 }
