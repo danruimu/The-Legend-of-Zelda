@@ -48,7 +48,7 @@ void createWindow(bool fullScreen,int x,int y){
 		glutInitWindowPosition(x,y);
 		glutInitWindowSize(GAME_WIDTH,GAME_HEIGHT);
 		glutCreateWindow("The Legend of Zelda");
-		PlaySound("sounds\\02_overworld_theme.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
+		//PlaySound("sounds\\02_overworld_theme.wav",NULL,SND_LOOP|SND_FILENAME|SND_ASYNC);
 		HWND windowHandle = FindWindow(NULL,"The Legend of Zelda");
 		HICON hIcon = (HICON)LoadImage(NULL, "images\\/window_logo.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
 		SendMessage(windowHandle,WM_SETICON, ICON_BIG, (LPARAM)hIcon );
