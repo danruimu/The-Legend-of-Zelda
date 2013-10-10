@@ -30,8 +30,10 @@ bool cGame::Init()
 	res = Scene.LoadLevel("H8");
 	if(!res) return false;
 
+	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link.png",GL_RGBA);
 	if(!res) return false;
+	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(STATE_IDLE);
@@ -167,11 +169,11 @@ bool cGame::Process()
 		Link.SetState(STATE_ATTACK_2);
 		Render();
 		Sleep(50);
-		//Link.SetState(STATE_SWORD);
 		LinkSword.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 		LinkSword.SetBlock(xo/BLOCK_SIZE,yo/BLOCK_SIZE);
 		LinkSword.SetDirection(Link.GetDirection());
 		LinkSword.SetState(STATE_SWORD);
+		LinkSword.setAlive(true);
 		if (Link.GetDirection() == DIRECTION_UP) {
 			LinkSword.SetPosition(xo, yo+BLOCK_SIZE);
 		} else if (Link.GetDirection() == DIRECTION_DOWN) {
@@ -181,7 +183,8 @@ bool cGame::Process()
 		} else {
 			LinkSword.SetPosition(xo-BLOCK_SIZE, yo);
 		}
-		Render2();
+		Render();
+		LinkSword.setAlive(false);
 		Sleep(100);
 		Render();
 		Link.SetState(STATE_ATTACK_2);
@@ -206,12 +209,18 @@ bool cGame::Process()
 //Output
 void cGame::Render()
 {
+	int i;
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glLoadIdentity();
 
 	Scene.Draw(Data.GetID(IMG_BLOCKS));
 	Link.Draw(Data.GetID(IMG_PLAYER));
+	if(LinkSword.isAlive()) LinkSword.Draw(Data.GetID(IMG_PLAYER));
+
+	for(i = 0; i < MAX_N_MONSTERS; ++i) {
+		if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
+	}
 
 	glutSwapBuffers();
 }
