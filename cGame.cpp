@@ -1,7 +1,6 @@
 #include "cGame.h"
 #include "Globals.h"
 
-
 cGame::cGame(void)
 {
 }
