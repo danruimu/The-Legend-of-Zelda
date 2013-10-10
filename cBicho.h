@@ -71,6 +71,9 @@ public:
 
 	int GetSpeed();
 	void SetSpeed(int s);
+
+	bool isAlive();
+	void setAlive(bool alive);
 	
 private:
 	int x,y;
@@ -80,4 +83,5 @@ private:
 	int speed;
 
 	int seq,delay;
+	bool alive = false;
 };
