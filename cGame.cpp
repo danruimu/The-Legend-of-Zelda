@@ -161,7 +161,6 @@ bool cGame::Process()
 		cPlayer linkSword = Link;
 		int xo, yo; Link.GetPosition(&xo, &yo);
 
-		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC);
 		Link.SetState(STATE_ATTACK_1);
 		Link.Draw(Data.GetID(IMG_PLAYER));
 		Render();
@@ -183,6 +182,7 @@ bool cGame::Process()
 		} else {
 			LinkSword.SetPosition(xo-BLOCK_SIZE, yo);
 		}
+		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 		Render();
 		LinkSword.setAlive(false);
 		Sleep(100);
@@ -219,21 +219,8 @@ void cGame::Render()
 	if(LinkSword.isAlive()) LinkSword.Draw(Data.GetID(IMG_PLAYER));
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
-		if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
+		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
 	}
-
-	glutSwapBuffers();
-}
-
-void cGame::Render2()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glLoadIdentity();
-
-	Scene.Draw(Data.GetID(IMG_BLOCKS));
-	Link.Draw(Data.GetID(IMG_PLAYER));
-	LinkSword.Draw(Data.GetID(IMG_PLAYER));
 
 	glutSwapBuffers();
 }

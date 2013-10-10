@@ -83,5 +83,5 @@ private:
 	int speed;
 
 	int seq,delay;
-	bool alive = false;
+	bool alive;
 };

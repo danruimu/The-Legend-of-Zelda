@@ -24,7 +24,6 @@ public:
 	bool Process();
 	//Output
 	void Render();
-	void Render2();
 
 private:
 	unsigned char keys[256];
