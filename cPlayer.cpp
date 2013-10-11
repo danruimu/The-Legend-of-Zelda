@@ -7,15 +7,55 @@ cPlayer::~cPlayer(){}
 
 void cPlayer::Draw(int tex_id)
 {	
-	float xo,yo,despx,despy;
-	despx = (TILE_SIZE-1.0)/(TILE_SIZE*PLAYER_TEXTURE_WIDTH);
-	despy = (TILE_SIZE-1.0)/(TILE_SIZE*PLAYER_TEXTURE_HEIGHT);
+	int posx,posy;
+	GetPosition(&posx,&posy);
+	float bordeX = 15./351.;
+	float bordeY = 15./185.;
+	float blockX = 15./351.;
+	float blockY = 15./185.;
+	float xo,yo;
 	float direction = GetDirection();
 	float state = GetState();
-	xo = direction /PLAYER_TEXTURE_WIDTH;
-	yo = state/PLAYER_TEXTURE_HEIGHT; 
-
-	DrawRect(tex_id,xo,yo + despy,xo + despx,yo);
+	xo = direction*(blockX+bordeX);
+	yo = state*(blockY+bordeY);
+	if(state == STATE_ATTACK_1 || state == STATE_ATTACK_2){
+		NextFrame(STATE_IDLE,STATE_ATTACK_2,2*FRAME_DELAY);
+	}
+	if (state == STATE_ATTACK_2){
+		if(direction == DIRECTION_DOWN){
+			SetPosition(posx,posy-BLOCK_SIZE);
+			yo -= 6./185.;
+			yo+=blockY;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			SetPosition(posx,posy);
+			yo-=blockY;
+		}
+		if(direction == DIRECTION_UP){
+			SetPosition(posx,posy+BLOCK_SIZE);
+			yo += 6./185.;
+			yo-=blockY;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			SetPosition(posx,posy);
+			yo+=blockY;
+		}
+		if(direction == DIRECTION_LEFT){
+			SetPosition(posx-BLOCK_SIZE,posy);
+			xo+=6./351.;
+			xo-=blockX;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			SetPosition(posx,posy);
+			xo+=blockX;
+		}
+		if(direction == DIRECTION_RIGHT){
+			SetPosition(posx+BLOCK_SIZE,posy);
+			xo-=6./351.;
+			xo+=blockX;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			SetPosition(posx,posy);
+			xo-=blockX;
+		}
+	}
+	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 }
 
 /* x = column
@@ -111,6 +151,6 @@ bool cPlayer::tirapalante(int* map){
 		break;
 	}
 	SetPosition(x,y);
-	NextFrame(2);
+	NextFrame(STATE_MOVE,2,FRAME_DELAY);
 	return true;
 }

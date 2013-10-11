@@ -209,12 +209,12 @@ void cBicho::Logic(int *map)
 	//		y -= (2*STEP_LENGTH);
 	//}
 }
-void cBicho::NextFrame(int max)
+void cBicho::NextFrame(int init,int max,int frame_delay)
 {
 	delay++;
-	if(delay == FRAME_DELAY)
+	if(delay == frame_delay)
 	{
-		state = (state+1)%max;
+		state = init + ((state-init)+1)%max;
 		delay = 0;
 	}
 }

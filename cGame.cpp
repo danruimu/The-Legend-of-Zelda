@@ -32,7 +32,7 @@ bool cGame::Init()
 	if(!res) return false;
 
 	//Link Initialization
-	res = Data.LoadImage(IMG_PLAYER,"sprites/link.png",GL_RGBA);
+	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;
 	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
@@ -140,42 +140,8 @@ bool cGame::Process()
 
 	if(keys['j']) {
 		keys['j'] = false;
-		cPlayer linkSword = Link;
-		int xo, yo; Link.GetPosition(&xo, &yo);
 		Link.SetState(STATE_ATTACK_1);
-		Render();
-		Sleep(50);
-		Link.SetState(STATE_ATTACK_2);
-		Render();
-		Sleep(50);
-		LinkSword.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
-		LinkSword.SetBlock(xo/BLOCK_SIZE,yo/BLOCK_SIZE);
-		LinkSword.SetDirection(Link.GetDirection());
-		LinkSword.SetState(STATE_SWORD);
-		LinkSword.setAlive(true);
-		if (Link.GetDirection() == DIRECTION_UP) {
-			LinkSword.SetPosition(xo, yo+BLOCK_SIZE);
-		} else if (Link.GetDirection() == DIRECTION_DOWN) {
-			LinkSword.SetPosition(xo, yo-BLOCK_SIZE);
-		} else if (Link.GetDirection() == DIRECTION_RIGHT) {
-			LinkSword.SetPosition(xo+BLOCK_SIZE, yo);
-		} else {
-			LinkSword.SetPosition(xo-BLOCK_SIZE, yo);
-		}
 		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-		Render();
-		LinkSword.setAlive(false);
-		Sleep(100);
-		Render();
-		Link.SetState(STATE_ATTACK_2);
-		Sleep(50);
-		Render();
-		Link.SetState(STATE_ATTACK_1);
-		Sleep(50);
-		Render();
-		Link.SetState(STATE_IDLE);
-		Sleep(50);
-		Render();
 		return true;
 	}
 
