@@ -9,10 +9,10 @@ void cPlayer::Draw(int tex_id)
 {	
 	int posx,posy;
 	GetPosition(&posx,&posy);
-	float bordeX = 15./351.;
-	float bordeY = 15./185.;
-	float blockX = 15./351.;
-	float blockY = 15./185.;
+	float bordeX = (0.+LINK_SIZE)/LINK_TEXTURES_WIDTH;
+	float bordeY = (0.+LINK_SIZE)/LINK_TEXTURES_HEIGHT;
+	float blockX = (0.+LINK_SIZE)/LINK_TEXTURES_WIDTH;
+	float blockY = (0.+LINK_SIZE)/LINK_TEXTURES_HEIGHT;
 	float xo,yo;
 	float direction = GetDirection();
 	float state = GetState();
@@ -23,36 +23,44 @@ void cPlayer::Draw(int tex_id)
 	}
 	if (state == STATE_ATTACK_2){
 		if(direction == DIRECTION_DOWN){
-			SetPosition(posx,posy-BLOCK_SIZE);
-			yo -= 6./185.;
-			yo+=blockY;
-			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-			SetPosition(posx,posy);
-			yo-=blockY;
+			yo -= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
+			if(posy-BLOCK_SIZE >= 0){
+				SetPosition(posx,posy-BLOCK_SIZE);
+				yo+=blockY;
+				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+				yo-=blockY;
+				SetPosition(posx,posy);
+			}
 		}
 		if(direction == DIRECTION_UP){
-			SetPosition(posx,posy+BLOCK_SIZE);
-			yo += 6./185.;
-			yo-=blockY;
-			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-			SetPosition(posx,posy);
-			yo+=blockY;
+			yo += (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
+			if(posy+BLOCK_SIZE <= BLOCK_SIZE*SCENE_HEIGHT){
+				SetPosition(posx,posy+BLOCK_SIZE);
+				yo-=blockY;
+				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+				yo+=blockY;
+				SetPosition(posx,posy);
+			}
 		}
 		if(direction == DIRECTION_LEFT){
-			SetPosition(posx-BLOCK_SIZE,posy);
-			xo+=6./351.;
-			xo-=blockX;
-			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-			SetPosition(posx,posy);
-			xo+=blockX;
+			xo+= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
+			if(posx-BLOCK_SIZE >= 0){
+				SetPosition(posx-BLOCK_SIZE,posy);
+				xo-=blockX;
+				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+				xo+=blockX;
+				SetPosition(posx,posy);
+			}
 		}
 		if(direction == DIRECTION_RIGHT){
-			SetPosition(posx+BLOCK_SIZE,posy);
-			xo-=6./351.;
-			xo+=blockX;
-			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-			SetPosition(posx,posy);
-			xo-=blockX;
+			xo-= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
+			if(posx+BLOCK_SIZE <= BLOCK_SIZE*SCENE_WIDTH){
+				SetPosition(posx+BLOCK_SIZE,posy);
+				xo+=blockX;
+				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+				xo-=blockX;
+				SetPosition(posx,posy);
+			}
 		}
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
