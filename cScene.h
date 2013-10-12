@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cTexture.h"
+#include "cEnemy.h"
 
 class cScene
 {
@@ -17,10 +18,7 @@ public:
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
-	//int up[SCENE_WIDTH * SCENE_HEIGHT];	//scene
-	//int down[SCENE_WIDTH * SCENE_HEIGHT];	//scene
-	//int left[SCENE_WIDTH * SCENE_HEIGHT];	//scene
-	//int right[SCENE_WIDTH * SCENE_HEIGHT];	//scene
 	int id_DL;								//actual level display list
 	char id[2];
+	cEnemy foes[42];
 };

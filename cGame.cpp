@@ -33,7 +33,7 @@ bool cGame::Init()
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;
 
-	res = Data.LoadImage(IMG_OBJECTS,"sprites/objects.png",GL_RGBA);
+	res = Data.LoadImage(IMG_OBJECTS,"sprites/treasures.png",GL_RGBA);
 	if(!res) return false;
 
 	Link.setAlive(true);

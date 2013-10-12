@@ -5,8 +5,6 @@
 
 #define FRAME_DELAY		4
 #define STEP_LENGTH		BLOCK_SIZE/FRAME_DELAY
-#define JUMP_HEIGHT		96
-#define JUMP_STEP		4
 
 #define STATE_IDLE			1
 #define STATE_MOVE			0
@@ -19,13 +17,6 @@
 #define DIRECTION_LEFT		1
 #define DIRECTION_RIGHT		3
 
-#define	MONSTER_DOWN	0
-#define	MONSTER_RIGHT	1
-#define	MONSTER_UP		2
-#define	MONSTER_LEFT	3
-
-#define	MONSTER_STATE_IDLE	0
-#define	MONSTER_STATE_MOVE	1
 
 class cRect
 {
@@ -50,7 +41,7 @@ public:
 	void GetWidthHeight(int *w,int *h);
 
 	bool Collides(cRect *rc);
-	bool CollidesMapWall(int *map,bool right);
+	bool CollidesMapWall(int *map,int direction);
 	void GetArea(cRect *rc);
 	void DrawRect(int tex_id,float xo,float yo,float xf,float yf);
 

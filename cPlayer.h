@@ -34,9 +34,15 @@ public:
 	void heal(int num_hearts);//-1 -> full recovery
 	void damage(int num_hearts);
 	void givePoints(int num_points);
+	bool useKey();
+	void getKey();
 private:
+	void printInfo(int obj_id);
 	Sword espasa;
 	int life;
 	int max_life;
 	int points;
+	int keys;
+	int triforce;
+	int max_triforces;
 };
