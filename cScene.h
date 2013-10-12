@@ -9,6 +9,7 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level);
+	bool LoadDungeon(int dungeon);
 	void Draw(int tex_id);
 	int *GetMap();
 	char *getId();

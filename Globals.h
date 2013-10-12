@@ -28,7 +28,7 @@
 #define IMG_PLAYER	1
 #define IMG_ENEMY1	2
 #define IMG_ENEMY2	3
-#define IMG_SHOOT	4
+#define IMG_OBJECTS	4
 #define IMG_BOSS	5
 
 #define GAME_WIDTH	(BLOCK_SIZE*SCENE_WIDTH+2*BLOCK_SIZE)

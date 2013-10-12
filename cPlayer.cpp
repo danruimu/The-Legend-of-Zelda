@@ -2,10 +2,29 @@
 #include "cPlayer.h"
 #include <math.h>
 
-cPlayer::cPlayer() {}
+cPlayer::cPlayer() {
+	espasa.alive =false;
+	life = max_life = 6;
+}
 cPlayer::~cPlayer(){}
 
-void cPlayer::Draw(int tex_id)
+void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,int h)
+{
+
+	glEnable(GL_TEXTURE_2D);
+	
+	glBindTexture(GL_TEXTURE_2D,tex_id);
+	glBegin(GL_QUADS);	
+		glTexCoord2f(tx,ty+th);	glVertex2i(x  ,y);
+		glTexCoord2f(tx+tw,ty+th);	glVertex2i(x+w,y);
+		glTexCoord2f(tx+tw,ty);	glVertex2i(x+w,y+h);
+		glTexCoord2f(tx,ty);	glVertex2i(x  ,y+h);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+}
+
+void cPlayer::Draw(int tex_id,int obj_id)
 {	
 	int posx,posy;
 	GetPosition(&posx,&posy);
@@ -24,48 +43,104 @@ void cPlayer::Draw(int tex_id)
 	if (state == STATE_ATTACK_2){
 		if(direction == DIRECTION_DOWN){
 			yo -= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
-			if(posy-BLOCK_SIZE >= 0){
-				SetPosition(posx,posy-BLOCK_SIZE);
-				yo+=blockY;
-				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-				yo-=blockY;
-				SetPosition(posx,posy);
-			}
+			SetPosition(posx,posy-BLOCK_SIZE);
+			yo+=blockY;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			yo-=blockY;
+			SetPosition(posx,posy);
 		}
 		if(direction == DIRECTION_UP){
 			yo += (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
-			if(posy+BLOCK_SIZE <= BLOCK_SIZE*SCENE_HEIGHT){
-				SetPosition(posx,posy+BLOCK_SIZE);
-				yo-=blockY;
-				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-				yo+=blockY;
-				SetPosition(posx,posy);
-			}
+			SetPosition(posx,posy+BLOCK_SIZE);
+			yo-=blockY;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			yo+=blockY;
+			SetPosition(posx,posy);
 		}
 		if(direction == DIRECTION_LEFT){
 			xo+= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
-			if(posx-BLOCK_SIZE >= 0){
-				SetPosition(posx-BLOCK_SIZE,posy);
-				xo-=blockX;
-				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-				xo+=blockX;
-				SetPosition(posx,posy);
-			}
+			SetPosition(posx-BLOCK_SIZE,posy);
+			xo-=blockX;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			xo+=blockX;
+			SetPosition(posx,posy);
 		}
 		if(direction == DIRECTION_RIGHT){
 			xo-= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
-			if(posx+BLOCK_SIZE <= BLOCK_SIZE*SCENE_WIDTH){
-				SetPosition(posx+BLOCK_SIZE,posy);
-				xo+=blockX;
-				DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-				xo-=blockX;
-				SetPosition(posx,posy);
-			}
+			SetPosition(posx+BLOCK_SIZE,posy);
+			xo+=blockX;
+			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+			xo-=blockX;
+			SetPosition(posx,posy);
 		}
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+	if(espasa.alive){
+		DrawSword(obj_id,espasa.direction/15.,espasa.state/4.,16./450.,1./8,espasa.x,espasa.y,BLOCK_SIZE,BLOCK_SIZE);
+		espasa.x+= espasa.direction==DIRECTION_RIGHT?STEP_LENGTH:0;
+		espasa.x-= espasa.direction==DIRECTION_LEFT?STEP_LENGTH:0;
+		espasa.y+= espasa.direction==DIRECTION_UP?STEP_LENGTH:0;
+		espasa.y-= espasa.direction==DIRECTION_DOWN?STEP_LENGTH:0;
+
+		//espasa.state = (espasa.state+1)%4; //cambiarla de color
+		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >BLOCK_SIZE*SCENE_WIDTH||espasa.y >BLOCK_SIZE*SCENE_HEIGHT){//comprovar colisions amb enemics
+			espasa.alive = false;
+			//fer animacio de xoc			
+		}
+	}
+	int pos = 18;
+	for (int i = 1; i <= life; i++){
+		DrawSword(obj_id,8./15.,0,16./450.,15./120.,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
+		pos+=18;
+	}
 }
 
+bool cPlayer::ataca(){
+	int posx,posy;
+	int direction = GetDirection();
+	GetPosition(&posx,&posy);
+	switch(direction){
+		case DIRECTION_UP:
+			if(posy+BLOCK_SIZE > BLOCK_SIZE*SCENE_HEIGHT)return false;
+			if(!espasa.alive){
+				espasa.direction = DIRECTION_UP;
+				espasa.x=posx;
+				espasa.y=posy+2*BLOCK_SIZE;
+			}
+			break;
+		case DIRECTION_DOWN:
+			if(posy-BLOCK_SIZE < 0)return false;
+			if(!espasa.alive){
+				espasa.direction = DIRECTION_DOWN;
+				espasa.x=posx;
+				espasa.y=posy-2*BLOCK_SIZE;
+			}
+			break;
+		case DIRECTION_RIGHT:
+			if(posx+BLOCK_SIZE > BLOCK_SIZE*SCENE_WIDTH)return false;
+			if(!espasa.alive){
+				espasa.direction = DIRECTION_RIGHT;
+				espasa.x=posx+2*BLOCK_SIZE;
+				espasa.y=posy;
+			}
+			break;
+		case DIRECTION_LEFT:
+			if(posx-BLOCK_SIZE < 0)return false;
+			if(!espasa.alive){
+				espasa.direction = DIRECTION_LEFT;
+				espasa.x=posx-2*BLOCK_SIZE;
+				espasa.y=posy;
+			}
+			break;
+	}
+	SetState(STATE_ATTACK_1);
+	if(!espasa.alive){
+		PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+		espasa.alive=true;
+		espasa.state=0;
+	}
+
+}
 /* x = column
    y = row
    map = vector of tiles

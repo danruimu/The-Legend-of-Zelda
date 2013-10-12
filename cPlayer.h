@@ -15,12 +15,24 @@
 #define STATE_LOOKUP		1
 #define NUM_TRANS			8
 
+typedef struct Sword{
+	bool alive;
+	int x,y;
+	int direction;
+	int state;
+};
+
 class cPlayer: public cBicho
 {
 public:
 	cPlayer();
 	~cPlayer();
 
-	void Draw(int tex_id);
+	void Draw(int tex_id,int obj_id);
 	bool tirapalante(int *map);
+	bool ataca();
+private:
+	Sword espasa;
+	int life;
+	int max_life;
 };

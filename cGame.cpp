@@ -34,6 +34,10 @@ bool cGame::Init()
 	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;
+
+	res = Data.LoadImage(IMG_OBJECTS,"sprites/objects.png",GL_RGBA);
+	if(!res) return false;
+
 	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
@@ -140,8 +144,7 @@ bool cGame::Process()
 
 	if(keys['j']) {
 		keys['j'] = false;
-		Link.SetState(STATE_ATTACK_1);
-		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+		if (Link.ataca())PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 		return true;
 	}
 
@@ -161,10 +164,7 @@ void cGame::Render()
 	glLoadIdentity();
 
 	Scene.Draw(Data.GetID(IMG_BLOCKS));
-	Link.Draw(Data.GetID(IMG_PLAYER));
-	if(LinkSword.isAlive()) {
-		LinkSword.Draw(Data.GetID(IMG_PLAYER));
-	}
+	Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
 		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
