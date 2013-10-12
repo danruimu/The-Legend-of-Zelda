@@ -42,6 +42,12 @@ bool cGame::Init()
 	Link.SetState(STATE_IDLE);
 	Link.SetDirection(DIRECTION_UP);
 	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
+
+	//Sounds Initialization
+	backSoundID = sound.addSound("sounds/02_overworld_theme.wav", true);
+	linkSowrdID = sound.addSound("sounds/sword.wav", false);
+	sound.playSound(backSoundID);
+
 	return res;
 }
 
@@ -142,7 +148,10 @@ bool cGame::Process()
 
 	if(keys['j']) {
 		keys['j'] = false;
-		if (Link.ataca())PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+		if (Link.ataca()) {
+			//PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+			sound.playSound(linkSowrdID);
+		}
 		return true;
 	}
 

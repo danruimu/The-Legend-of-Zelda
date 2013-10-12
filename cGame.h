@@ -34,4 +34,7 @@ private:
 	cPlayer Link;
 	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
+	cSound sound;
+	int backSoundID;
+	int linkSowrdID;
 };
