@@ -8,9 +8,15 @@ cSound::cSound() {
 
 cSound::~cSound(void)
 {
+	for(int i = 0; i<nSounds; ++i) {
+		sounds[i]->release();
+	}
+	system->close();
+	system->release();
 }
 
 int cSound::addSound(char *file, bool loop) {
+	if(nSounds==MAX_SOUNDS) return -1;
 	system->createSound(file, FMOD_HARDWARE, 0, &sounds[nSounds]);
 	if(loop) sounds[nSounds]->setMode(FMOD_LOOP_NORMAL);
 	else sounds[nSounds]->setMode(FMOD_LOOP_OFF);

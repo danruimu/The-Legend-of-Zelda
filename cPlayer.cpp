@@ -82,6 +82,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		}
 		SetPosition(posx,posy);
 		if(!espasa.alive){
+			//TODO: cambiar por FMOD
 			PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 			espasa.alive=true;
 			espasa.state=0;
@@ -257,6 +258,7 @@ void cPlayer::heal(int num_hearts){//-1 -> full recovery
 }
 void cPlayer::damage(int num_hearts){ 
 	life = max(0,life-num_hearts);
+	//TODO: cambiar por FMOD
 	PlaySound("sounds\\link_hurt.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 }
 
