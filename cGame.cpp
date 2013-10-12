@@ -40,14 +40,18 @@ bool cGame::Init()
 	if(!res) return false;
 
 	//Link Initialization
-	res = Data.LoadImage(IMG_PLAYER,"sprites/link.png",GL_RGBA);
+	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;
+
+	res = Data.LoadImage(IMG_OBJECTS,"sprites/objects.png",GL_RGBA);
+	if(!res) return false;
+
 	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
 	Link.SetState(STATE_IDLE);
-	Link.SetDirection(0);
-	Link.SetSpeed(BLOCK_SIZE/4);	//MUST BE 32/x where x=y^2
+	Link.SetDirection(DIRECTION_UP);
+	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
 	return res;
 }
 
@@ -89,16 +93,9 @@ bool cGame::Process()
 	//Process Input
 	if(keys[27])	
 		return false;
-	if(keys['e']) {
-		keys['e'] = false;
-		Link.SetState((Link.GetState()+1)%5);
-		Link.Draw(Data.GetID(IMG_PLAYER));
-		return true;
-	}
-	//TODO: comprovar que no salimos de los mapas que tenemos
 	if(keys['w']) {
 		keys['w'] = false;
-		/*if(Link.GetDirection() == DIRECTION_UP)Link.tirapalante(map);*/
+		if (Link.GetDirection()!=DIRECTION_UP)
 		Link.SetDirection(DIRECTION_UP);
 		res = Link.tirapalante(map);
 		if (!res) {
@@ -108,14 +105,11 @@ bool cGame::Process()
 			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
-		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
-		else Link.SetState(STATE_IDLE);
-		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['a']) {
 		keys['a'] = false;
-		/*if(Link.GetDirection() == DIRECTION_LEFT)Link.tirapalante(map);*/
+		if (Link.GetDirection()!=DIRECTION_LEFT)
 		Link.SetDirection(DIRECTION_LEFT);
 		res = Link.tirapalante(map);
 		if (!res) {
@@ -125,14 +119,11 @@ bool cGame::Process()
 			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
-		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
-		else Link.SetState(STATE_IDLE);
-		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['s']) {
 		keys['s'] = false;
-		/*if(Link.GetDirection() == DIRECTION_DOWN)Link.tirapalante(map);*/
+		if (Link.GetDirection()!=DIRECTION_DOWN)
 		Link.SetDirection(DIRECTION_DOWN);
 		res = Link.tirapalante(map);
 		if (!res) {
@@ -142,14 +133,11 @@ bool cGame::Process()
 			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
-		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
-		else Link.SetState(STATE_IDLE);
-		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 	if(keys['d']) {
 		keys['d'] = false;
-		/*if(Link.GetDirection() == DIRECTION_RIGHT)Link.tirapalante(map);*/
+		if (Link.GetDirection()!=DIRECTION_RIGHT)
 		Link.SetDirection(DIRECTION_RIGHT);
 		res = Link.tirapalante(map);
 		if (!res) {
@@ -159,52 +147,12 @@ bool cGame::Process()
 			if (!Scene.LoadLevel(level))return false;
 			free(level);
 		}
-		if(Link.GetState() == STATE_IDLE) Link.SetState(STATE_MOVE);
-		else Link.SetState(STATE_IDLE);
-		Link.Draw(Data.GetID(IMG_PLAYER));
 		return true;
 	}
 
 	if(keys['j']) {
 		keys['j'] = false;
-		cPlayer linkSword = Link;
-		int xo, yo; Link.GetPosition(&xo, &yo);
-
-		Link.SetState(STATE_ATTACK_1);
-		Link.Draw(Data.GetID(IMG_PLAYER));
-		Render();
-		Sleep(50);
-		Link.SetState(STATE_ATTACK_2);
-		Render();
-		Sleep(50);
-		LinkSword.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
-		LinkSword.SetBlock(xo/BLOCK_SIZE,yo/BLOCK_SIZE);
-		LinkSword.SetDirection(Link.GetDirection());
-		LinkSword.SetState(STATE_SWORD);
-		LinkSword.setAlive(true);
-		if (Link.GetDirection() == DIRECTION_UP) {
-			LinkSword.SetPosition(xo, yo+BLOCK_SIZE);
-		} else if (Link.GetDirection() == DIRECTION_DOWN) {
-			LinkSword.SetPosition(xo, yo-BLOCK_SIZE);
-		} else if (Link.GetDirection() == DIRECTION_RIGHT) {
-			LinkSword.SetPosition(xo+BLOCK_SIZE, yo);
-		} else {
-			LinkSword.SetPosition(xo-BLOCK_SIZE, yo);
-		}
-		PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-		Render();
-		LinkSword.setAlive(false);
-		Sleep(100);
-		Render();
-		Link.SetState(STATE_ATTACK_2);
-		Sleep(50);
-		Render();
-		Link.SetState(STATE_ATTACK_1);
-		Sleep(50);
-		Render();
-		Link.SetState(STATE_IDLE);
-		Sleep(50);
-		Render();
+		if (Link.ataca())PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 		return true;
 	}
 
@@ -224,8 +172,7 @@ void cGame::Render()
 	glLoadIdentity();
 
 	Scene.Draw(Data.GetID(IMG_BLOCKS));
-	Link.Draw(Data.GetID(IMG_PLAYER));
-	if(LinkSword.isAlive()) LinkSword.Draw(Data.GetID(IMG_PLAYER));
+	Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
 		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);

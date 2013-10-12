@@ -9,10 +9,8 @@ class cSound
 {
 public:
 	cSound();
-	~cSound();
-	void addFiles(char *file);
-	
+	~cSound(void);
+
 private:
-	char *files[];
 };
 
