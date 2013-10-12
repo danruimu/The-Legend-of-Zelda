@@ -15,3 +15,5 @@
 !images/*
 !GL
 !GL/*
+!enemies/
+!enemies/*
