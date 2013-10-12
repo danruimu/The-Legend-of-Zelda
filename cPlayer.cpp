@@ -5,6 +5,7 @@
 cPlayer::cPlayer() {
 	espasa.alive =false;
 	life = max_life = 6;
+	points = 42;
 }
 cPlayer::~cPlayer(){}
 
@@ -23,6 +24,16 @@ void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,
 	glDisable(GL_TEXTURE_2D);
 }
 
+void print( int x, int y, char *st){
+	int i,len;
+	len = strlen(st);
+	//glColor3f(1.,0.,0.);
+	glRasterPos2i( x-len*7, y);
+	for( i=0; i < len; i++){
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, st[i]); // Print a character on the screen
+	}
+}
+
 void cPlayer::Draw(int tex_id,int obj_id){	
 	int posx,posy;
 	GetPosition(&posx,&posy);
@@ -31,7 +42,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 	float blockX = (0.+LINK_SIZE)/LINK_TEXTURES_WIDTH;
 	float blockY = (0.+LINK_SIZE)/LINK_TEXTURES_HEIGHT;
 	float xo,yo;
-	float direction = GetDirection();
+	int direction = GetDirection();
 	float state = GetState();
 	xo = direction*(blockX+bordeX);
 	yo = state*(blockY+bordeY);
@@ -39,37 +50,41 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		NextFrame(STATE_IDLE,STATE_ATTACK_2,2*FRAME_DELAY);
 	}
 	if (state == STATE_ATTACK_2){
-		if(direction == DIRECTION_DOWN){
+		switch (direction){
+		case DIRECTION_DOWN:
 			yo -= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
 			SetPosition(posx,posy-BLOCK_SIZE);
 			yo+=blockY;
 			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 			yo-=blockY;
-			SetPosition(posx,posy);
-		}
-		if(direction == DIRECTION_UP){
+			break;
+		case DIRECTION_UP:
 			yo += (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_HEIGHT;
 			SetPosition(posx,posy+BLOCK_SIZE);
 			yo-=blockY;
 			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 			yo+=blockY;
-			SetPosition(posx,posy);
-		}
-		if(direction == DIRECTION_LEFT){
+			break;
+		case DIRECTION_LEFT:
 			xo+= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
 			SetPosition(posx-BLOCK_SIZE,posy);
 			xo-=blockX;
 			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 			xo+=blockX;
-			SetPosition(posx,posy);
-		}
-		if(direction == DIRECTION_RIGHT){
+			break;
+		case DIRECTION_RIGHT:
 			xo-= (0.+LINK_DESFASE_ATTACK)/LINK_TEXTURES_WIDTH;
 			SetPosition(posx+BLOCK_SIZE,posy);
 			xo+=blockX;
 			DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 			xo-=blockX;
-			SetPosition(posx,posy);
+			break;
+		}
+		SetPosition(posx,posy);
+		if(!espasa.alive){
+			PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+			espasa.alive=true;
+			espasa.state=0;
 		}
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
@@ -92,6 +107,10 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		DrawSword(obj_id,8./15.,0,16./450.,15./120.,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
 		pos+=18;
 	}
+	char *buffer = (char*)malloc(42);
+	sprintf(buffer,"%d POINTS",points);
+	print(SCENE_WIDTH*BLOCK_SIZE+BLOCK_SIZE,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer);
+	free(buffer);
 }
 
 bool cPlayer::ataca(){
@@ -133,12 +152,7 @@ bool cPlayer::ataca(){
 			break;
 	}
 	SetState(STATE_ATTACK_1);
-	if(!espasa.alive){
-		PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-		espasa.alive=true;
-		espasa.state=0;
-	}
-
+	return true;
 }
 /* x = column
    y = row
@@ -244,4 +258,8 @@ void cPlayer::heal(int num_hearts){//-1 -> full recovery
 void cPlayer::damage(int num_hearts){ 
 	life = max(0,life-num_hearts);
 	PlaySound("sounds\\link_hurt.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+}
+
+void cPlayer::givePoints(int num_points){
+	points+=num_points;
 }

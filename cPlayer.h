@@ -15,7 +15,7 @@
 #define STATE_LOOKUP		1
 #define NUM_TRANS			8
 
-typedef struct Sword{
+struct Sword{
 	bool alive;
 	int x,y;
 	int direction;
@@ -33,8 +33,10 @@ public:
 	bool ataca();
 	void heal(int num_hearts);//-1 -> full recovery
 	void damage(int num_hearts);
+	void givePoints(int num_points);
 private:
 	Sword espasa;
 	int life;
 	int max_life;
+	int points;
 };
