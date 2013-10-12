@@ -3,7 +3,6 @@
 
 cGame::cGame(void)
 {
-	//sound = cSound("sounds\\02_overworld_theme.wav");
 }
 
 cGame::~cGame(void)
@@ -13,7 +12,16 @@ cGame::~cGame(void)
 bool cGame::Init()
 {
 	bool res=true;
-	//sound.playSound();
+	FMOD_System_Create(&system);
+	system.init(32, FMOD_INIT_NORMAL, 0);
+
+	system.createSound("sounds/02_overworld_theme.wav", FMOD_HARDWARE, 0, &soundBack);
+	soundBack->setMode(FMOD_LOOP_NORMAL);
+
+	system->createSound("sounds/sword.wav", FMOD_HARDWARE, 0, &soundSword);
+	soundSword->setMode(FMOD_LOOP_OFF);
+
+	system->playSound(FMOD_CHANNEL, soundBack, false, 0);
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);

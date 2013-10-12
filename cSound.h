@@ -1,18 +1,18 @@
 #pragma once
 
-#include <xaudio2.h>
+#include "fmod.h"
+#include "fmod_codec.h"
+#include "fmod.hpp"
+#include "fmod_common.h"
 
 class cSound
 {
 public:
 	cSound();
-	cSound(char* soundFile);
-	~cSound(void);
-	void playSound();
-
+	~cSound();
+	void addFiles(char *file);
+	
 private:
-	IXAudio2* pXAudio2;
-	IXAudio2MasteringVoice* pMasterVoice;
-	IXAudio2SourceVoice* pSourceVoice;
+	char *files[];
 };
 
