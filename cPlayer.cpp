@@ -8,8 +8,7 @@ cPlayer::cPlayer() {
 }
 cPlayer::~cPlayer(){}
 
-void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,int h)
-{
+void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,int h){
 
 	glEnable(GL_TEXTURE_2D);
 	
@@ -24,8 +23,7 @@ void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,
 	glDisable(GL_TEXTURE_2D);
 }
 
-void cPlayer::Draw(int tex_id,int obj_id)
-{	
+void cPlayer::Draw(int tex_id,int obj_id){	
 	int posx,posy;
 	GetPosition(&posx,&posy);
 	float bordeX = (0.+LINK_SIZE)/LINK_TEXTURES_WIDTH;
@@ -88,6 +86,7 @@ void cPlayer::Draw(int tex_id,int obj_id)
 			//fer animacio de xoc			
 		}
 	}
+
 	int pos = 18;
 	for (int i = 1; i <= life; i++){
 		DrawSword(obj_id,8./15.,0,16./450.,15./120.,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
@@ -236,4 +235,13 @@ bool cPlayer::tirapalante(int* map){
 	SetPosition(x,y);
 	NextFrame(STATE_MOVE,2,FRAME_DELAY);
 	return true;
+}
+
+void cPlayer::heal(int num_hearts){//-1 -> full recovery
+	if(num_hearts == -1) life = max_life;
+	else life = min(max_life,life+num_hearts);
+}
+void cPlayer::damage(int num_hearts){ 
+	life = max(0,life-num_hearts);
+	PlaySound("sounds\\link_hurt.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 }

@@ -31,6 +31,8 @@ public:
 	void Draw(int tex_id,int obj_id);
 	bool tirapalante(int *map);
 	bool ataca();
+	void heal(int num_hearts);//-1 -> full recovery
+	void damage(int num_hearts);
 private:
 	Sword espasa;
 	int life;
