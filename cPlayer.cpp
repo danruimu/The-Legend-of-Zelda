@@ -8,7 +8,7 @@ cPlayer::cPlayer() {
 	max_life = 6;
 	points = 0;
 	keys = 0;
-	triforce = 3;
+	triforce = 0;
 	max_triforces = 3;
 }
 cPlayer::~cPlayer(){}
@@ -63,8 +63,10 @@ void cPlayer::printInfo(int obj_id){
 	print(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer);
 	pos += strlen(buffer)*15;
 	free(buffer);
-	for(i=0;i<triforce;i++){
-		DrawObject(obj_id,0,2,pos,(SCENE_HEIGHT)*BLOCK_SIZE+27);
+	for(i=0;i<max_triforces;i++){
+		if(triforce>i)DrawObject(obj_id,0,2,pos,(SCENE_HEIGHT)*BLOCK_SIZE+27);
+		else
+		DrawObject(obj_id,0,3,pos,(SCENE_HEIGHT)*BLOCK_SIZE+27);
 		pos += 28;
 	}
 }
