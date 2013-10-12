@@ -34,5 +34,6 @@ private:
 	cPlayer Link;
 	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
-	//cSound sound;
+	FMOD_SYSTEM *system;
+	FMOD_SOUND *soundBack, *soundSword;
 };
