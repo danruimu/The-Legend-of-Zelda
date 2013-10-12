@@ -4,21 +4,29 @@
 
 cPlayer::cPlayer() {
 	espasa.alive =false;
-	life = max_life = 6;
-	points = 42;
+	life = 6;
+	max_life = 6;
+	points = 0;
+	keys = 0;
+	triforce = 3;
+	max_triforces = 3;
 }
 cPlayer::~cPlayer(){}
 
-void DrawSword(int tex_id,float tx,float ty,float tw,float th,int x,int y,int w,int h){
+void DrawObject(int tex_id,int x,int y,int posx,int posy){
+	float th = 1/5.;
+	float tw = 1/5.;
+	float tx = x/5.;
+	float ty = y/5.;
 
 	glEnable(GL_TEXTURE_2D);
 	
 	glBindTexture(GL_TEXTURE_2D,tex_id);
 	glBegin(GL_QUADS);	
-		glTexCoord2f(tx,ty+th);	glVertex2i(x  ,y);
-		glTexCoord2f(tx+tw,ty+th);	glVertex2i(x+w,y);
-		glTexCoord2f(tx+tw,ty);	glVertex2i(x+w,y+h);
-		glTexCoord2f(tx,ty);	glVertex2i(x  ,y+h);
+		glTexCoord2f(tx,ty+th);	glVertex2i(posx  ,posy);
+		glTexCoord2f(tx+tw,ty+th);	glVertex2i(posx+BLOCK_SIZE,posy);
+		glTexCoord2f(tx+tw,ty);	glVertex2i(posx+BLOCK_SIZE,posy+BLOCK_SIZE);
+		glTexCoord2f(tx,ty);	glVertex2i(posx  ,posy+BLOCK_SIZE);
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
@@ -28,9 +36,36 @@ void print( int x, int y, char *st){
 	int i,len;
 	len = strlen(st);
 	//glColor3f(1.,0.,0.);
-	glRasterPos2i( x-len*7, y);
+	glRasterPos2i( x, y);
 	for( i=0; i < len; i++){
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, st[i]); // Print a character on the screen
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, st[i]); // Print a character on the screen
+	}
+}
+
+void cPlayer::printInfo(int obj_id){
+	int i;
+	int pos = BLOCK_SIZE;
+	for (i = 0; i < max_life; i+=2){
+		if (i+1 == life)DrawObject(obj_id,1,1,pos,(SCENE_HEIGHT)*BLOCK_SIZE + 21);
+		else if(life > i) DrawObject(obj_id,0,1,pos,(SCENE_HEIGHT)*BLOCK_SIZE + 21); 
+		else DrawObject(obj_id,2,1,pos,(SCENE_HEIGHT)*BLOCK_SIZE + 21);
+		pos+=18;
+	}
+	DrawObject(obj_id,3,0,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE);
+	pos+=BLOCK_SIZE;
+	char *buffer = (char*)malloc(42);
+	sprintf(buffer,"X%d",points);
+	print(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer);
+	pos += strlen(buffer)*10;
+	DrawObject(obj_id,2,0,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE);
+	pos+=BLOCK_SIZE-3;
+	sprintf(buffer,"X%d",keys);
+	print(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer);
+	pos += strlen(buffer)*15;
+	free(buffer);
+	for(i=0;i<triforce;i++){
+		DrawObject(obj_id,0,2,pos,(SCENE_HEIGHT)*BLOCK_SIZE+27);
+		pos += 28;
 	}
 }
 
@@ -81,7 +116,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 			break;
 		}
 		SetPosition(posx,posy);
-		if(!espasa.alive){
+		if(!espasa.alive && life == max_life){
 			PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 			espasa.alive=true;
 			espasa.state=0;
@@ -89,7 +124,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 	if(espasa.alive){
-		DrawSword(obj_id,espasa.direction/15.,espasa.state/4.,16./450.,1./8,espasa.x,espasa.y,BLOCK_SIZE,BLOCK_SIZE);
+		DrawObject(obj_id,espasa.direction,4,espasa.x,espasa.y);
 		espasa.x+= espasa.direction==DIRECTION_RIGHT?STEP_LENGTH:0;
 		espasa.x-= espasa.direction==DIRECTION_LEFT?STEP_LENGTH:0;
 		espasa.y+= espasa.direction==DIRECTION_UP?STEP_LENGTH:0;
@@ -101,16 +136,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 			//fer animacio de xoc			
 		}
 	}
-
-	int pos = 18;
-	for (int i = 1; i <= life; i++){
-		DrawSword(obj_id,8./15.,0,16./450.,15./120.,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE);
-		pos+=18;
-	}
-	char *buffer = (char*)malloc(42);
-	sprintf(buffer,"%d POINTS",points);
-	print(SCENE_WIDTH*BLOCK_SIZE+BLOCK_SIZE,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer);
-	free(buffer);
+	printInfo(obj_id);
 }
 
 bool cPlayer::ataca(){
@@ -262,4 +288,15 @@ void cPlayer::damage(int num_hearts){
 
 void cPlayer::givePoints(int num_points){
 	points+=num_points;
+}
+
+bool cPlayer::useKey(){
+	if(keys > 0){
+		keys--;
+		return true;
+	}
+	return false;
+}
+void cPlayer::getKey(){
+	keys++;
 }

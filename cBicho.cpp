@@ -47,29 +47,30 @@ void cBicho::GetWidthHeight(int *width,int *height)
 	*width = w;
 	*height = h;
 }
+
 bool cBicho::Collides(cRect *rc)
 {
-	//return ((x>rc->left) && (x+w<rc->right) && (y>rc->bottom) && (y+h<rc->top));
+	return ((x>rc->left) && (x+w<rc->right) && (y>rc->bottom) && (y+h<rc->top));
 	return false;
 }
-bool cBicho::CollidesMapWall(int *map,bool right)
+bool cBicho::CollidesMapWall(int *map,int direction)
 {
-	int tile_x,tile_y;
-	int j;
-	int width_tiles,height_tiles;
+	//int tile_x,tile_y;
+	//int j;
+	//int width_tiles,height_tiles;
 
-	tile_x = x / TILE_SIZE;
-	tile_y = y / TILE_SIZE;
-	width_tiles  = w / TILE_SIZE;
-	height_tiles = h / TILE_SIZE;
+	//tile_x = x / TILE_SIZE;
+	//tile_y = y / TILE_SIZE;
+	//width_tiles  = w / TILE_SIZE;
+	//height_tiles = h / TILE_SIZE;
 
-	if(right)	tile_x += width_tiles;
-	
-	for(j=0;j<height_tiles;j++)
-	{
-		if(map[ tile_x + ((tile_y+j)*SCENE_WIDTH) ] != 0)	return true;
-	}
-	
+	//if(right)	tile_x += width_tiles;
+	//
+	//for(j=0;j<height_tiles;j++)
+	//{
+	//	if(map[ tile_x + ((tile_y+j)*SCENE_WIDTH) ] != 0)	return true;
+	//}
+	//
 	return false;
 }
 

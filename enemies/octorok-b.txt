@@ -1,0 +1,4 @@
+life:2
+damage:1
+projectile:rock#50
+drop:heart#50|rupy#100
