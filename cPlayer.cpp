@@ -185,10 +185,10 @@ bool cPlayer::tirapalante(int* map){
 			SetPosition(x,SCENE_Yo);
 			return false;
 		}
-		case1 = checkPos(x-BLOCK_SIZE, y, map);
+		case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE/2, map);
 		case2 = 2;
 		if(x%BLOCK_SIZE != 0) {
-			case2 = checkPos(x, y,map);
+			case2 = checkPos(x, y-BLOCK_SIZE/2, map);
 		}
 		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
@@ -220,7 +220,7 @@ bool cPlayer::tirapalante(int* map){
 		case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE, map);
 		case2 = 2;
 		if(y%BLOCK_SIZE != 0) {
-			case2 = checkPos(x-BLOCK_SIZE-1, y,map);
+			case2 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE/2-1,map);
 		}
 		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
@@ -236,7 +236,7 @@ bool cPlayer::tirapalante(int* map){
 		case1 = checkPos(x, y-BLOCK_SIZE, map);
 		case2 = 2;
 		if(y%BLOCK_SIZE != 0) {
-			case2 = checkPos(x, y,map);
+			case2 = checkPos(x, y-BLOCK_SIZE/2-1, map);
 		}
 		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
 
