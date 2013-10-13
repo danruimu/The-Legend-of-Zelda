@@ -13,7 +13,7 @@
 #define SND_SW_SH	"shoot_sword_sound"
 #define SND_MAIN_MENU	"main_menu_sound"
 
-#define TRANS_MAINMENU	10
+#define TRANS_MAINMENU	7
 
 using namespace std;
 

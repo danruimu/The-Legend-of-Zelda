@@ -37,10 +37,10 @@ bool cScene::LoadMainMenu(int id) {
 	id_DL=glGenLists(1);
 	glNewList(id_DL,GL_COMPILE);
 		glBegin(GL_QUADS);
-			glTexCoord2f(0, 0);	glVertex2i(0, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(0.5, 0);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(0.5, 0.5);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, 0);
-			glTexCoord2f(0, 0.5);	glVertex2i(0, 0);
+			glTexCoord2f(xi, yi);	glVertex2i(0, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
+			glTexCoord2f(xf, yi);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
+			glTexCoord2f(xf, yf);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, 0);
+			glTexCoord2f(xi, yf);	glVertex2i(0, 0);
 		glEnd();
 	glEndList();
 

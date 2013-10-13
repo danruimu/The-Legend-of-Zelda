@@ -46,6 +46,16 @@ bool cGame::startGame() {
 	return res;
 }
 
+void printChar( int x, int y, char *st){
+	int i,len;
+	len = strlen(st);
+	//glColor3f(1.,0.,0.);
+	glRasterPos2i( x, y);
+	for( i=0; i < len; i++){
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, st[i]); // Print a character on the screen
+	}
+}
+
 bool cGame::Init()
 {
 	bool res=true;
@@ -69,6 +79,8 @@ bool cGame::Init()
 	res = Scene.LoadMainMenu(currentMM);
 	if(!res) return false;
 
+	printChar(SCENE_WIDTH/2, SCENE_HEIGHT/2, "PRESS Q TO START");
+
 	//Sounds Initialization
 	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
 	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
@@ -84,6 +96,17 @@ bool cGame::Loop()
 {
 	bool res=true;
 
+	if(mainMenu) {
+		if(nTransMM == TRANS_MAINMENU) {
+			currentMM++;
+			if(currentMM == 4) currentMM = 0;
+			res = Scene.LoadMainMenu(currentMM);
+			if(!res) return false;
+			nTransMM = 0;
+		} else {
+			nTransMM++;
+		}
+	}
 	res = Process();
 	if(res) Render();
 
@@ -186,15 +209,6 @@ bool cGame::Process()
 			return true;
 		}
 	} else {
-		if(nTransMM == TRANS_MAINMENU) {
-			currentMM = currentMM+1;
-			if(currentMM == 4) currentMM = 0;
-			res = Scene.LoadMainMenu(currentMM);
-			if(!res) return false;
-			nTransMM = 0;
-		} else {
-			nTransMM++;
-		}
 		if(keys['w']) {
 			keys['w'] = false;
 		} else if(keys['s']) {
