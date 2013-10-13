@@ -8,10 +8,10 @@
 
 #define	MAX_N_MONSTERS	10
 
-#define SND_BACK	"back_sound"
-#define	SND_SW_ME	"attack_sword_sound"
-#define SND_SW_SH	"shoot_sword_sound"
-#define SND_MAIN_MENU	"main_menu_sound"
+#define SND_BACK	'a'
+#define	SND_SW_ME	'b'
+#define SND_SW_SH	'c'
+#define SND_MAIN_MENU	'd'
 
 #define TRANS_MAINMENU	7
 
@@ -46,7 +46,7 @@ private:
 	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
 	cSound sound;
-	map<char *,int> sounds;
+	map<char,int> sounds;
 
 	bool mainMenu;
 	int nTransMM;

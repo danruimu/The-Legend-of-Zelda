@@ -2,7 +2,7 @@
 
 cSound::cSound() {
 	nSounds = 0;
-	FMOD::System_Create(&system);
+	System_Create(&system);
 	system->init(MAX_SOUNDS, FMOD_INIT_NORMAL, 0);
 }
 
@@ -16,30 +16,43 @@ cSound::~cSound(void)
 
 int cSound::addSound(char *file, bool loop) {
 	if(nSounds==MAX_SOUNDS) return -1;
-	system->createSound(file, FMOD_DEFAULT, 0, &sounds[nSounds]);
+	system->createSound(file, FMOD_HARDWARE, 0, &sounds[nSounds]);
 	if(loop) sounds[nSounds]->setMode(FMOD_LOOP_NORMAL);
 	else sounds[nSounds]->setMode(FMOD_LOOP_OFF);
-
-	this->pauseSound(nSounds);
 
 	nSounds++;
 	return nSounds-1;
 }
 
 void cSound::playSound(int id) {
-	system->playSound(sounds[id], 0, true, &channels[id]);
-	channels[id]->setPaused(false);
+	if(id >= nSounds) return;
+	bool play;
+	channels[id]->isPlaying(&play);
+	if(!play) system->playSound(sounds[id], 0, false, &channels[id]);
 }
 
 void cSound::stopSound(int id) {
-	pauseSound(id);
+	if(id >= nSounds) return;
+	bool play;
+	channels[id]->isPlaying(&play);
+	if(play) channels[id]->setPaused(true);
+	channels[id]->setPosition(0, FMOD_TIMEUNIT_MS);
 }
 
 void cSound::resumeSound(int id) {
-	playSound(id);
+	if(id >= nSounds) return;
+	bool play;
+	channels[id]->isPlaying(&play);
+	if(!play) channels[id]->setPaused(false);
 }
 
 void cSound::pauseSound(int id) {
-	system->playSound(sounds[id], 0, true, &channels[id]);
-	channels[id]->setPaused(true);
+	if(id >= nSounds) return;
+	bool play;
+	channels[id]->isPlaying(&play);
+	if(play) channels[id]->setPaused(true);
+}
+
+void cSound::updateSound() {
+	system->update();
 }

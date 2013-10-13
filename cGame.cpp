@@ -77,12 +77,15 @@ bool cGame::Init()
 	if(!res) return false;
 
 	//Sounds Initialization
-	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
-	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
-	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
-
+	int aux;
+	aux = sound.addSound("sounds/02_overworld_theme.wav", true);
+	sounds[SND_BACK] = aux;
+	aux = sound.addSound("sounds/01_introduction.wav", true);
+	sounds[SND_MAIN_MENU] = aux;
+	aux = sound.addSound("sounds/sword.wav", false);
+	sounds[SND_SW_ME] = aux;
+	
 	sound.playSound(sounds[SND_MAIN_MENU]);
-	//sound.playSound(sounds[SND_MAIN_MENU]);
 
 	return res;
 }
@@ -102,6 +105,9 @@ bool cGame::Loop()
 			nTransMM++;
 		}
 	}
+
+	sound.updateSound();
+
 	res = Process();
 	if(res) Render();
 
@@ -198,7 +204,6 @@ bool cGame::Process()
 		if(keys['j']) {
 			keys['j'] = false;
 			if (Link.ataca()) {
-				//PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 				sound.playSound(sounds[SND_SW_ME]);
 			}
 			return true;

@@ -7,6 +7,8 @@
 
 #define MAX_SOUNDS	256
 
+using namespace FMOD;
+
 class cSound
 {
 public:
@@ -18,11 +20,12 @@ public:
 	void stopSound(int id);
 	void resumeSound(int id);
 	void pauseSound(int id);
+	void updateSound();
 
 private:
-	FMOD::Sound *sounds[MAX_SOUNDS];
-	FMOD::Channel *channels[MAX_SOUNDS];
+	System *system;
+	Sound *sounds[MAX_SOUNDS];
+	Channel *channels[MAX_SOUNDS];
 	int nSounds;
-	FMOD::System *system;
 };
 
