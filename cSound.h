@@ -21,6 +21,7 @@ public:
 
 private:
 	FMOD::Sound *sounds[MAX_SOUNDS];
+	FMOD::Channel *channels[MAX_SOUNDS];
 	int nSounds;
 	FMOD::System *system;
 };

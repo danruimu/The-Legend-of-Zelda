@@ -69,8 +69,11 @@ bool cGame::Init()
 
 	//Sounds Initialization
 	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
-	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
 	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
+	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
+
+	sound.playSound(sounds[SND_MAIN_MENU]);
+	//sound.playSound(sounds[SND_MAIN_MENU]);
 
 	return res;
 }
