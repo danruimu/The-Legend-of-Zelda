@@ -13,6 +13,8 @@
 #define SND_SW_SH	"shoot_sword_sound"
 #define SND_MAIN_MENU	"main_menu_sound"
 
+#define TRANS_MAINMENU	10
+
 using namespace std;
 
 class cGame
@@ -47,4 +49,6 @@ private:
 	map<char *,int> sounds;
 
 	bool mainMenu;
+	int nTransMM;
+	int currentMM;
 };

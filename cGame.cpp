@@ -50,6 +50,8 @@ bool cGame::Init()
 {
 	bool res=true;
 	mainMenu = true;
+	nTransMM = 0;
+	currentMM = 0;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -64,7 +66,7 @@ bool cGame::Init()
 	//Main Menu initialization
 	res = Data.LoadImage(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
 	if(!res) return false;
-	res = Scene.LoadMainMenu(0);
+	res = Scene.LoadMainMenu(currentMM);
 	if(!res) return false;
 
 	//Sounds Initialization
@@ -184,12 +186,23 @@ bool cGame::Process()
 			return true;
 		}
 	} else {
+		if(nTransMM == TRANS_MAINMENU) {
+			currentMM = currentMM+1;
+			if(currentMM == 4) currentMM = 0;
+			res = Scene.LoadMainMenu(currentMM);
+			if(!res) return false;
+			nTransMM = 0;
+		} else {
+			nTransMM++;
+		}
 		if(keys['w']) {
 			keys['w'] = false;
-
 		} else if(keys['s']) {
 			keys['s'] = false;
 
+		} else if(keys['q']) {
+			keys['q'] = false;
+			startGame();
 		}
 	}
 	
@@ -207,9 +220,10 @@ void cGame::Render()
 	
 	glLoadIdentity();
 
-	if(!mainMenu) Scene.Draw(Data.GetID(IMG_BLOCKS));
-	else Scene.Draw(Data.GetID(IMG_MAINMENU));
-	Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
+	if(!mainMenu) {
+		Scene.Draw(Data.GetID(IMG_BLOCKS));
+		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
+	} else Scene.Draw(Data.GetID(IMG_MAINMENU));
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
 		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
