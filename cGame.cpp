@@ -46,22 +46,16 @@ bool cGame::startGame() {
 	return res;
 }
 
-void printChar( int x, int y, char *st){
-	int i,len;
-	len = strlen(st);
-	//glColor3f(1.,0.,0.);
-	glRasterPos2i( x, y);
-	for( i=0; i < len; i++){
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, st[i]); // Print a character on the screen
-	}
-}
-
 bool cGame::Init()
 {
 	bool res=true;
 	mainMenu = true;
 	nTransMM = 0;
 	currentMM = 0;
+	menuText[0] = "NEW GAME";
+	menuText[1] = "OPTIONS";
+	menuText[2] = "EXIT";
+	currentOptMM = 0;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -78,8 +72,6 @@ bool cGame::Init()
 	if(!res) return false;
 	res = Scene.LoadMainMenu(currentMM);
 	if(!res) return false;
-
-	printChar(SCENE_WIDTH/2, SCENE_HEIGHT/2, "PRESS Q TO START");
 
 	//Sounds Initialization
 	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
@@ -209,14 +201,24 @@ bool cGame::Process()
 			return true;
 		}
 	} else {
-		if(keys['w']) {
-			keys['w'] = false;
-		} else if(keys['s']) {
+		if(keys['s']) {
 			keys['s'] = false;
-
-		} else if(keys['q']) {
-			keys['q'] = false;
-			startGame();
+			currentOptMM++;
+			if(currentOptMM == 3) currentOptMM = 0;
+		} else if(keys['w']) {
+			keys['w'] = false;
+			currentOptMM--;
+			if(currentOptMM == -1) currentOptMM = 2;
+		} else if(keys['j']) {
+			keys['j'] = false;
+			if(currentOptMM == 0) {    //NEW GAME
+				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU));
+				startGame();
+			} else if (currentOptMM == 1) {   //OPTIONS
+				//TODO: implementar opciones
+			} else if (currentOptMM == 2) {    //EXIT
+				return false;
+			}
 		}
 	}
 	
@@ -235,9 +237,9 @@ void cGame::Render()
 	glLoadIdentity();
 
 	if(!mainMenu) {
-		Scene.Draw(Data.GetID(IMG_BLOCKS));
+		Scene.Draw(Data.GetID(IMG_BLOCKS), mainMenu, NULL);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
-	} else Scene.Draw(Data.GetID(IMG_MAINMENU));
+	} else Scene.Draw(Data.GetID(IMG_MAINMENU), mainMenu, menuText[currentOptMM]);
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
 		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);

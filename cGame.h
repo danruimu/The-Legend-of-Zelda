@@ -51,4 +51,6 @@ private:
 	bool mainMenu;
 	int nTransMM;
 	int currentMM;
+	char *menuText[3];
+	int currentOptMM;
 };

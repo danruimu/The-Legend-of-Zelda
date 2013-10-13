@@ -12,7 +12,8 @@ public:
 	bool LoadLevel(char* level);
 	bool LoadMainMenu(int id);
 	bool LoadDungeon(int dungeon);
-	void Draw(int tex_id);
+	void Draw(int tex_id, bool mainMenu, char* text);
+	void newGameAnimation(int texID);
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);
