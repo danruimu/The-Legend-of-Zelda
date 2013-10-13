@@ -10,6 +10,7 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level);
+	bool LoadMainMenu(int id);
 	bool LoadDungeon(int dungeon);
 	void Draw(int tex_id);
 	int *GetMap();

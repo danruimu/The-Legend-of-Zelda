@@ -12,6 +12,7 @@ cGame::~cGame(void)
 bool cGame::Init()
 {
 	bool res=true;
+	mainMenu = true;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -22,6 +23,15 @@ bool cGame::Init()
 	
 	glAlphaFunc(GL_GREATER, 0.05f);
 	glEnable(GL_ALPHA_TEST);
+
+	//Main Menu initialization
+	res = Data.LoadImageA(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
+	if(!res) return false;
+	res = Scene.LoadMainMenu(0);
+	if(!res) return false;
+
+	//TODO: quitar esta linea
+	mainMenu = false;
 
 	//Scene initialization
 	res = Data.LoadImage(IMG_BLOCKS,"sprites/blocks.png",GL_RGBA);
@@ -44,9 +54,12 @@ bool cGame::Init()
 	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
 
 	//Sounds Initialization
-	backSoundID = sound.addSound("sounds/02_overworld_theme.wav", true);
-	linkSowrdID = sound.addSound("sounds/sword.wav", false);
-	sound.playSound(backSoundID);
+	//backSoundID = sound.addSound("sounds/02_overworld_theme.wav", true);
+	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
+	//linkSowrdID = sound.addSound("sounds/sword.wav", false);
+	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
+	//sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
+	//sound.playSound(sounds[SND_BACK]);
 
 	return res;
 }
@@ -89,72 +102,82 @@ bool cGame::Process()
 	//Process Input
 	if(keys[27])	
 		return false;
-	if(keys['w']) {
-		keys['w'] = false;
-		if (Link.GetDirection()!=DIRECTION_UP)
-		Link.SetDirection(DIRECTION_UP);
-		res = Link.tirapalante(map);
-		if (!res) {
-			char *level = (char*)malloc(4);
-			strcpy(level, Scene.getId());
-			level[1]--;
-			if (!Scene.LoadLevel(level))return false;
-			free(level);
-		}
-		return true;
-	}
-	if(keys['a']) {
-		keys['a'] = false;
-		if (Link.GetDirection()!=DIRECTION_LEFT)
-		Link.SetDirection(DIRECTION_LEFT);
-		res = Link.tirapalante(map);
-		if (!res) {
-			char *level = (char*)malloc(4);
-			strcpy(level, Scene.getId());
-			level[0]--;
-			if (!Scene.LoadLevel(level))return false;
-			free(level);
-		}
-		return true;
-	}
-	if(keys['s']) {
-		keys['s'] = false;
-		if (Link.GetDirection()!=DIRECTION_DOWN)
-		Link.SetDirection(DIRECTION_DOWN);
-		res = Link.tirapalante(map);
-		if (!res) {
-			char *level = (char*)malloc(4);
-			strcpy(level, Scene.getId());
-			level[1]++;
-			if (!Scene.LoadLevel(level))return false;
-			free(level);
-		}
-		return true;
-	}
-	if(keys['d']) {
-		keys['d'] = false;
-		if (Link.GetDirection()!=DIRECTION_RIGHT)
-		Link.SetDirection(DIRECTION_RIGHT);
-		res = Link.tirapalante(map);
-		if (!res) {
-			char *level = (char*)malloc(4);
-			strcpy(level, Scene.getId());
-			level[0]++;
-			if (!Scene.LoadLevel(level))return false;
-			free(level);
-		}
-		return true;
-	}
 
-	if(keys['j']) {
-		keys['j'] = false;
-		if (Link.ataca()) {
-			//PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-			sound.playSound(linkSowrdID);
+	if(!mainMenu) {
+		if(keys['w']) {
+			keys['w'] = false;
+			if (Link.GetDirection()!=DIRECTION_UP)
+			Link.SetDirection(DIRECTION_UP);
+			res = Link.tirapalante(map);
+			if (!res) {
+				char *level = (char*)malloc(4);
+				strcpy(level, Scene.getId());
+				level[1]--;
+				if (!Scene.LoadLevel(level))return false;
+				free(level);
+			}
+			return true;
 		}
-		return true;
-	}
+		if(keys['a']) {
+			keys['a'] = false;
+			if (Link.GetDirection()!=DIRECTION_LEFT)
+			Link.SetDirection(DIRECTION_LEFT);
+			res = Link.tirapalante(map);
+			if (!res) {
+				char *level = (char*)malloc(4);
+				strcpy(level, Scene.getId());
+				level[0]--;
+				if (!Scene.LoadLevel(level))return false;
+				free(level);
+			}
+			return true;
+		}
+		if(keys['s']) {
+			keys['s'] = false;
+			if (Link.GetDirection()!=DIRECTION_DOWN)
+			Link.SetDirection(DIRECTION_DOWN);
+			res = Link.tirapalante(map);
+			if (!res) {
+				char *level = (char*)malloc(4);
+				strcpy(level, Scene.getId());
+				level[1]++;
+				if (!Scene.LoadLevel(level))return false;
+				free(level);
+			}
+			return true;
+		}
+		if(keys['d']) {
+			keys['d'] = false;
+			if (Link.GetDirection()!=DIRECTION_RIGHT)
+			Link.SetDirection(DIRECTION_RIGHT);
+			res = Link.tirapalante(map);
+			if (!res) {
+				char *level = (char*)malloc(4);
+				strcpy(level, Scene.getId());
+				level[0]++;
+				if (!Scene.LoadLevel(level))return false;
+				free(level);
+			}
+			return true;
+		}
 
+		if(keys['j']) {
+			keys['j'] = false;
+			if (Link.ataca()) {
+				//PlaySound("sounds\\sword.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+				sound.playSound(sounds[SND_SW_ME]);
+			}
+			return true;
+		}
+	} else {
+		if(keys['w']) {
+			keys['w'] = false;
+
+		} else if(keys['s']) {
+			keys['s'] = false;
+
+		}
+	}
 	
 	//Game Logic
 	//...

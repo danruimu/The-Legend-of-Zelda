@@ -4,8 +4,16 @@
 #include "cData.h"
 #include "cPlayer.h"
 #include "cSound.h"
+#include <map>
 
 #define	MAX_N_MONSTERS	10
+
+#define SND_BACK	"back_sound"
+#define	SND_SW_ME	"attack_sword_sound"
+#define SND_SW_SH	"shoot_sword_sound"
+#define SND_MAIN_MENU	"main_menu_sound"
+
+using namespace std;
 
 class cGame
 {
@@ -35,6 +43,7 @@ private:
 	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
 	cSound sound;
-	int backSoundID;
-	int linkSowrdID;
+	map<char *,int> sounds;
+
+	bool mainMenu;
 };

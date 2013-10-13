@@ -11,6 +11,26 @@ cScene::~cScene(void)
 {
 }
 
+bool cScene::LoadMainMenu(int id) {
+	bool res=true;
+	FILE *fd;
+
+	fd=fopen("sprites/main_menu.png","r");
+	if(fd==NULL) return false;
+
+	id_DL=glGenLists(1);
+	glNewList(id_DL,GL_COMPILE);
+		glBegin(GL_QUADS);
+			float bordeX = (float)3/(2*(256+3));
+			float bordeY = (float)3/(2*(240+3));
+
+		glEnd();
+	glEndList();
+
+	fclose(fd);
+	return res;
+}
+
 bool cScene::LoadLevel(char* level)
 {
 	bool res;
