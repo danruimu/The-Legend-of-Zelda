@@ -144,7 +144,9 @@ void cPlayer::Draw(int tex_id,int obj_id){
 
 bool cPlayer::ataca(){
 	int posx,posy;
+	int state = GetState();
 	int direction = GetDirection();
+	if (!(state == STATE_IDLE || state==STATE_MOVE))return false;
 	GetPosition(&posx,&posy);
 	switch(direction){
 		case DIRECTION_UP:
