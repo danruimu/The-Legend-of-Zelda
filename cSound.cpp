@@ -32,7 +32,7 @@ void cSound::playSound(int id) {
 }
 
 void cSound::stopSound(int id) {
-	sounds[id]->release();
+	pauseSound(id);
 }
 
 void cSound::resumeSound(int id) {

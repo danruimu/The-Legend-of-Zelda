@@ -43,6 +43,9 @@ bool cGame::startGame() {
 	Link.SetDirection(DIRECTION_UP);
 	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
 
+	sound.stopSound(sounds[SND_MAIN_MENU]);
+	sound.playSound(sounds[SND_BACK]);
+
 	return res;
 }
 
@@ -74,8 +77,8 @@ bool cGame::Init()
 	if(!res) return false;
 
 	//Sounds Initialization
-	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
 	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
+	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
 	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
 
 	sound.playSound(sounds[SND_MAIN_MENU]);
