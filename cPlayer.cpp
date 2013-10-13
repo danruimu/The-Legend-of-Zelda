@@ -120,6 +120,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		SetPosition(posx,posy);
 		if(!espasa.alive){
 			//TODO: cambiar por FMOD
+			
 			PlaySound("sounds\\sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
 			espasa.alive=true;
 			espasa.state=0;

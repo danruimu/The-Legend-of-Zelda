@@ -137,7 +137,7 @@ void cScene::newGameAnimation(int texID) {
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(100);
+	Sleep(1000);
 
 	glColor3f(0.0, 1.0, 0.0);
 	glEnable(GL_TEXTURE_2D);
@@ -145,7 +145,7 @@ void cScene::newGameAnimation(int texID) {
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(100);
+	Sleep(1000);
 
 	glColor3f(0.0, 0.0, 1.0);
 	glEnable(GL_TEXTURE_2D);
@@ -153,7 +153,7 @@ void cScene::newGameAnimation(int texID) {
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(100);
+	Sleep(1000);
 	
 	glColor3f(1.0, 1.0, 1.0);
 	glEnable(GL_TEXTURE_2D);
@@ -161,6 +161,7 @@ void cScene::newGameAnimation(int texID) {
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
+	Sleep(1000);
 }
 
 int* cScene::GetMap()
