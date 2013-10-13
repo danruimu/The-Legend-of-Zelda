@@ -1,4 +1,6 @@
 *
+*.db
+*/*.db
 !.gitignore
 !*.cpp
 !*.hpp
