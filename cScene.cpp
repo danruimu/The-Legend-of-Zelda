@@ -21,9 +21,10 @@ bool cScene::LoadMainMenu(int id) {
 	id_DL=glGenLists(1);
 	glNewList(id_DL,GL_COMPILE);
 		glBegin(GL_QUADS);
-			float bordeX = (float)3/(2*(256+3));
-			float bordeY = (float)3/(2*(240+3));
-
+			glTexCoord2f(0, 0);		glVertex2i(SCENE_Xo, SCENE_Yo);
+			glTexCoord2f(0, 1);		glVertex2i(SCENE_Xo, SCENE_Yo+SCENE_HEIGHT*BLOCK_SIZE);
+			glTexCoord2f(1, 1);		glVertex2i(SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo+SCENE_HEIGHT*BLOCK_SIZE);
+			glTexCoord2f(1, 0);		glVertex2i(SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo);
 		glEnd();
 	glEndList();
 

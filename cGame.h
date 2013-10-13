@@ -22,6 +22,7 @@ public:
 	virtual ~cGame(void);
 
 	bool Init();
+	bool startGame();
 	bool Loop();
 	void Finalize();
 

@@ -9,10 +9,9 @@ cGame::~cGame(void)
 {
 }
 
-bool cGame::Init()
-{
+bool cGame::startGame() {
 	bool res=true;
-	mainMenu = true;
+	mainMenu = false;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -23,15 +22,6 @@ bool cGame::Init()
 	
 	glAlphaFunc(GL_GREATER, 0.05f);
 	glEnable(GL_ALPHA_TEST);
-
-	//Main Menu initialization
-	res = Data.LoadImageA(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
-	if(!res) return false;
-	res = Scene.LoadMainMenu(0);
-	if(!res) return false;
-
-	//TODO: quitar esta linea
-	mainMenu = false;
 
 	//Scene initialization
 	res = Data.LoadImage(IMG_BLOCKS,"sprites/blocks.png",GL_RGBA);
@@ -53,13 +43,34 @@ bool cGame::Init()
 	Link.SetDirection(DIRECTION_UP);
 	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
 
+	return res;
+}
+
+bool cGame::Init()
+{
+	bool res=true;
+	mainMenu = true;
+
+	//Graphics initialization
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0,GAME_WIDTH,0,GAME_HEIGHT,0,1);
+	glMatrixMode(GL_MODELVIEW);
+	
+	glAlphaFunc(GL_GREATER, 0.05f);
+	glEnable(GL_ALPHA_TEST);
+
+	//Main Menu initialization
+	res = Data.LoadImage(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
+	if(!res) return false;
+	res = Scene.LoadMainMenu(0);
+	if(!res) return false;
+
 	//Sounds Initialization
-	//backSoundID = sound.addSound("sounds/02_overworld_theme.wav", true);
 	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
-	//linkSowrdID = sound.addSound("sounds/sword.wav", false);
 	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
-	//sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
-	//sound.playSound(sounds[SND_BACK]);
+	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
 
 	return res;
 }
