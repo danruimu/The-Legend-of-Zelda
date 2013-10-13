@@ -14,6 +14,9 @@ cScene::~cScene(void)
 bool cScene::LoadMainMenu(int id) {
 	bool res=true;
 	FILE *fd;
+	int i,j,px,py,tile;
+	float coordx_tile, coordy_tile;
+	px=py=0;
 
 	fd=fopen("sprites/main_menu.png","r");
 	if(fd==NULL) return false;
@@ -21,10 +24,32 @@ bool cScene::LoadMainMenu(int id) {
 	id_DL=glGenLists(1);
 	glNewList(id_DL,GL_COMPILE);
 		glBegin(GL_QUADS);
-			glTexCoord2f(0, 0);		glVertex2i(SCENE_Xo, SCENE_Yo);
-			glTexCoord2f(0, 1);		glVertex2i(SCENE_Xo, SCENE_Yo+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(1, 1);		glVertex2i(SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(1, 0);		glVertex2i(SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo);
+			float bordeX = (float)INTERTALE_SPACE/(TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
+			float bordeY = (float)INTERTALE_SPACE/(TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
+			float blockX = (float)TILE_SIZE/(TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
+			float blockY = (float)TILE_SIZE/(TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
+			int x,y;
+			for(j=SCENE_HEIGHT-1;j>=0;j--)
+			{
+				px = SCENE_Xo;
+				py=SCENE_Yo+BLOCK_SIZE*j;
+				for(i=0;i<SCENE_WIDTH;i++)
+				{
+					fscanf(fd,"%d",&tile);
+					tile--;
+						map[(j*SCENE_WIDTH)+i] = tile;
+						x = tile%TEXTURES_WIDTH;
+						y = tile/TEXTURES_WIDTH;
+						coordx_tile = x*(blockX+bordeX);
+						coordy_tile = y*(blockY+bordeY);
+
+						glTexCoord2f(coordx_tile,coordy_tile+blockY		  );	glVertex2i(px           ,py           );
+						glTexCoord2f(coordx_tile+blockX,coordy_tile+blockY);	glVertex2i(px+BLOCK_SIZE,py           );
+						glTexCoord2f(coordx_tile+blockX,coordy_tile       );	glVertex2i(px+BLOCK_SIZE,py+BLOCK_SIZE);
+						glTexCoord2f(coordx_tile       ,coordy_tile       );	glVertex2i(px           ,py+BLOCK_SIZE);
+						px+=BLOCK_SIZE;
+				}
+			}
 		glEnd();
 	glEndList();
 

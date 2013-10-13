@@ -204,7 +204,8 @@ void cGame::Render()
 	
 	glLoadIdentity();
 
-	Scene.Draw(Data.GetID(IMG_BLOCKS));
+	if(!mainMenu) Scene.Draw(Data.GetID(IMG_BLOCKS));
+	else Scene.Draw(Data.GetID(IMG_MAINMENU));
 	Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
 
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
