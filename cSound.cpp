@@ -29,6 +29,11 @@ void cSound::playSound(int id) {
 	bool play;
 	channels[id]->isPlaying(&play);
 	if(!play) system->playSound(sounds[id], 0, false, &channels[id]);
+	else {
+		bool paused;
+		channels[id]->getPaused(&paused);
+		if(paused) channels[id]->setPaused(false);
+	}
 }
 
 void cSound::stopSound(int id) {
@@ -43,7 +48,7 @@ void cSound::resumeSound(int id) {
 	if(id >= nSounds) return;
 	bool play;
 	channels[id]->isPlaying(&play);
-	if(!play) channels[id]->setPaused(false);
+	if(play) channels[id]->setPaused(false);
 }
 
 void cSound::pauseSound(int id) {

@@ -36,6 +36,9 @@ public:
 	void givePoints(int num_points);
 	bool useKey();
 	void getKey();
+	int getHearts();
+	void addLife();
+	void subLife();
 private:
 	void printInfo(int obj_id);
 	Sword espasa;

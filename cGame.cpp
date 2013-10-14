@@ -54,6 +54,7 @@ bool cGame::Init()
 {
 	bool res=true;
 	mainMenu = true;
+	pause = false;
 	up = true;
 	nTransMM = 0;
 	currentMM = 0;
@@ -85,6 +86,7 @@ bool cGame::Init()
 	sounds[LOZ_MUSIC_WHISTLE]= sound.addSound("sounds/LOZ_MUSIC_Whistle.wav", false);
 	sounds[LOZ_SWORD_SHOOT]= sound.addSound("sounds/LOZ_Sword_Shoot.wav", false);
 	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false);
+	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true);
 	
 	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
@@ -132,10 +134,14 @@ bool cGame::Loop()
 		}
 	}
 
+	int n = Link.getHearts();
+	if (!mainMenu && n <= 2) sound.playSound(sounds[LOZ_LOW_HEALTH]);
+	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+
 	sound.updateSound();
 
 	res = Process();
-	if(res) Render();
+	if(res && !pause) Render();
 
 	return res;
 }
@@ -153,6 +159,7 @@ void cGame::ReadKeyboard(unsigned char key, bool press)
 void cGame::ReadSpecialKeyboard(unsigned char specialkey, bool press)
 {
 	specialKeys[specialkey] = press;
+
 }
 
 void cGame::ReadMouse(int button, int state, int x, int y)
@@ -169,7 +176,7 @@ bool cGame::Process()
 	if(keys[27])	
 		return false;
 
-	if(!mainMenu) {
+	if(!mainMenu && !pause) {
 		if(keys['w']) {
 			keys['w'] = false;
 			if (Link.GetDirection()!=DIRECTION_UP)
@@ -234,7 +241,27 @@ bool cGame::Process()
 			}
 			return true;
 		}
-	} else {
+		
+		if(keys[' ']) {
+			keys[' '] = false;
+			pause = true;
+			Scene.setPaused();
+			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+			return true;
+		}
+		//TODO: remove this 
+		if(keys['q']) {
+			keys['q'] = false;
+			Link.addLife();
+			return true;
+		}
+		if(keys['e']) {
+			keys['e'] = false;
+			Link.subLife();
+			return true;
+		}
+		//TODO: to here
+	} else if (mainMenu) {
 		if(keys['s']) {
 			keys['s'] = false;
 			sound.playSound(sounds[LOZ_SWORD]);
@@ -261,6 +288,13 @@ bool cGame::Process()
 				Sleep(3000);
 				return false;
 			}
+		}
+	} else if(pause) {
+		if(keys[' ']) {
+			keys[' '] = false;
+			pause = false;
+			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+			return true;
 		}
 	}
 	

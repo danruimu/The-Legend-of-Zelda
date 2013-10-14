@@ -112,7 +112,6 @@ void cScene::setId(char Nid[]){
 void printText( int x, int y, char *st){
 	int i,len;
 	len = strlen(st);
-	//glColor3f(1.,0.,0.);
 	glColor3f(0.0, 0.0, 0.0);
 	glRasterPos2i( x, y);
 	for( i=0; i < len; i++){
@@ -173,4 +172,9 @@ int* cScene::GetMap()
 
 char* cScene::getId() {
 	return id;
+}
+
+void cScene::setPaused() {
+	printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, "PAUSE");
+	glutSwapBuffers();
 }

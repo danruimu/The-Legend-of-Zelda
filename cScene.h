@@ -17,6 +17,7 @@ public:
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);
+	void setPaused();
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene

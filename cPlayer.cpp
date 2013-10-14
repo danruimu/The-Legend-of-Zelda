@@ -4,7 +4,7 @@
 
 cPlayer::cPlayer() {
 	espasa.alive =false;
-	life = 6;
+	life = 3;
 	max_life = 6;
 	points = 0;
 	keys = 0;
@@ -135,7 +135,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		espasa.y-= espasa.direction==DIRECTION_DOWN?STEP_LENGTH:0;
 
 		//espasa.state = (espasa.state+1)%4; //cambiarla de color
-		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >BLOCK_SIZE*SCENE_WIDTH||espasa.y >BLOCK_SIZE*SCENE_HEIGHT){//comprovar colisions amb enemics
+		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >BLOCK_SIZE*SCENE_WIDTH-BLOCK_SIZE||espasa.y >BLOCK_SIZE*SCENE_HEIGHT-BLOCK_SIZE){//comprovar colisions amb enemics
 			espasa.alive = false;
 			//fer animacio de xoc			
 		}
@@ -310,4 +310,16 @@ bool cPlayer::useKey(){
 }
 void cPlayer::getKey(){
 	keys++;
+}
+
+int cPlayer::getHearts() {
+	return life;
+}
+
+void cPlayer::addLife() {
+	life++;
+}
+
+void cPlayer::subLife() {
+	life--;
 }

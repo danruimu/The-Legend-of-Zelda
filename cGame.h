@@ -50,6 +50,8 @@ private:
 	char *menuText[3];
 	int currentOptMM;
 
+	bool pause;
+
 	struct Options {
 		float effectVolume;
 		float musicVolume;
