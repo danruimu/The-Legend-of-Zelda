@@ -135,7 +135,7 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		espasa.y-= espasa.direction==DIRECTION_DOWN?STEP_LENGTH:0;
 
 		//espasa.state = (espasa.state+1)%4; //cambiarla de color
-		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >BLOCK_SIZE*SCENE_WIDTH-BLOCK_SIZE||espasa.y >BLOCK_SIZE*SCENE_HEIGHT-BLOCK_SIZE){//comprovar colisions amb enemics
+		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >BLOCK_SIZE*SCENE_WIDTH-BLOCK_SIZE/2||espasa.y >BLOCK_SIZE*SCENE_HEIGHT-BLOCK_SIZE/2){//comprovar colisions amb enemics
 			espasa.alive = false;
 			//fer animacio de xoc			
 		}
