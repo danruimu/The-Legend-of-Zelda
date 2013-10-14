@@ -198,7 +198,11 @@ int checkPos(int x, int y, const int* map) {
 }
 
 bool isWalkable(int tile) {
-	if (tile == 2 || tile == 8 || tile == 14) return true;	//suelo
+	if (tile == 2 || tile == 8 || tile == 14) return true;	//escaleras verticales
+	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//puente
+	if (tile == 0 || tile == 6 || tile == 12) return true;	//escaleras
+	if (tile == 22 || tile == 28 || tile == 34) return true;	//puertas abiertas
+	if (tile >= 126 && tile <= 129 || tile >= 131 && tile <= 135 || tile >= 137 && tile <=141 || tile == 143) return true;  //puentes y esquinas
 	
 	return false;
 }
