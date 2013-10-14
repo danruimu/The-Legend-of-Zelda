@@ -16,12 +16,12 @@ public:
 	bool LoadLevel(char* level);
 	bool LoadMainMenu(int id);
 	bool LoadDungeon(int dungeon);
-	void Draw(int tex_id, bool mainMenu, char* text);
+	void Draw(int tex_id, bool mainMenu, char* text[], int currentText);
 	void newGameAnimation(int texID);
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);
-	const char* locked;
+	void setPaused();
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
