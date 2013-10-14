@@ -109,25 +109,29 @@ void cScene::setId(char Nid[]){
 	id[1] = Nid[1];
 }
 
-void printText( int x, int y, char *st){
+void printText( int x, int y, char *st, void *font ){
 	int i,len;
 	len = strlen(st);
 	glColor3f(0.0, 0.0, 0.0);
 	glRasterPos2i( x, y);
 	for( i=0; i < len; i++){
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, st[i]); // Print a character on the screen
+		glutBitmapCharacter(font, st[i]); // Print a character on the screen
 	}
 	glColor3f(1.0, 1.0, 1.0);
 }
 
-void cScene::Draw(int tex_id, bool mainMenu, char* text)
+void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
 	glCallList(id_DL);
 	glDisable(GL_TEXTURE_2D);
 	if(mainMenu) {
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18);
+		currentText++; if(currentText==3) currentText=0;
+		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
+		currentText++; if(currentText==3) currentText=0;
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
 	}
 }
 
@@ -175,6 +179,6 @@ char* cScene::getId() {
 }
 
 void cScene::setPaused() {
-	printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, "PAUSE");
+	printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, "PAUSE", GLUT_BITMAP_HELVETICA_18);
 	glutSwapBuffers();
 }

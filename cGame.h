@@ -44,6 +44,7 @@ private:
 	map<char,int> sounds;
 
 	bool mainMenu;
+	bool optMenu;
 	int nTransMM;
 	int currentMM;
 	bool up;
