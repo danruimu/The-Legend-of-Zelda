@@ -113,10 +113,12 @@ void printText( int x, int y, char *st){
 	int i,len;
 	len = strlen(st);
 	//glColor3f(1.,0.,0.);
+	glColor3f(0.0, 0.0, 0.0);
 	glRasterPos2i( x, y);
 	for( i=0; i < len; i++){
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, st[i]); // Print a character on the screen
 	}
+	glColor3f(1.0, 1.0, 1.0);
 }
 
 void cScene::Draw(int tex_id, bool mainMenu, char* text)
