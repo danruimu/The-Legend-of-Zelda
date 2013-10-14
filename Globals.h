@@ -36,6 +36,7 @@
 #define GAME_HEIGHT (BLOCK_SIZE*SCENE_HEIGHT+2*BLOCK_SIZE)
 
 #define FPS	60
+#define NUM_PROPS	4
 
 #define OPT_FILE "opts/options.txt"
 

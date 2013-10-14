@@ -5,6 +5,7 @@ cScene::cScene(void)
 {
 	id[0] = 'H';
 	id[1] = '8';
+	names[LOCKED] = STR_LOCKED;
 }
 
 cScene::~cScene(void)
@@ -53,7 +54,8 @@ bool cScene::LoadLevel(char* level)
 	FILE *fd;
 	char file[16];
 	char coma;
-	int i,j,px,py,tile;
+	char* buffer = (char*)malloc(42);
+	int i,j,px,py,tile,n;
 	float coordx_tile, coordy_tile;
 	px=py=0;
 	res=true;
@@ -90,11 +92,16 @@ bool cScene::LoadLevel(char* level)
 						glTexCoord2f(coordx_tile+blockX,coordy_tile       );	glVertex2i(px+BLOCK_SIZE,py+BLOCK_SIZE);
 						glTexCoord2f(coordx_tile       ,coordy_tile       );	glVertex2i(px           ,py+BLOCK_SIZE);
 						px+=BLOCK_SIZE;
-						fscanf(fd,"%c",&coma);
+						fscanf(fd,"%c",&coma);//pass coma
 				}
 				fscanf(fd,"%c",&coma); //pass enter
 			}
-
+			//fscanf(fd,"%d",&n);
+			//fscanf(fd,"%c",&coma);//pass enter
+			//for(i=0;i<n;i++){
+			//	fscanf(fd,"%s",buffer);
+			//	prop[i] = strcmp(names[i],buffer) == 0;
+			//}
 		glEnd();
 	glEndList();
 
