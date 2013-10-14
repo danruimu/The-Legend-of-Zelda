@@ -56,3 +56,10 @@ void cSound::pauseSound(int id) {
 void cSound::updateSound() {
 	system->update();
 }
+
+void cSound::setVolume(int id, float vol) {
+	if (id >= nSounds) return;
+	if (vol < 0) vol = 0;
+	else if (vol > 1) vol = 1;
+	channels[id]->setVolume(vol);
+}

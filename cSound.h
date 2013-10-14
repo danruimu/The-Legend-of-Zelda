@@ -21,6 +21,7 @@ public:
 	void resumeSound(int id);
 	void pauseSound(int id);
 	void updateSound();
+	void setVolume(int id, float vol);	// 0>=vol<=1
 
 private:
 	System *system;
