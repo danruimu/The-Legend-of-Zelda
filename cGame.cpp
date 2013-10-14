@@ -316,7 +316,7 @@ bool cGame::Process()
 					sound.setVolume(MUSIC, options.musicVolume);
 				} else if(currentOptMM == 1) {
 					if(options.effectVolume < 1.0) options.effectVolume += 0.1;
-					if(options.effectVolume < 1.0) sound.setVolume(EFFECT, options.effectVolume);
+					sound.setVolume(EFFECT, options.effectVolume);
 				}
 			}
 			return true;
