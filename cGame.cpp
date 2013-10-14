@@ -310,10 +310,10 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					options.musicVolume += 0.05;
+					options.musicVolume += 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
 				} else if(currentOptMM == 1) {
-					options.effectVolume += 0.05;
+					options.effectVolume += 0.1;
 					sound.setVolume(EFFECT, options.effectVolume);
 				}
 			}
@@ -323,10 +323,10 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					options.musicVolume -= 0.05;
+					options.musicVolume -= 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
 				} else if(currentOptMM == 1) {
-					options.effectVolume -= 0.05;
+					options.effectVolume -= 0.1;
 					sound.setVolume(EFFECT, options.effectVolume);
 				}
 			}
