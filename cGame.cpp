@@ -58,9 +58,12 @@ bool cGame::Init()
 	up = true;
 	nTransMM = 0;
 	currentMM = 0;
-	menuText[0] = "NEW GAME";
-	menuText[1] = "OPTIONS";
-	menuText[2] = "EXIT";
+	menuText[0] = (char*)malloc(42);
+	menuText[1] = (char*)malloc(42);
+	menuText[2] = (char*)malloc(42);
+	sprintf(menuText[0],"NEW GAME");
+	sprintf(menuText[1],"OPTIONS");
+	sprintf(menuText[2],"EXIT");
 	currentOptMM = 0;
 
 	//Graphics initialization
@@ -285,9 +288,12 @@ bool cGame::Process()
 				if (!optMenu) {
 					sound.playSound(sounds[LOZ_SWORD]);
 					optMenu = true;
-					menuText[0] = "^ MUSIC VOLUME v";
-					menuText[1] = "^ EFFECTS VOLUME v";
-					menuText[2] = "BACK";
+					int vol,effect;
+					vol = options.musicVolume*100.0;
+					effect = options.effectVolume*100.0;
+					sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
+					sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
+					sprintf(menuText[2],"BACK");				
 					return true;
 				}
 			} else if (currentOptMM == 2) {    //EXIT
@@ -299,9 +305,9 @@ bool cGame::Process()
 				} else {
 					sound.playSound(sounds[LOZ_SWORD]);
 					optMenu = false;
-					menuText[0] = "NEW GAME";
-					menuText[1] = "OPTIONS";
-					menuText[2] = "EXIT";
+					sprintf(menuText[0],"NEW GAME");
+					sprintf(menuText[1],"OPTIONS");
+					sprintf(menuText[2],"EXIT");
 					currentOptMM = 0;
 					this->saveSettings();
 					return true;
@@ -312,11 +318,18 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					if(options.musicVolume < 1.0) options.musicVolume += 0.1;
+					int vol;
+					if(options.musicVolume < 0.95) options.musicVolume += 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
+					vol = options.musicVolume*100.0;
+					sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
+
 				} else if(currentOptMM == 1) {
-					if(options.effectVolume < 1.0) options.effectVolume += 0.1;
-					if(options.effectVolume < 1.0) sound.setVolume(EFFECT, options.effectVolume);
+					int effect;
+					if(options.effectVolume < 0.95) options.effectVolume += 0.1;
+					sound.setVolume(EFFECT, options.effectVolume);
+					effect = options.effectVolume*100.0;
+					sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				}
 			}
 			return true;
@@ -325,11 +338,17 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					if(options.musicVolume > 0) options.musicVolume -= 0.1;
+					int vol;
+					if(options.musicVolume > 0.05) options.musicVolume -= 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
+					vol = options.musicVolume*100.0;
+					sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 				} else if(currentOptMM == 1) {
-					if(options.effectVolume > 0) options.effectVolume -= 0.1;
+					int effect;
+					if(options.effectVolume > 0.05) options.effectVolume -= 0.1;
 					sound.setVolume(EFFECT, options.effectVolume);
+					effect = options.effectVolume*100.0;
+					sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				}
 			}
 			return true;
