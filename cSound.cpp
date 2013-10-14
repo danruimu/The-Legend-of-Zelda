@@ -26,7 +26,7 @@ int cSound::addSound(char *file, bool loop, int kind) {
 		musics[nMusics] = nSounds;
 		++nMusics;
 	} else if(kind == EFFECT) {
-		effects[nEffects] = nEffects;
+		effects[nEffects] = nSounds;
 		++nEffects;
 	}
 
