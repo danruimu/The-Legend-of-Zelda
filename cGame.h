@@ -46,6 +46,12 @@ private:
 	bool mainMenu;
 	int nTransMM;
 	int currentMM;
+	bool up;
 	char *menuText[3];
 	int currentOptMM;
+
+	struct Options {
+		float effectVolume;
+		float musicVolume;
+	} options;
 };

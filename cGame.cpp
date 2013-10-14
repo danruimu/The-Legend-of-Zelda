@@ -3,6 +3,8 @@
 
 cGame::cGame(void)
 {
+	options.effectVolume = 1.0;
+	options.musicVolume = 1.0;
 }
 
 cGame::~cGame(void)
@@ -52,6 +54,7 @@ bool cGame::Init()
 {
 	bool res=true;
 	mainMenu = true;
+	up = true;
 	nTransMM = 0;
 	currentMM = 0;
 	menuText[0] = "NEW GAME";
@@ -85,6 +88,13 @@ bool cGame::Init()
 	
 	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
+	sound.setVolume(sounds[LOZ_MUSIC_OVERWORLD], options.musicVolume);
+	sound.setVolume(sounds[LOZ_MUSIC_MAIN_MENU], options.musicVolume);
+	sound.setVolume(sounds[LOZ_SWORD], options.effectVolume);
+	sound.setVolume(sounds[LOZ_MUSIC_WHISTLE], options.musicVolume);
+	sound.setVolume(sounds[LOZ_SWORD_SHOOT], options.effectVolume);
+	sound.setVolume(sounds[LOZ_DIE], options.effectVolume);
+
 	return res;
 }
 
@@ -93,14 +103,32 @@ bool cGame::Loop()
 	bool res=true;
 
 	if(mainMenu) {
-		if(nTransMM == TRANS_MAINMENU) {
-			currentMM++;
-			if(currentMM == 4) currentMM = 0;
-			res = Scene.LoadMainMenu(currentMM);
-			if(!res) return false;
-			nTransMM = 0;
+		if(up) {
+			if(nTransMM == TRANS_MAINMENU) {
+				currentMM++;
+				if(currentMM == 4) {
+					up = false;
+					currentMM = 3;
+				}
+				res = Scene.LoadMainMenu(currentMM);
+				if(!res) return false;
+				nTransMM = 0;
+			} else {
+				nTransMM++;
+			}
 		} else {
-			nTransMM++;
+			if(nTransMM == TRANS_MAINMENU) {
+				currentMM--;
+				if(currentMM == -1) {
+					up = true;
+					currentMM = 0;
+				}
+				res = Scene.LoadMainMenu(currentMM);
+				if(!res) return false;
+				nTransMM = 0;
+			} else {
+				nTransMM++;
+			}
 		}
 	}
 
