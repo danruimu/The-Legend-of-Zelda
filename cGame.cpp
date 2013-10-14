@@ -92,8 +92,8 @@ bool cGame::Init()
 	
 	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
-	sound.setVolume(MUSIC, 0);
-	sound.setVolume(EFFECT, 1.0);
+	sound.setVolume(MUSIC, options.musicVolume);
+	sound.setVolume(EFFECT, options.effectVolume);
 
 	return res;
 }
