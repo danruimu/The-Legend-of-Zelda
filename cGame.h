@@ -8,13 +8,6 @@
 
 #define	MAX_N_MONSTERS	10
 
-#define SND_BACK	'a'
-#define	SND_SW_ME	'b'
-#define SND_SW_SH	'c'
-#define SND_MAIN_MENU	'd'
-#define SND_WHISTLE	'e'
-#define SND_LINK_DIE 'f'
-
 #define TRANS_MAINMENU	7
 
 using namespace std;

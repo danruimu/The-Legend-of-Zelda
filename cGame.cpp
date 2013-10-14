@@ -43,8 +43,7 @@ bool cGame::startGame() {
 	Link.SetDirection(DIRECTION_UP);
 	Link.SetSpeed(STEP_LENGTH);	//MUST BE 32/x where x=y^2
 
-	//sound.stopSound(sounds[SND_MAIN_MENU]);
-	sound.playSound(sounds[SND_BACK]);
+	sound.playSound(sounds[LOZ_MUSIC_OVERWORLD]);
 
 	return res;
 }
@@ -77,14 +76,14 @@ bool cGame::Init()
 	if(!res) return false;
 
 	//Sounds Initialization
-	sounds[SND_BACK] = sound.addSound("sounds/02_overworld_theme.wav", true);
-	sounds[SND_MAIN_MENU] = sound.addSound("sounds/01_introduction.wav", true);
-	sounds[SND_SW_ME] = sound.addSound("sounds/sword.wav", false);
-	sounds[SND_WHISTLE]= sound.addSound("sounds/07_whistle.wav", false);
-	sounds[SND_SW_SH]= sound.addSound("sounds/sword_shoot.wav", false);
-	sounds[SND_LINK_DIE] = sound.addSound("sounds/link_die.wav", false);
+	sounds[LOZ_MUSIC_OVERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Overworld_theme.wav", true);
+	sounds[LOZ_MUSIC_MAIN_MENU] = sound.addSound("sounds/LOZ_MUSIC_Introduction.wav", true);
+	sounds[LOZ_SWORD] = sound.addSound("sounds/LOZ_Sword.wav", false);
+	sounds[LOZ_MUSIC_WHISTLE]= sound.addSound("sounds/LOZ_MUSIC_Whistle.wav", false);
+	sounds[LOZ_SWORD_SHOOT]= sound.addSound("sounds/LOZ_Sword_Shoot.wav", false);
+	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false);
 	
-	sound.playSound(sounds[SND_MAIN_MENU]);
+	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
 	return res;
 }
@@ -203,34 +202,34 @@ bool cGame::Process()
 		if(keys['j']) {
 			keys['j'] = false;
 			if (Link.ataca()) {
-				sound.playSound(sounds[SND_SW_ME]);
+				sound.playSound(sounds[LOZ_SWORD]);
 			}
 			return true;
 		}
 	} else {
 		if(keys['s']) {
 			keys['s'] = false;
-			sound.playSound(sounds[SND_SW_ME]);
+			sound.playSound(sounds[LOZ_SWORD]);
 			currentOptMM++;
 			if(currentOptMM == 3) currentOptMM = 0;
 		} else if(keys['w']) {
 			keys['w'] = false;
-			sound.playSound(sounds[SND_SW_ME]);
+			sound.playSound(sounds[LOZ_SWORD]);
 			currentOptMM--;
 			if(currentOptMM == -1) currentOptMM = 2;
 		} else if(keys['j']) {
 			keys['j'] = false;
 			if(currentOptMM == 0) {    //NEW GAME
-				sound.stopSound(sounds[SND_MAIN_MENU]);
-				sound.playSound(sounds[SND_WHISTLE]);
+				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
+				sound.playSound(sounds[LOZ_MUSIC_WHISTLE]);
 				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU));
 				startGame();
 			} else if (currentOptMM == 1) {   //OPTIONS
-				sound.playSound(sounds[SND_SW_SH]);
+				sound.playSound(sounds[LOZ_SWORD]);
 				//TODO: implementar opciones
 			} else if (currentOptMM == 2) {    //EXIT
-				sound.stopSound(sounds[SND_MAIN_MENU]);
-				sound.playSound(sounds[SND_LINK_DIE]);
+				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
+				sound.playSound(sounds[LOZ_DIE]);
 				Sleep(3000);
 				return false;
 			}
