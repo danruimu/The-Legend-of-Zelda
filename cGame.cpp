@@ -3,8 +3,6 @@
 
 cGame::cGame(void)
 {
-	options.effectVolume = 1.0;
-	options.musicVolume = 1.0;
 }
 
 cGame::~cGame(void)
@@ -52,6 +50,7 @@ bool cGame::startGame() {
 
 bool cGame::Init()
 {
+	this->loadSettings();
 	bool res=true;
 	mainMenu = true;
 	optMenu = false;
@@ -86,14 +85,14 @@ bool cGame::Init()
 	sounds[LOZ_SWORD] = sound.addSound("sounds/LOZ_Sword.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_WHISTLE]= sound.addSound("sounds/LOZ_MUSIC_Whistle.wav", false, MUSIC);
 	sounds[LOZ_SWORD_SHOOT]= sound.addSound("sounds/LOZ_Sword_Shoot.wav", false, EFFECT);
-	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false, EFFECT);
+	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false, MUSIC);
 	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true, EFFECT);
 	sounds[LOZ_TEXT] = sound.addSound("sounds/LOZ_Text.wav", false, EFFECT);
 	
-	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
-
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
+
+	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
 	return res;
 }
@@ -146,6 +145,7 @@ bool cGame::Loop()
 
 void cGame::Finalize()
 {
+	this->saveSettings();
 	exit(0);
 }
 
@@ -302,6 +302,8 @@ bool cGame::Process()
 					menuText[0] = "NEW GAME";
 					menuText[1] = "OPTIONS";
 					menuText[2] = "EXIT";
+					currentOptMM = 0;
+					this->saveSettings();
 					return true;
 				}
 			}
@@ -310,11 +312,11 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					options.musicVolume += 0.1;
+					if(options.musicVolume < 1.0) options.musicVolume += 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
 				} else if(currentOptMM == 1) {
-					options.effectVolume += 0.1;
-					sound.setVolume(EFFECT, options.effectVolume);
+					if(options.effectVolume < 1.0) options.effectVolume += 0.1;
+					if(options.effectVolume < 1.0) sound.setVolume(EFFECT, options.effectVolume);
 				}
 			}
 			return true;
@@ -323,10 +325,10 @@ bool cGame::Process()
 			if(optMenu) {
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == 0) {
-					options.musicVolume -= 0.1;
+					if(options.musicVolume > 0) options.musicVolume -= 0.1;
 					sound.setVolume(MUSIC, options.musicVolume);
 				} else if(currentOptMM == 1) {
-					options.effectVolume -= 0.1;
+					if(options.effectVolume > 0) options.effectVolume -= 0.1;
 					sound.setVolume(EFFECT, options.effectVolume);
 				}
 			}
@@ -366,4 +368,24 @@ void cGame::Render()
 	}
 
 	glutSwapBuffers();
+}
+
+
+void cGame::saveSettings() {
+	FILE *fd = fopen(OPT_FILE, "w+");
+	char *buffer = (char *) malloc(42);
+	sprintf(buffer, "%f\n%f\n", options.musicVolume, options.effectVolume); 
+	if (fd != NULL) {
+		fwrite(buffer, strlen(buffer), 1, fd);
+	}
+}
+
+void cGame::loadSettings() {
+	FILE *fd = fopen(OPT_FILE, "r");
+	if(fd != NULL) {
+		fscanf(fd, "%f%f", &options.musicVolume, &options.effectVolume);
+	} else { //default
+		options.musicVolume = 1;
+		options.effectVolume = 1;
+	}
 }

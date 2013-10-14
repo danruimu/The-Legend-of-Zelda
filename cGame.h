@@ -22,6 +22,8 @@ public:
 	bool startGame();
 	bool Loop();
 	void Finalize();
+	void saveSettings();
+	void loadSettings();
 
 	//Input
 	void ReadKeyboard(unsigned char key, bool press);

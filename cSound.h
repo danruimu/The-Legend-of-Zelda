@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "Globals.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
 #pragma comment( lib, "fmod_vc.lib" )
@@ -34,5 +35,6 @@ private:
 	int nSounds;
 	int nMusics;
 	int nEffects;
+	FILE *saveOpts;
 };
 

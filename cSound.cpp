@@ -30,6 +30,9 @@ int cSound::addSound(char *file, bool loop, int kind) {
 		++nEffects;
 	}
 
+	//Start the sound paused to be able to set the volume
+	system->playSound(sounds[nSounds], 0, true, &channels[nSounds]);
+
 	nSounds++;
 	return nSounds-1;
 }

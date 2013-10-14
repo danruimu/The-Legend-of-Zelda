@@ -37,6 +37,8 @@
 
 #define FPS	60
 
+#define OPT_FILE "opts/options.txt"
+
 //Sounds
 #define LOZ_ARROW	'a'		//effect for throw arror
 #define	LOZ_BOMB_BLOW	'b'	//effect for bomb explosions
