@@ -273,7 +273,7 @@ bool cGame::Process()
 
 	if(keys[27]) {    //ESCAPE
 		keys[27] = false;
-		keys[' '] = true;	//escape is the same as space
+		if(!mainMenu) keys[' '] = true;	//escape is the same as space
 	}
 
 	if(pause) {
