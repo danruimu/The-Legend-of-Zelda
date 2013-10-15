@@ -3,8 +3,11 @@
 #include "cTexture.h"
 #include "cEnemy.h"
 
-#define STR_LOCKED	"locked"
-#define LOCKED		0
+#define STR_LOCKED		"locked"
+#define STR_TRIFORCE	"triforce"
+#define LOCKED			0
+#define TRIFORCE		1
+
 
 #define OK						0
 #define COLLIDES				1
@@ -32,10 +35,10 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level);
-	bool LoadMainMenu(int id);
+	bool PrintMainMenu(int id);
 	bool LoadDungeon(int dungeon);
-	void Draw(int tex_id, bool mainMenu, char* text[], int currentText);
-	void newGameAnimation(int texID);
+	void Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state);
+	void newGameAnimation(int texID,int currentAnimation);
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);

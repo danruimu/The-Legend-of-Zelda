@@ -7,46 +7,27 @@ cScene::cScene(void)
 	id[1] = '8';
 	id[2] = '\0';
 	names[LOCKED] = STR_LOCKED;
+	names[TRIFORCE] = STR_TRIFORCE;
 }
 
 cScene::~cScene(void)
 {
 }
 
-bool cScene::LoadMainMenu(int id) {
-	bool res=true;
+bool cScene::PrintMainMenu(int id) {
 	float xi,yi,xf,yf;
+	xi=0.5*(id%2);
+	yi=(id<<1)*0.5;
+	xf=xi+0.5;
+	yf=0.5+yi;
+	glBegin(GL_QUADS);
+		glTexCoord2f(xi, yi);	glVertex2i(0, GAME_HEIGHT);
+		glTexCoord2f(xf, yi);	glVertex2i(GAME_WIDTH, GAME_HEIGHT);
+		glTexCoord2f(xf, yf);	glVertex2i(GAME_WIDTH, 0);
+		glTexCoord2f(xi, yf);	glVertex2i(0, 0);
+	glEnd();
 
-	switch(id) {
-	case 0:
-		xi = 0.0; yi = 0.0;
-		xf = 0.5; yf = 0.5;
-		break;
-	case 1:
-		xi = 0.5; yi = 0.0;
-		xf = 1.0; yf = 0.5;
-		break;
-	case 2:
-		xi = 0.0; yi = 0.5;
-		xf = 0.5; yf = 1.0;
-		break;
-	case 3:
-		xi = 0.5; yi = 0.5;
-		xf = 1.0; yf = 1.0;
-		break;
-	}
-
-	id_DL=glGenLists(1);
-	glNewList(id_DL,GL_COMPILE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(xi, yi);	glVertex2i(0, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(xf, yi);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, SCENE_Yo*2+SCENE_HEIGHT*BLOCK_SIZE);
-			glTexCoord2f(xf, yf);	glVertex2i(SCENE_Xo*2+SCENE_WIDTH*BLOCK_SIZE, 0);
-			glTexCoord2f(xi, yf);	glVertex2i(0, 0);
-		glEnd();
-	glEndList();
-
-	return res;
+	return true;
 }
 
 void cScene::generateCallLevel(){
@@ -85,29 +66,29 @@ void cScene::generateCallLevel(){
 bool cScene::LoadLevel(char level[])
 {
 	FILE *fd;
-	char file[16];
+	char buffer[42];
 	char coma;
-	int ii,jj,tile;
+	int i,j,tile,n;
 
-	sprintf(file,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
+	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
 
-	fd=fopen(file,"r");
+	fd=fopen(buffer,"r");
 	if(fd==NULL) return false;
-	for(jj=SCENE_HEIGHT-1;jj>=0;jj--){
-		for(ii=0;ii<SCENE_WIDTH;ii++){
+	for(j=SCENE_HEIGHT-1;j>=0;j--){
+		for(i=0;i<SCENE_WIDTH;i++){
 			fscanf(fd,"%d",&tile);
 			tile--;
-			map[(jj*SCENE_WIDTH)+ii] = tile;
+			map[(j*SCENE_WIDTH)+i] = tile;
 			fscanf(fd,"%c",&coma);//pass coma
 		}
 		fscanf(fd,"%c",&coma); //pass enter
 	}
-	//fscanf(fd,"%d",&n);
-	//fscanf(fd,"%c",&coma);//pass enter
-	//for(i=0;i<n;i++){
-	//	fscanf(fd,"%s",buffer);
-	//	prop[i] = strcmp(names[i],buffer) == 0;
-	//}
+	fscanf(fd,"%d",&n);
+	fscanf(fd,"%c",&coma);//pass enter
+	for(i=0;i<n;i++){
+		fscanf(fd,"%s",buffer);
+		prop[i] = strcmp(names[i],buffer) == 0;
+	}
 	fclose(fd);
 	setId(level);
 	generateCallLevel();
@@ -130,45 +111,49 @@ void printText( int x, int y, char *st, void *font ){
 	glColor3f(1.0, 1.0, 1.0);
 }
 
-void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText)
+void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
-	glCallList(id_DL);
-	glDisable(GL_TEXTURE_2D);
 	if(mainMenu) {
+		PrintMainMenu(state);
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18);
 		currentText = (currentText + 1)%3;
 		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
 		currentText = (currentText + 1)%3;
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
 	}
+	else{
+		glCallList(id_DL);
+	}
+	glDisable(GL_TEXTURE_2D);
 }
 
-void cScene::newGameAnimation(int texID) {
+void cScene::newGameAnimation(int texID,int currentAnimation) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texID);
 
 	glColor3f(1.0, 0.0, 0.0);
-	glCallList(id_DL);
+	PrintMainMenu(currentAnimation);
 	glutSwapBuffers();
 	Sleep(200);
 
 	glColor3f(0.0, 1.0, 0.0);
-	glCallList(id_DL);
+	PrintMainMenu(currentAnimation);
 	glutSwapBuffers();
 	Sleep(200);
 
 	glColor3f(0.0, 0.0, 1.0);
-	glCallList(id_DL);
+	PrintMainMenu(currentAnimation);
 	glutSwapBuffers();
 	Sleep(200);
 	
 	glColor3f(1.0, 1.0, 1.0);
-	glCallList(id_DL);
+	PrintMainMenu(currentAnimation);
 	glutSwapBuffers();
 	Sleep(200);
 	glDisable(GL_TEXTURE_2D);
+	//TODO: falta esperarse 2,2 segundos mas
 
 }
 

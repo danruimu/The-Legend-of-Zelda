@@ -31,14 +31,11 @@ public:
 	void Draw(int tex_id,int obj_id);
 	bool tirapalante(int *map);
 	bool ataca();
-	void heal(int num_hearts);//-1 -> full recovery
-	void damage(int num_hearts);
+	int heal(int num_hearts);//-1 -> full recovery
+	int damage(int num_hearts);//devuelve el numero de corazones, quien llame a esto 
 	void givePoints(int num_points);
 	bool useKey();
 	void getKey();
-	int getHearts();
-	void addLife();
-	void subLife();
 private:
 	void printInfo(int obj_id);
 	Sword espasa;

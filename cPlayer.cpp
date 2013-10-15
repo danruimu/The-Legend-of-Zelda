@@ -7,7 +7,7 @@ cPlayer::cPlayer() {
 	life = 3;
 	max_life = 6;
 	points = 0;
-	keys = 0;
+	keys = 3;
 	triforce = 0;
 	max_triforces = 3;
 }
@@ -197,104 +197,14 @@ int checkPos(int x, int y, const int* map) {
 	return map[by*SCENE_WIDTH + bx ];
 }
 
-bool isWalkable(int tile) {
-	if (tile == 2 || tile == 8 || tile == 14) return true;	//escaleras verticales
-	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//puente
-	if (tile == 0 || tile == 6 || tile == 12) return true;	//escaleras
-	if (tile == 22 || tile == 28 || tile == 34) return true;	//puertas abiertas
-	if (tile >= 126 && tile <= 129 || tile >= 131 && tile <= 135 || tile >= 137 && tile <=141 || tile == 143) return true;  //puentes y esquinas
-	
-	return false;
-}
-
-// return
-// true => same map
-// false => change map
-bool cPlayer::tirapalante(int* map){
-	int x,y;
-	int case1, case2;
-	GetPosition(&x,&y);
-	//TODO colisiones con enemigos
-	switch (GetDirection()) {
-	case DIRECTION_UP:
-		if (y == SCENE_HEIGHT*BLOCK_SIZE) {
-			SetPosition(x,SCENE_Yo);
-			return false;
-		}
-		case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE/2, map);
-		case2 = 2;
-		if(x%BLOCK_SIZE != 0) {
-			case2 = checkPos(x, y-BLOCK_SIZE/2, map);
-		}
-		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
-
-		y+=GetSpeed();
-		if (y > SCENE_HEIGHT*BLOCK_SIZE) return true;
-		break;
-	case DIRECTION_DOWN:
-		if (y == SCENE_Yo) {
-			SetPosition(x,BLOCK_SIZE*SCENE_HEIGHT);
-			return false;
-		}
-
-		case1 = checkPos(x-BLOCK_SIZE, y-BLOCK_SIZE-1, map);
-		case2 = 2;
-		if(x%BLOCK_SIZE != 0) {
-			case2 = checkPos(x, y-BLOCK_SIZE-1,map);
-		}
-		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
-
-		y-=GetSpeed();
-		if (y < SCENE_Yo) return true;
-		break;
-	case DIRECTION_LEFT:
-		if (x == SCENE_Xo) {
-			SetPosition(BLOCK_SIZE*SCENE_WIDTH,y);
-			return false;
-		}
-
-		case1 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE, map);
-		case2 = 2;
-		if(y%BLOCK_SIZE != 0) {
-			case2 = checkPos(x-BLOCK_SIZE-1, y-BLOCK_SIZE/2-1,map);
-		}
-		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
-
-		x-=GetSpeed();
-		if (x < SCENE_Xo) return true;
-		break;
-	case DIRECTION_RIGHT:
-		if (x == BLOCK_SIZE*SCENE_WIDTH) {
-			SetPosition(SCENE_Xo,y);
-			return false;
-		}
-
-		case1 = checkPos(x, y-BLOCK_SIZE, map);
-		case2 = 2;
-		if(y%BLOCK_SIZE != 0) {
-			case2 = checkPos(x, y-BLOCK_SIZE/2-1, map);
-		}
-		if ( !isWalkable(case1) || !isWalkable(case2)) return true;
-
-		x+=GetSpeed();
-		if (x > SCENE_WIDTH*BLOCK_SIZE) return true;
-		break;
-	default:
-		break;
-	}
-	SetPosition(x,y);
-	NextFrame(STATE_MOVE,2,FRAME_DELAY);
-	return true;
-}
-
-void cPlayer::heal(int num_hearts){//-1 -> full recovery
+int cPlayer::heal(int num_hearts){//-1 -> full recovery
 	if(num_hearts == -1) life = max_life;
 	else life = min(max_life,life+num_hearts);
+	return life;
 }
-void cPlayer::damage(int num_hearts){ 
+int cPlayer::damage(int num_hearts){ 
 	life = max(0,life-num_hearts);
-	//TODO: cambiar por FMOD
-	PlaySound("sounds\\LOZ_Hurt.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
+	return life;
 }
 
 void cPlayer::givePoints(int num_points){
@@ -312,14 +222,3 @@ void cPlayer::getKey(){
 	keys++;
 }
 
-int cPlayer::getHearts() {
-	return life;
-}
-
-void cPlayer::addLife() {
-	life++;
-}
-
-void cPlayer::subLife() {
-	life--;
-}

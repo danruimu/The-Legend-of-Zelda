@@ -80,8 +80,6 @@ bool cGame::Init()
 	//Main Menu initialization
 	res = Data.LoadImage(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
 	if(!res) return false;
-	res = Scene.LoadMainMenu(currentMM);
-	if(!res) return false;
 
 	//Sounds Initialization
 	sounds[LOZ_MUSIC_OVERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Overworld_theme.wav", true, MUSIC);
@@ -142,7 +140,7 @@ bool cGame::mainMenuProcess(){
 			case NEW_GAME:
 				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 				sound.playSound(sounds[LOZ_MUSIC_WHISTLE]);
-				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU));
+				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU),currentMM);
 				startGame();
 				break;
 			case OPTIONS:
@@ -242,9 +240,9 @@ bool cGame::mainMenuProcess(){
 bool cGame::Process()
 {
 	
-	int n = Link.getHearts();
+	/*int n = Link.getHearts();
 	if (!mainMenu && n <= 2) sound.playSound(sounds[LOZ_LOW_HEALTH]);
-	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);*/
 
 	sound.updateSound();
 
@@ -372,8 +370,11 @@ bool cGame::Process()
 void cGame::Render()
 {
 	int i;
+		glClear(GL_COLOR_BUFFER_BIT);
 	
-	if(mainMenu) {
+	glLoadIdentity();
+	
+	if(mainMenu) { //TODO: ponerlo bonico
 		if(up) {
 			if(nTransMM == TRANS_MAINMENU) {
 				currentMM++;
@@ -381,7 +382,6 @@ void cGame::Render()
 					up = false;
 					currentMM = 3;
 				}
-				Scene.LoadMainMenu(currentMM);
 				nTransMM = 0;
 			} else {
 				nTransMM++;
@@ -393,27 +393,24 @@ void cGame::Render()
 					up = true;
 					currentMM = 0;
 				}
-				Scene.LoadMainMenu(currentMM);
 				nTransMM = 0;
 			} else {
 				nTransMM++;
 			}
 		}
+		Scene.Draw(Data.GetID(IMG_MAINMENU), mainMenu, menuText, currentOptMM,currentMM);
 	}
-
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glLoadIdentity();
-
-	if(!mainMenu) {
-		Scene.Draw(Data.GetID(IMG_BLOCKS), mainMenu, NULL, 0);
+	else{//mainMenu= false
+		Scene.Draw(Data.GetID(IMG_BLOCKS), mainMenu, NULL, 0,0);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
-	} else Scene.Draw(Data.GetID(IMG_MAINMENU), mainMenu, menuText, currentOptMM);
+		for(i = 0; i < MAX_N_MONSTERS; ++i) {
+			//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
+		}
+		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1],currentPauseOpt);
+	} 
 
-	for(i = 0; i < MAX_N_MONSTERS; ++i) {
-		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
-	}
-	if (pause)Scene.drawPauseMenu(menuText[0],menuText[1],currentPauseOpt);
+	
+	
 
 	glutSwapBuffers();
 }
@@ -422,7 +419,7 @@ void cGame::Render()
 bool folderExists(const char* folderName) {
 	DWORD attribs = ::GetFileAttributesA(folderName);
 	if(attribs == INVALID_FILE_ATTRIBUTES) return false;
-	return (attribs & FILE_ATTRIBUTE_DIRECTORY);
+	return (attribs & FILE_ATTRIBUTE_DIRECTORY)!= 0;
 }
 
 void cGame::saveSettings() {
