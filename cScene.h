@@ -43,7 +43,7 @@ public:
 	char *getId();
 	void setId(char Nid[]);
 
-	void drawPauseMenu(char *t1, char* t2, int select);
+	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
 	int Process(cRect *Box);
 	int whatsThere(int x,int y);
 	void unlock();

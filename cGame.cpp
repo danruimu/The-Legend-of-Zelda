@@ -288,7 +288,8 @@ bool cGame::Process()
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
 			keys['w'] = specialKeys['e'] = false;
-			currentPauseOpt = 1-currentPauseOpt;
+			--currentPauseOpt;
+			if(currentPauseOpt<0) currentPauseOpt = 2;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
 			/**************************************/
@@ -303,7 +304,8 @@ bool cGame::Process()
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
 			keys['s'] = specialKeys['g'] = false;
-			currentPauseOpt = 1 - currentPauseOpt;
+			++currentPauseOpt;
+			if(currentPauseOpt>2) currentPauseOpt=0;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
 			/**************************************/
@@ -316,45 +318,58 @@ bool cGame::Process()
 			return true;
 		} else if(keys['a'] || specialKeys['d']) {
 			keys['a'] = specialKeys['d'] = false;
-			if(!currentPauseOpt) {   //MUSIC
+			if(currentPauseOpt==0) {   //MUSIC
 				options.musicVolume = max(0.0,options.musicVolume-0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
 				sound.playSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
-			} else {    //EFFECT
+			} else if(currentPauseOpt==1) {    //EFFECT
 				options.effectVolume = max(0.0,options.effectVolume-0.1);
 				sound.setVolume(EFFECT, options.effectVolume);
 			}
-			sound.playSound(sounds[LOZ_TEXT]);
-			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
-			/**************************************/
-			// WORKAROUND
-			if(music%10 != 0) ++music;
-			if(effect%10 != 0) ++effect;
-			/**************************************/
-			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
-			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
+			if(currentPauseOpt!=2) {
+				sound.playSound(sounds[LOZ_TEXT]);
+				int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(music%10 != 0) ++music;
+				if(effect%10 != 0) ++effect;
+				/**************************************/
+				sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+				sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
+			}
 			return true;
 		} else if(keys['d'] || specialKeys['f']) {
 			keys['d'] = specialKeys['f'] = false;
-			if(!currentPauseOpt) {   //MUSIC
+			if(currentPauseOpt==0) {   //MUSIC
 				options.musicVolume = min(1.0,options.musicVolume+0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
 				sound.playSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
-			} else {    //EFFECT
+			} else if(currentPauseOpt==1) {    //EFFECT
 				options.effectVolume = min(1.0,options.effectVolume+0.1);
 				sound.setVolume(EFFECT, options.effectVolume);
 			}
-			sound.playSound(sounds[LOZ_TEXT]);
-			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
-			/**************************************/
-			// WORKAROUND
-			if(music%10 != 0) ++music;
-			if(effect%10 != 0) ++effect;
-			/**************************************/
-			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
-			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
+			if(currentPauseOpt!=2) {
+				sound.playSound(sounds[LOZ_TEXT]);
+				int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(music%10 != 0) ++music;
+				if(effect%10 != 0) ++effect;
+				/**************************************/
+				sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+				sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
+			}
 			return true;
-		} 
+		} else if(keys['j'] || keys['\r']) {
+			keys['j'] = keys['\r'] = false;
+			if(currentPauseOpt==2) {
+				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
+				sound.playSound(sounds[LOZ_DIE]);
+				Sleep(3000);
+				return false;
+			}
+			return true;
+		}
 
 	} else if(!mainMenu) {    //NOT IN PAUSE
 		if(keys[' ']) {
@@ -483,11 +498,8 @@ void cGame::Render()
 		for(i = 0; i < MAX_N_MONSTERS; ++i) {
 			//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
 		}
-		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1],currentPauseOpt);
+		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} 
-
-	
-	
 
 	glutSwapBuffers();
 }

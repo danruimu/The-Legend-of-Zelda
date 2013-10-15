@@ -8,6 +8,18 @@
 cGame Game;
 int inittime;
 
+// Disable or enable the [X] button in top-right corne
+BOOL EnableCloseButton(const HWND hwnd, const BOOL bState)
+{
+	HMENU	hMenu;
+	UINT	dwExtra;
+
+	if (hwnd == NULL) return FALSE;
+	if ((hMenu = GetSystemMenu(hwnd, FALSE)) == NULL) return FALSE;
+	dwExtra = bState ? MF_ENABLED : (MF_DISABLED | MF_GRAYED);
+	return EnableMenuItem(hMenu, SC_CLOSE, MF_BYCOMMAND | dwExtra) != -1;
+}
+
 void AppRender()
 {
 	Game.Render();
@@ -33,7 +45,7 @@ void AppMouse(int button, int state, int x, int y)
 	Game.ReadMouse(button,state,x,y);
 }
 void AppIdle()
-{
+{	
 	int timeAct = glutGet(GLUT_ELAPSED_TIME);
 	if(timeAct - inittime > (1000./FPS)) {
 		inittime = timeAct;
@@ -47,14 +59,14 @@ void createWindow(bool fullScreen,int x,int y){
 		sprintf(buffer,"%dx%d:32",x,y);
 		glutGameModeString(buffer);
 		glutEnterGameMode();
-	}
-	else{
+	} else{
 		glutInitWindowPosition(x,y);
 		glutInitWindowSize(GAME_WIDTH,GAME_HEIGHT);
 		glutCreateWindow("The Legend of Zelda");
 		HWND windowHandle = FindWindow(NULL,"The Legend of Zelda");
 		HICON hIcon = (HICON)LoadImage(NULL, "images\\/window_logo.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
 		SendMessage(windowHandle,WM_SETICON, ICON_BIG, (LPARAM)hIcon );
+		EnableCloseButton(windowHandle, false);
 	}
 }
 
