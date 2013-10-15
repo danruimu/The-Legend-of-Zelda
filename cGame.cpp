@@ -12,6 +12,7 @@ cGame::~cGame(void)
 bool cGame::startGame() {
 	bool res=true;
 	mainMenu = false;
+	pause = false;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -90,6 +91,7 @@ bool cGame::Init()
 	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false, MUSIC);
 	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true, EFFECT);
 	sounds[LOZ_TEXT] = sound.addSound("sounds/LOZ_Text.wav", false, EFFECT);
+	sounds[LOZ_MUSIC_DEATH_MOUNTAIN] = sound.addSound("sounds/LOZ_MUSIC_Death_mountain_dungeon.wav", true, MUSIC);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -149,6 +151,11 @@ bool cGame::mainMenuProcess(){
 				int vol,effect;
 				vol = options.musicVolume*100.0;
 				effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(vol%10 != 0) ++vol;
+				if(effect%10 != 0) ++effect;
+				/**************************************/
 				sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 				sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				sprintf(menuText[2],"BACK");				
@@ -177,13 +184,13 @@ bool cGame::mainMenuProcess(){
 	}
 	if(keys['d'] || specialKeys['f']) {
 		keys['d'] = specialKeys['f'] = false;
-		sound.playSound(sounds[LOZ_SWORD]);
+		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM = (currentOptMM +1)%3;
 		return true;
 	}
 	if(keys['a'] || specialKeys['d']) {
 		keys['a'] = specialKeys['d'] = false;
-		sound.playSound(sounds[LOZ_SWORD]);
+		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM--;
 		currentOptMM = currentOptMM<0?2:currentOptMM;
 		return true;
@@ -197,6 +204,10 @@ bool cGame::mainMenuProcess(){
 				options.musicVolume = min(1.0,options.musicVolume+0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
 				vol = options.musicVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(vol%10 != 0) ++vol;
+				/**************************************/
 				sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 				return true;
 
@@ -206,6 +217,10 @@ bool cGame::mainMenuProcess(){
 				options.effectVolume = min(1.0,options.effectVolume+0.1);
 				sound.setVolume(EFFECT, options.effectVolume);
 				effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(effect%10 != 0) ++effect;
+				/**************************************/
 				sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				return true;
 			}
@@ -220,6 +235,10 @@ bool cGame::mainMenuProcess(){
 					options.musicVolume = max (0.0,options.musicVolume-0.1);
 					sound.setVolume(MUSIC, options.musicVolume);
 					vol = options.musicVolume*100.0;
+					/**************************************/
+					// WORKAROUND
+					if(vol%10 != 0) ++vol;
+					/**************************************/
 					sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 					return true;
 				}
@@ -228,6 +247,10 @@ bool cGame::mainMenuProcess(){
 					options.effectVolume = max (0.0,options.effectVolume-0.1);
 					sound.setVolume(EFFECT, options.effectVolume);
 					effect = options.effectVolume*100.0;
+					/**************************************/
+					// WORKAROUND
+					if(effect%10 != 0) ++effect;
+					/**************************************/
 					sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 					return true;
 				}
@@ -248,118 +271,172 @@ bool cGame::Process()
 
 	//int *map = Scene.GetMap();
 
-	if(keys[27])	
-		return false;
+	if(keys[27]) {    //ESCAPE
+		keys[27] = false;
+		keys[' '] = true;	//escape is the same as space
+	}
 
 	if(pause) {
 		if(keys[' ']) {
 			keys[' '] = false;
 			pause = false;
+			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 			return true;
 		} else if(keys['w'] || specialKeys['e']) {
+			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+
 			keys['w'] = specialKeys['e'] = false;
 			currentPauseOpt = 1-currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
-			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
-			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
+			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		} else if(keys['s'] || specialKeys['g']) {
+			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+
 			keys['s'] = specialKeys['g'] = false;
 			currentPauseOpt = 1 - currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
-			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
-			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
+			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		} else if(keys['a'] || specialKeys['d']) {
 			keys['a'] = specialKeys['d'] = false;
+			if(!currentPauseOpt) {   //MUSIC
+				options.musicVolume = max(0.0,options.musicVolume-0.1);
+				sound.setVolume(MUSIC, options.musicVolume);
+				sound.playSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+			} else {    //EFFECT
+				options.effectVolume = max(0.0,options.effectVolume-0.1);
+				sound.setVolume(EFFECT, options.effectVolume);
+			}
+			sound.playSound(sounds[LOZ_TEXT]);
+			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
+			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		} else if(keys['d'] || specialKeys['f']) {
 			keys['d'] = specialKeys['f'] = false;
+			if(!currentPauseOpt) {   //MUSIC
+				options.musicVolume = min(1.0,options.musicVolume+0.1);
+				sound.setVolume(MUSIC, options.musicVolume);
+				sound.playSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+			} else {    //EFFECT
+				options.effectVolume = min(1.0,options.effectVolume+0.1);
+				sound.setVolume(EFFECT, options.effectVolume);
+			}
+			sound.playSound(sounds[LOZ_TEXT]);
+			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
+			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		} 
 
+	} else if(!mainMenu) {    //NOT IN PAUSE
+		if(keys[' ']) {
+			keys[' '] = false;
+			pause = true;
+			sound.playSound(sounds[LOZ_TEXT]);
+			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+
+			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
+			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
+			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
+			return true;
+		}
+
+		if(keys['j']) {
+			keys['j'] = false;
+			if (Link.ataca()) {
+				sound.playSound(sounds[LOZ_SWORD]);
+			}
+			return true;
+		}
+		if (keys['w']||keys['s']||keys['d']||keys['a']){
+			int speed;
+			cRect linkBox;
+			Link.GetArea(&linkBox);
+			speed = Link.GetSpeed();
+			if(keys['w']) {
+				keys['w'] = false;
+				if (Link.GetDirection()!=DIRECTION_UP)
+				Link.SetDirection(DIRECTION_UP);
+				linkBox.bottom+=speed;
+				linkBox.top+=speed;
+			}
+			if(keys['a']) {
+				keys['a'] = false;
+				if (Link.GetDirection()!=DIRECTION_LEFT)
+				Link.SetDirection(DIRECTION_LEFT);
+				linkBox.left-=speed;
+				linkBox.right-=speed;
+			}
+			if(keys['s']) {
+				keys['s'] = false;
+				if (Link.GetDirection()!=DIRECTION_DOWN)
+				Link.SetDirection(DIRECTION_DOWN);
+				linkBox.top-=speed;
+				linkBox.bottom-=speed;
+			}
+			if(keys['d']) {
+				keys['d'] = false;
+				if (Link.GetDirection()!=DIRECTION_RIGHT)
+				Link.SetDirection(DIRECTION_RIGHT);
+				linkBox.left+=speed;
+				linkBox.right+=speed;
+			}
+			switch (Scene.Process(&linkBox)){
+				case OK:
+					Link.SetArea(linkBox);
+					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY);
+				break;
+				case COLLIDES:
+					return true;
+				case COLLIDES_LOCKED_DOOR:
+					if(Link.useKey())
+						Scene.unlock();
+				break;
+				case OUTLIMITS:
+					Link.SetArea(linkBox);
+				break;
+			}
+		}
+		return true;
 	}
 
 	if (mainMenu){
 		return mainMenuProcess();
 	}
-
-	if(keys[' ']) {
-		keys[' '] = false;
-		pause = true;
-		sound.playSound(sounds[LOZ_TEXT]);
-		sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
-
-		int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
-		sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
-		sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
-		return true;
-	}
-
-	if(keys['j']) {
-		keys['j'] = false;
-		if (Link.ataca()) {
-			sound.playSound(sounds[LOZ_SWORD]);
-		}
-		return true;
-	}
-	if (keys['w']||keys['s']||keys['d']||keys['a']){
-		int speed;
-		cRect linkBox;
-		Link.GetArea(&linkBox);
-		speed = Link.GetSpeed();
-		if(keys['w']) {
-			keys['w'] = false;
-			if (Link.GetDirection()!=DIRECTION_UP)
-			Link.SetDirection(DIRECTION_UP);
-			linkBox.bottom+=speed;
-			linkBox.top+=speed;
-		}
-		if(keys['a']) {
-			keys['a'] = false;
-			if (Link.GetDirection()!=DIRECTION_LEFT)
-			Link.SetDirection(DIRECTION_LEFT);
-			linkBox.left-=speed;
-			linkBox.right-=speed;
-		}
-		if(keys['s']) {
-			keys['s'] = false;
-			if (Link.GetDirection()!=DIRECTION_DOWN)
-			Link.SetDirection(DIRECTION_DOWN);
-			linkBox.top-=speed;
-			linkBox.bottom-=speed;
-		}
-		if(keys['d']) {
-			keys['d'] = false;
-			if (Link.GetDirection()!=DIRECTION_RIGHT)
-			Link.SetDirection(DIRECTION_RIGHT);
-			linkBox.left+=speed;
-			linkBox.right+=speed;
-		}
-		switch (Scene.Process(&linkBox)){
-			case OK:
-				Link.SetArea(linkBox);
-				Link.NextFrame(STATE_MOVE,2,FRAME_DELAY);
-			break;
-			case COLLIDES:
-				return true;
-			case COLLIDES_LOCKED_DOOR:
-				if(Link.useKey())
-					Scene.unlock();
-			break;
-			case OUTLIMITS:
-				Link.SetArea(linkBox);
-			break;
-		}
-			return true;
-
-	}
-
-		
+	
 	//Game Logic
 	//...
 

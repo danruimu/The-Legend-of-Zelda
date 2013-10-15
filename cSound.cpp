@@ -65,7 +65,15 @@ void cSound::resumeSound(int id) {
 	if(id >= nSounds) return;
 	bool play;
 	channels[id]->isPlaying(&play);
-	if(play) channels[id]->setPaused(false);
+	if(play) {
+		channels[id]->setPaused(false);
+		bool Music = false;
+		for(int i = 0; i<nMusics && !Music; ++i) {
+			Music = (musics[i] == id);
+		}
+		if(Music) channels[id]->setVolume(musicVolume);
+		else channels[id]->setVolume(effectVolume);
+	}
 }
 
 void cSound::pauseSound(int id) {
