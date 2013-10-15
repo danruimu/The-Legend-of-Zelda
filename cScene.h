@@ -6,6 +6,24 @@
 #define STR_LOCKED	"locked"
 #define LOCKED		0
 
+#define OK						0
+#define COLLIDES				1
+#define COLLIDES_LOCKED_DOOR	2
+#define OUTLIMITS				3
+
+#define WALKABLE	0
+#define DOOR		1
+#define LOCKED_DOOR	2
+#define WATER		3
+#define OTHERS		-1
+
+#define DOWN	0
+#define UP		1
+#define RIGHT	2
+#define LEFT	3
+
+#define TILE_DOOR	22
+
 
 class cScene
 {
@@ -21,13 +39,22 @@ public:
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);
+<<<<<<< HEAD
 	void setPaused(char *t1, char* t2, int select);
+=======
+	void setPaused();
+	int Process(cRect *Box);
+	int whatsThere(int x,int y);
+	void unlock();
+
+>>>>>>> 5bf43e30cab7a503d28c7784dab74d62ba4923ad
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
 	int id_DL;								//actual level display list
-	char id[2];
+	char id[3];
 	bool prop[NUM_PROPS];
 	char *names[NUM_PROPS];
 	cEnemy foes[42];
+	void generateCallLevel();
 };
