@@ -12,6 +12,7 @@ cGame::~cGame(void)
 bool cGame::startGame() {
 	bool res=true;
 	mainMenu = false;
+	pause = false;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -152,6 +153,11 @@ bool cGame::mainMenuProcess(){
 				int vol,effect;
 				vol = options.musicVolume*100.0;
 				effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(vol%10 != 0) ++vol;
+				if(effect%10 != 0) ++effect;
+				/**************************************/
 				sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 				sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				sprintf(menuText[2],"BACK");				
@@ -200,6 +206,10 @@ bool cGame::mainMenuProcess(){
 				options.musicVolume = min(1.0,options.musicVolume+0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
 				vol = options.musicVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(vol%10 != 0) ++vol;
+				/**************************************/
 				sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 				return true;
 
@@ -209,6 +219,10 @@ bool cGame::mainMenuProcess(){
 				options.effectVolume = min(1.0,options.effectVolume+0.1);
 				sound.setVolume(EFFECT, options.effectVolume);
 				effect = options.effectVolume*100.0;
+				/**************************************/
+				// WORKAROUND
+				if(effect%10 != 0) ++effect;
+				/**************************************/
 				sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 				return true;
 			}
@@ -223,6 +237,10 @@ bool cGame::mainMenuProcess(){
 					options.musicVolume = max (0.0,options.musicVolume-0.1);
 					sound.setVolume(MUSIC, options.musicVolume);
 					vol = options.musicVolume*100.0;
+					/**************************************/
+					// WORKAROUND
+					if(vol%10 != 0) ++vol;
+					/**************************************/
 					sprintf(menuText[0],"^ MUSIC VOLUME v %d%%",vol);
 					return true;
 				}
@@ -231,6 +249,10 @@ bool cGame::mainMenuProcess(){
 					options.effectVolume = max (0.0,options.effectVolume-0.1);
 					sound.setVolume(EFFECT, options.effectVolume);
 					effect = options.effectVolume*100.0;
+					/**************************************/
+					// WORKAROUND
+					if(effect%10 != 0) ++effect;
+					/**************************************/
 					sprintf(menuText[1],"^ EFFECTS VOLUME v %d%%",effect);
 					return true;
 				}
@@ -251,8 +273,10 @@ bool cGame::Process()
 
 	//int *map = Scene.GetMap();
 
-	if(keys[27])	
-		return false;
+	if(keys[27]) {    //ESCAPE
+		keys[27] = false;
+		keys[' '] = true;	//escape is the same as space
+	}
 
 	if(pause) {
 		if(keys[' ']) {
@@ -269,6 +293,11 @@ bool cGame::Process()
 			currentPauseOpt = 1-currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
@@ -279,6 +308,11 @@ bool cGame::Process()
 			currentPauseOpt = 1 - currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
@@ -294,6 +328,11 @@ bool cGame::Process()
 			}
 			sound.playSound(sounds[LOZ_TEXT]);
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
@@ -309,6 +348,11 @@ bool cGame::Process()
 			}
 			sound.playSound(sounds[LOZ_TEXT]);
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
@@ -322,6 +366,11 @@ bool cGame::Process()
 			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			/**************************************/
+			// WORKAROUND
+			if(music%10 != 0) ++music;
+			if(effect%10 != 0) ++effect;
+			/**************************************/
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
