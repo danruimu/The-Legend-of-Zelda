@@ -3,7 +3,6 @@
 */*.db
 !.gitignore
 !opts
-!opts/*
 !*.cpp
 !*.hpp
 !*.h
