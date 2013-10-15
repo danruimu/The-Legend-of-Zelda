@@ -10,6 +10,14 @@
 
 #define TRANS_MAINMENU	7
 
+#define NEW_GAME		0
+#define OPTIONS			1
+#define EXIT			2
+
+#define MUSIC_VOLUME	0
+#define EFFECTS_VOLUME	1
+#define BACK			2
+
 using namespace std;
 
 class cGame
@@ -54,6 +62,8 @@ private:
 	int currentOptMM;
 
 	bool pause;
+
+	bool mainMenuProcess();
 
 	struct Options {
 		float effectVolume;

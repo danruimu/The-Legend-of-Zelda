@@ -81,6 +81,12 @@ void cBicho::GetArea(cRect *rc)
 	rc->bottom = y;
 	rc->top    = y+h;
 }
+
+void cBicho::SetArea(cRect rc){
+	x = rc.left;
+	y = rc.bottom;
+}
+
 void cBicho::DrawRect(int tex_id,float xo,float yo,float xf,float yf)
 {
 	int screen_x,screen_y;
