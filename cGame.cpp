@@ -105,42 +105,6 @@ bool cGame::Loop()
 {
 	bool res=true;
 
-	if(mainMenu) {
-		if(up) {
-			if(nTransMM == TRANS_MAINMENU) {
-				currentMM++;
-				if(currentMM == 4) {
-					up = false;
-					currentMM = 3;
-				}
-				res = Scene.LoadMainMenu(currentMM);
-				if(!res) return false;
-				nTransMM = 0;
-			} else {
-				nTransMM++;
-			}
-		} else {
-			if(nTransMM == TRANS_MAINMENU) {
-				currentMM--;
-				if(currentMM == -1) {
-					up = true;
-					currentMM = 0;
-				}
-				res = Scene.LoadMainMenu(currentMM);
-				if(!res) return false;
-				nTransMM = 0;
-			} else {
-				nTransMM++;
-			}
-		}
-	}
-
-	int n = Link.getHearts();
-	if (!mainMenu && n <= 2) sound.playSound(sounds[LOZ_LOW_HEALTH]);
-	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-
-	sound.updateSound();
-
 	res = Process();
 	if(res && !pause) Render();
 
@@ -278,6 +242,12 @@ bool cGame::mainMenuProcess(){
 bool cGame::Process()
 {
 	
+	int n = Link.getHearts();
+	if (!mainMenu && n <= 2) sound.playSound(sounds[LOZ_LOW_HEALTH]);
+	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+
+	sound.updateSound();
+
 	//int *map = Scene.GetMap();
 
 	if(keys[27])	
@@ -434,6 +404,35 @@ bool cGame::Process()
 void cGame::Render()
 {
 	int i;
+	
+	if(mainMenu) {
+		if(up) {
+			if(nTransMM == TRANS_MAINMENU) {
+				currentMM++;
+				if(currentMM == 4) {
+					up = false;
+					currentMM = 3;
+				}
+				Scene.LoadMainMenu(currentMM);
+				nTransMM = 0;
+			} else {
+				nTransMM++;
+			}
+		} else {
+			if(nTransMM == TRANS_MAINMENU) {
+				currentMM--;
+				if(currentMM == -1) {
+					up = true;
+					currentMM = 0;
+				}
+				Scene.LoadMainMenu(currentMM);
+				nTransMM = 0;
+			} else {
+				nTransMM++;
+			}
+		}
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glLoadIdentity();

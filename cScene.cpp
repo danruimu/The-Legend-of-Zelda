@@ -189,6 +189,8 @@ char* cScene::getId() {
 }
 
 void cScene::setPaused(char *t1, char* t2, int select) {
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
 	printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE*2, "PAUSE", GLUT_BITMAP_TIMES_ROMAN_24);
 	if(select == 0) {
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_18);
