@@ -40,7 +40,7 @@ public:
 	char *getId();
 	void setId(char Nid[]);
 
-	void setPaused();
+	void setPaused(char *t1, char* t2, int select);
 	int Process(cRect *Box);
 	int whatsThere(int x,int y);
 	void unlock();

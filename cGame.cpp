@@ -290,7 +290,32 @@ bool cGame::Process()
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 			return true;
-		}
+		} else if(keys['w'] || specialKeys['e']) {
+			keys['w'] = specialKeys['e'] = false;
+			currentPauseOpt = 1 - currentOptMM;
+
+			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
+			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
+			return true;
+		} else if(keys['s'] || specialKeys['g']) {
+			keys['s'] = specialKeys['g'] = false;
+			currentPauseOpt = 1 - currentOptMM;
+
+			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
+			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
+			return true;
+		} else if(keys['a'] || specialKeys['d']) {
+			keys['a'] = specialKeys['d'] = false;
+			return true;
+		} else if(keys['d'] || specialKeys['f']) {
+			keys['d'] = specialKeys['f'] = false;
+			return true;
+		} 
+
 	}
 
 	if (mainMenu){
@@ -302,7 +327,11 @@ bool cGame::Process()
 		pause = true;
 		sound.playSound(sounds[LOZ_TEXT]);
 		sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
-		Scene.setPaused();
+
+		int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
+		sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
+		sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
+ 		Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 		return true;
 	}
 
