@@ -52,6 +52,7 @@ private:
 	bool up;
 	char *menuText[3];
 	int currentOptMM;
+	int currentPauseOpt;
 
 	bool pause;
 

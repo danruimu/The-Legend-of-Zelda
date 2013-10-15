@@ -65,6 +65,7 @@ bool cGame::Init()
 	sprintf(menuText[1],"OPTIONS");
 	sprintf(menuText[2],"EXIT");
 	currentOptMM = 0;
+	currentPauseOpt = 0;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -246,20 +247,23 @@ bool cGame::Process()
 		if(keys[' ']) {
 			keys[' '] = false;
 			pause = true;
+			sprintf(menuText[0],"MUSIC VOLUME - %d%%",(int)options.musicVolume*100.0);
+			sprintf(menuText[1],"EFFECTS VOLUME - %d%%", (int)options.effectVolume*100.0);
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
-			Scene.setPaused();
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 			return true;
 		}
-		//TODO: remove this 
+		//TODO: remove this
+		//These lines are for healing and hurt link to make tests
 		if(keys['q']) {
 			keys['q'] = false;
-			Link.addLife();
+			Link.heal(1);
 			return true;
 		}
 		if(keys['e']) {
 			keys['e'] = false;
-			Link.subLife();
+			Link.damage(1);
 			return true;
 		}
 		//TODO: to here
@@ -359,6 +363,46 @@ bool cGame::Process()
 			pause = false;
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+			return true;
+		} else if(keys['d'] || specialKeys['f']) {
+			keys['d'] = specialKeys['f'] = false;
+			//TODO: increment music/effect volume
+			if(currentPauseOpt == 0) {   //MUSIC
+				if(options.musicVolume < 0.95) options.musicVolume += 0.1;
+				sound.setVolume(MUSIC, options.musicVolume);
+			} else {    //EFFECTS
+				if(options.effectVolume < 0.95) options.effectVolume += 0.1;
+				sound.setVolume(EFFECT, options.effectVolume);
+			}
+			sprintf(menuText[0],"MUSIC VOLUME - %d%%",(int)options.musicVolume*100.0);
+			sprintf(menuText[1],"EFFECTS VOLUME - %d%%", (int)options.effectVolume*100.0);
+
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
+			return true;
+		} else if(keys['a'] || specialKeys['d']) {
+			keys['a'] = specialKeys['d'] = false;
+			//TODO: decrement music/effect volume
+			if(currentPauseOpt == 0) {   //MUSIC
+				if(options.musicVolume > 0.05) options.musicVolume -= 0.1;
+				sound.setVolume(MUSIC, options.musicVolume);
+			} else {    //EFFECTS
+				if(options.effectVolume > 0.05) options.effectVolume -= 0.1;
+				sound.setVolume(EFFECT, options.effectVolume);
+			}
+			sprintf(menuText[0],"MUSIC VOLUME - %d%%",(int)options.musicVolume*100.0);
+			sprintf(menuText[1],"EFFECTS VOLUME - %d%%", (int)options.effectVolume*100.0);
+
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
+			return true;
+		} else if (keys['w'] || specialKeys['e']) {
+			keys['w'] = specialKeys['e'] = false;
+			currentPauseOpt = 1 - currentPauseOpt;
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
+			return true;
+		} else if (keys['s'] || specialKeys['g']) {
+			keys['s'] = specialKeys['g'] = false;
+			currentPauseOpt = 1 - currentPauseOpt;
+			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 			return true;
 		}
 	}
