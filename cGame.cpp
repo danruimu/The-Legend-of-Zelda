@@ -247,8 +247,8 @@ bool cGame::Process()
 		if(keys[' ']) {
 			keys[' '] = false;
 			pause = true;
-			sprintf(menuText[0],"MUSIC VOLUME - %d%%",(int)options.musicVolume*100.0);
-			sprintf(menuText[1],"EFFECTS VOLUME - %d%%", (int)options.effectVolume*100.0);
+			sprintf(menuText[0],"MUSIC VOLUME - %d%%",(int)(options.musicVolume*100.0));
+			sprintf(menuText[1],"EFFECTS VOLUME - %d%%", (int)(options.effectVolume*100.0));
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
@@ -366,7 +366,6 @@ bool cGame::Process()
 			return true;
 		} else if(keys['d'] || specialKeys['f']) {
 			keys['d'] = specialKeys['f'] = false;
-			//TODO: increment music/effect volume
 			if(currentPauseOpt == 0) {   //MUSIC
 				if(options.musicVolume < 0.95) options.musicVolume += 0.1;
 				sound.setVolume(MUSIC, options.musicVolume);
@@ -380,7 +379,6 @@ bool cGame::Process()
 			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 			return true;
 		} else if(keys['a'] || specialKeys['d']) {
-			keys['a'] = specialKeys['d'] = false;
 			//TODO: decrement music/effect volume
 			if(currentPauseOpt == 0) {   //MUSIC
 				if(options.musicVolume > 0.05) options.musicVolume -= 0.1;
