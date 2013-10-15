@@ -138,45 +138,38 @@ void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText)
 	glDisable(GL_TEXTURE_2D);
 	if(mainMenu) {
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18);
-		currentText++; if(currentText==3) currentText=0;
+		currentText = (currentText + 1)%3;
 		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
-		currentText++; if(currentText==3) currentText=0;
+		currentText = (currentText + 1)%3;
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
 	}
 }
 
 void cScene::newGameAnimation(int texID) {
-	glColor3f(1.0, 0.0, 0.0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texID);
+
+	glColor3f(1.0, 0.0, 0.0);
 	glCallList(id_DL);
-	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(1000);
+	Sleep(200);
 
 	glColor3f(0.0, 1.0, 0.0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texID);
 	glCallList(id_DL);
-	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(1000);
+	Sleep(200);
 
 	glColor3f(0.0, 0.0, 1.0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texID);
 	glCallList(id_DL);
-	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(1000);
+	Sleep(200);
 	
 	glColor3f(1.0, 1.0, 1.0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texID);
 	glCallList(id_DL);
-	glDisable(GL_TEXTURE_2D);
 	glutSwapBuffers();
-	Sleep(1000);
+	Sleep(200);
+	glDisable(GL_TEXTURE_2D);
+
 }
 
 int* cScene::GetMap()
@@ -188,9 +181,7 @@ char* cScene::getId() {
 	return id;
 }
 
-void cScene::setPaused(char *t1, char* t2, int select) {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
+void cScene::drawPauseMenu(char *t1, char* t2, int select) {
 	printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE*2, "PAUSE", GLUT_BITMAP_TIMES_ROMAN_24);
 	if(select == 0) {
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_18);
@@ -199,7 +190,6 @@ void cScene::setPaused(char *t1, char* t2, int select) {
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_10);
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_18);
 	}
-	glutSwapBuffers();
 }
 
 

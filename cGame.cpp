@@ -106,7 +106,7 @@ bool cGame::Loop()
 	bool res=true;
 
 	res = Process();
-	if(res && !pause) Render();
+	if(res) Render();
 
 	return res;
 }
@@ -262,21 +262,19 @@ bool cGame::Process()
 			return true;
 		} else if(keys['w'] || specialKeys['e']) {
 			keys['w'] = specialKeys['e'] = false;
-			currentPauseOpt = 1 - currentOptMM;
+			currentPauseOpt = 1-currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
 			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
 			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
-			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 			return true;
 		} else if(keys['s'] || specialKeys['g']) {
 			keys['s'] = specialKeys['g'] = false;
-			currentPauseOpt = 1 - currentOptMM;
+			currentPauseOpt = 1 - currentPauseOpt;
 
 			int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
 			sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
 			sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
-			Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 			return true;
 		} else if(keys['a'] || specialKeys['d']) {
 			keys['a'] = specialKeys['d'] = false;
@@ -301,7 +299,6 @@ bool cGame::Process()
 		int music = options.musicVolume*100.0, effect = options.effectVolume*100.0;
 		sprintf(menuText[0], "MUSIC VOLUME - %d%%", music);
 		sprintf(menuText[1], "EFFECT VOLUME - %d%%", effect);
- 		Scene.setPaused(menuText[0], menuText[1], currentPauseOpt);
 		return true;
 	}
 
@@ -323,13 +320,6 @@ bool cGame::Process()
 			Link.SetDirection(DIRECTION_UP);
 			linkBox.bottom+=speed;
 			linkBox.top+=speed;
-			/*if (!Link.tirapalante(map)) {
-				char *level = (char*)malloc(4);
-				strcpy(level, Scene.getId());
-				level[1]--;
-				if (!Scene.LoadLevel(level))return false;
-				free(level);
-			}*/
 		}
 		if(keys['a']) {
 			keys['a'] = false;
@@ -337,13 +327,6 @@ bool cGame::Process()
 			Link.SetDirection(DIRECTION_LEFT);
 			linkBox.left-=speed;
 			linkBox.right-=speed;
-			/*if (!Link.tirapalante(map)) {
-				char *level = (char*)malloc(4);
-				strcpy(level, Scene.getId());
-				level[0]--;
-				if (!Scene.LoadLevel(level))return false;
-				free(level);
-			}*/
 		}
 		if(keys['s']) {
 			keys['s'] = false;
@@ -351,13 +334,6 @@ bool cGame::Process()
 			Link.SetDirection(DIRECTION_DOWN);
 			linkBox.top-=speed;
 			linkBox.bottom-=speed;
-			/*if (!Link.tirapalante(map)) {
-				char *level = (char*)malloc(4);
-				strcpy(level, Scene.getId());
-				level[1]++;
-				if (!Scene.LoadLevel(level))return false;
-				free(level);
-			}*/
 		}
 		if(keys['d']) {
 			keys['d'] = false;
@@ -365,14 +341,6 @@ bool cGame::Process()
 			Link.SetDirection(DIRECTION_RIGHT);
 			linkBox.left+=speed;
 			linkBox.right+=speed;
-			/*if (!Link.tirapalante(map)) {
-				char *level = (char*)malloc(4);
-				strcpy(level, Scene.getId());
-				level[0]++;
-				if (!Scene.LoadLevel(level))return false;
-				free(level);
-
-			}*/
 		}
 		switch (Scene.Process(&linkBox)){
 			case OK:
@@ -445,6 +413,7 @@ void cGame::Render()
 	for(i = 0; i < MAX_N_MONSTERS; ++i) {
 		//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
 	}
+	if (pause)Scene.drawPauseMenu(menuText[0],menuText[1],currentPauseOpt);
 
 	glutSwapBuffers();
 }
