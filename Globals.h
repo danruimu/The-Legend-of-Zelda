@@ -38,6 +38,7 @@
 #define FPS	60
 #define NUM_PROPS	4
 
+#define OPT_DIR	"opts"
 #define OPT_FILE "opts/options.txt"
 
 //Sounds

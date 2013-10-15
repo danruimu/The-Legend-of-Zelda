@@ -36,5 +36,7 @@ private:
 	int nMusics;
 	int nEffects;
 	FILE *saveOpts;
+	float effectVolume;
+	float musicVolume;
 };
 

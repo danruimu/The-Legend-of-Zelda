@@ -419,7 +419,18 @@ void cGame::Render()
 }
 
 
+bool folderExists(const char* folderName) {
+	DWORD attribs = ::GetFileAttributesA(folderName);
+	if(attribs == INVALID_FILE_ATTRIBUTES) return false;
+	return (attribs & FILE_ATTRIBUTE_DIRECTORY);
+}
+
 void cGame::saveSettings() {
+	if(!folderExists(OPT_DIR)) {
+		//Create folder
+		CreateDirectory(OPT_DIR, NULL);
+	}
+
 	FILE *fd = fopen(OPT_FILE, "w+");
 	char *buffer = (char *) malloc(42);
 	sprintf(buffer, "%f\n%f\n", options.musicVolume, options.effectVolume); 

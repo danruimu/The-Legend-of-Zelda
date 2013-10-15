@@ -30,9 +30,6 @@ int cSound::addSound(char *file, bool loop, int kind) {
 		++nEffects;
 	}
 
-	//Start the sound paused to be able to set the volume
-	system->playSound(sounds[nSounds], 0, true, &channels[nSounds]);
-
 	nSounds++;
 	return nSounds-1;
 }
@@ -47,6 +44,13 @@ void cSound::playSound(int id) {
 		channels[id]->getPaused(&paused);
 		if(paused) channels[id]->setPaused(false);
 	}
+	//update volume
+	bool Music = false;
+	for(int i = 0; i<nMusics && !Music; ++i) {
+		Music = (musics[i] == id);
+	}
+	if(Music) channels[id]->setVolume(musicVolume);
+	else channels[id]->setVolume(effectVolume);
 }
 
 void cSound::stopSound(int id) {
@@ -80,12 +84,19 @@ void cSound::setVolume(int idGroup, float vol) {
 	else if (vol > 1) vol = 1;
 	
 	if(idGroup == MUSIC) {
-		for(int i = 0; i<nMusics; ++i) {
-			channels[musics[i]]->setVolume(vol);
-		}
+		musicVolume = vol;
 	} else if (idGroup == EFFECT) {
-		for (int i = 0; i< nEffects; ++i) {
-			channels[effects[i]]->setVolume(vol);
-		}
+		effectVolume = vol;
+	}
+
+	for(int i = 0; i < nMusics; ++i) {
+		bool paused;
+		channels[musics[i]]->getPaused(&paused);
+		if(!paused) channels[musics[i]]->setVolume(musicVolume);
+	}
+	for(int i = 0; i < nEffects; ++i) {
+		bool paused;
+		channels[effects[i]]->getPaused(&paused);
+		if(!paused) channels[effects[i]]->setVolume(effectVolume);
 	}
 }
