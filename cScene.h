@@ -39,15 +39,12 @@ public:
 	int *GetMap();
 	char *getId();
 	void setId(char Nid[]);
-<<<<<<< HEAD
-	void setPaused(char *t1, char* t2, int select);
-=======
+
 	void setPaused();
 	int Process(cRect *Box);
 	int whatsThere(int x,int y);
 	void unlock();
 
->>>>>>> 5bf43e30cab7a503d28c7784dab74d62ba4923ad
 
 private:
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
