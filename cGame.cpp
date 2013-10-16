@@ -92,6 +92,7 @@ bool cGame::Init()
 	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true, EFFECT);
 	sounds[LOZ_TEXT] = sound.addSound("sounds/LOZ_Text.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_DEATH_MOUNTAIN] = sound.addSound("sounds/LOZ_MUSIC_Death_mountain_dungeon.wav", true, MUSIC);
+	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -376,7 +377,7 @@ bool cGame::Process()
 			return true;
 		}
 
-	} else if(!mainMenu) {    //NOT IN PAUSE
+	} else if(!mainMenu) {    //NOT IN PAUSE and NOT IN MAIN MENU
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;
@@ -394,8 +395,8 @@ bool cGame::Process()
 			return true;
 		}
 
-		if(keys['j']) {
-			keys['j'] = false;
+		if(keys['j'] || keys[' ']) {
+			keys['j'] = keys[' '] = false;
 			int ataca=Link.ataca();
 			if (ataca==1) {
 				sound.playSound(sounds[LOZ_SWORD]);
@@ -454,6 +455,7 @@ bool cGame::Process()
 						unLockedLevels[i][1] = Scene.getId()[1];
 						unLockedLevels[i][2] = '\0';
 						Scene.unlock();
+						sound.playSound(sounds[LOZ_UNLOCK]);
 					}
 				break;
 				case OUTLIMITS:
