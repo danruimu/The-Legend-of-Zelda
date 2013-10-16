@@ -4,6 +4,7 @@
 #include "cData.h"
 #include "cPlayer.h"
 #include "cSound.h"
+#include "utils.h"
 #include <map>
 
 #define	MAX_N_MONSTERS	10
@@ -58,7 +59,8 @@ private:
 	int nTransMM;
 	int currentMM;
 	bool up;
-	char *menuText[3];
+	String menuText[3];
+	String unLockedLevels[NUM_MAX_GATES];
 	int currentOptMM;
 	int currentPauseOpt;
 

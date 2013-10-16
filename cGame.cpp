@@ -1,5 +1,4 @@
 #include "cGame.h"
-#include "Globals.h"
 
 cGame::cGame(void)
 {
@@ -27,7 +26,7 @@ bool cGame::startGame() {
 	//Scene initialization
 	res = Data.LoadImage(IMG_BLOCKS,"sprites/blocks.png",GL_RGBA);
 	if(!res) return false;
-	res = Scene.LoadLevel("H8");
+	res = Scene.LoadLevel("H8",false);
 	if(!res) return false;
 
 	//Link Initialization
@@ -86,6 +85,7 @@ bool cGame::Init()
 	sounds[LOZ_MUSIC_OVERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Overworld_theme.wav", true, MUSIC);
 	sounds[LOZ_MUSIC_MAIN_MENU] = sound.addSound("sounds/LOZ_MUSIC_Introduction.wav", true, MUSIC);
 	sounds[LOZ_SWORD] = sound.addSound("sounds/LOZ_Sword.wav", false, EFFECT);
+	sounds[LOZ_SWORD_COMBINED] = sound.addSound("sounds/LOZ_Sword_Combined.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_WHISTLE]= sound.addSound("sounds/LOZ_MUSIC_Whistle.wav", false, MUSIC);
 	sounds[LOZ_SWORD_SHOOT]= sound.addSound("sounds/LOZ_Sword_Shoot.wav", false, EFFECT);
 	sounds[LOZ_DIE] = sound.addSound("sounds/LOZ_Die.wav", false, MUSIC);
@@ -268,26 +268,31 @@ bool cGame::Process()
 	else sound.stopSound(sounds[LOZ_LOW_HEALTH]);*/
 
 	sound.updateSound();
+	
+	//Game Logic
+	Link.Logic(pause);
+
+
 
 	//int *map = Scene.GetMap();
 
-	if(keys[27]) {    //ESCAPE
-		keys[27] = false;
-		keys[' '] = true;	//escape is the same as space
-	}
+	//if(keys[27]) {    //ESCAPE
+	//	keys[27] = false;
+	//	keys[' '] = true;	//escape is the same as space
+	//}
 
 	if(pause) {
-		if(keys[' ']) {
-			keys[' '] = false;
+		if(keys[27]) {
+			keys[27] = false;
 			pause = false;
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 			return true;
 		} else if(keys['w'] || specialKeys['e']) {
+			keys['w'] = specialKeys['e'] = false;
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
-			keys['w'] = specialKeys['e'] = false;
 			--currentPauseOpt;
 			if(currentPauseOpt<0) currentPauseOpt = 2;
 
@@ -301,9 +306,9 @@ bool cGame::Process()
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		} else if(keys['s'] || specialKeys['g']) {
+			keys['s'] = specialKeys['g'] = false;
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
-			keys['s'] = specialKeys['g'] = false;
 			++currentPauseOpt;
 			if(currentPauseOpt>2) currentPauseOpt=0;
 
@@ -372,8 +377,8 @@ bool cGame::Process()
 		}
 
 	} else if(!mainMenu) {    //NOT IN PAUSE
-		if(keys[' ']) {
-			keys[' '] = false;
+		if(keys[27]) {
+			keys[27] = false;
 			pause = true;
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
@@ -391,8 +396,12 @@ bool cGame::Process()
 
 		if(keys['j']) {
 			keys['j'] = false;
-			if (Link.ataca()) {
+			int ataca=Link.ataca();
+			if (ataca==1) {
 				sound.playSound(sounds[LOZ_SWORD]);
+			}
+			else if(ataca == 2){
+				sound.playSound(sounds[LOZ_SWORD_COMBINED]);
 			}
 			return true;
 		}
@@ -429,7 +438,7 @@ bool cGame::Process()
 				linkBox.left+=speed;
 				linkBox.right+=speed;
 			}
-			switch (Scene.Process(&linkBox)){
+			switch (Scene.Process(&linkBox,unLockedLevels)){
 				case OK:
 					Link.SetArea(linkBox);
 					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY);
@@ -437,8 +446,15 @@ bool cGame::Process()
 				case COLLIDES:
 					return true;
 				case COLLIDES_LOCKED_DOOR:
-					if(Link.useKey())
+					if(Link.useKey()){
+						int i = 0;
+						while(unLockedLevels[i]!=nullptr)i++;
+						unLockedLevels[i] = (char*)malloc(3);
+						unLockedLevels[i][0] = Scene.getId()[0];
+						unLockedLevels[i][1] = Scene.getId()[1];
+						unLockedLevels[i][2] = '\0';
 						Scene.unlock();
+					}
 				break;
 				case OUTLIMITS:
 					Link.SetArea(linkBox);
@@ -452,8 +468,7 @@ bool cGame::Process()
 		return mainMenuProcess();
 	}
 	
-	//Game Logic
-	//...
+
 
 	return true;
 }
@@ -504,19 +519,10 @@ void cGame::Render()
 	glutSwapBuffers();
 }
 
-
-bool folderExists(const char* folderName) {
-	DWORD attribs = ::GetFileAttributesA(folderName);
-	if(attribs == INVALID_FILE_ATTRIBUTES) return false;
-	return (attribs & FILE_ATTRIBUTE_DIRECTORY)!= 0;
-}
-
 void cGame::saveSettings() {
 	if(!folderExists(OPT_DIR)) {
-		//Create folder
 		CreateDirectory(OPT_DIR, NULL);
 	}
-
 	FILE *fd = fopen(OPT_FILE, "w+");
 	char *buffer = (char *) malloc(42);
 	sprintf(buffer, "%f\n%f\n", options.musicVolume, options.effectVolume); 

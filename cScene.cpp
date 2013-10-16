@@ -1,5 +1,39 @@
 #include "cScene.h"
-#include "Globals.h"
+
+int BoxOut(cRect box){
+	if(box.bottom <= 0) return DOWN;
+	if(box.top >= SCENE_HEIGHT*BLOCK_SIZE) return UP;
+	if(box.left <= 0)return LEFT;
+	if(box.right >= SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
+	return -1;
+}
+
+bool isWallkable(int tile) {
+	if (tile == 2 || tile == 8 || tile == 14) return true;	//tierra
+	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//escaleras verticales
+	if (tile >= 126 && tile <= 129 || tile >= 132 && tile <= 135 || tile >= 138 && tile <=141 ) return true;  //esquinas
+	if (tile >=75 && tile >= 77 || tile >=81 && tile >= 83 || tile >=87 && tile >= 89) return true;  //desierto
+	if (tile >=93 && tile >= 95 || tile >=99 && tile >= 101 || tile >=105 && tile >= 107) return true;  //desierto
+	if (tile >=111 && tile >= 113 || tile >=117 && tile >= 119 || tile >=123 && tile >= 125) return true;  //desierto
+	if (tile ==  59 || tile == 65 ||tile == 71) return true;	//desierto
+	if (tile ==  131 || tile == 137 ||tile == 143) return true;	//puente
+	return false;
+}
+
+bool isWater(int tile){
+	if (tile >=72 && tile >= 74 || tile >=78 && tile >= 81 || tile >=84 && tile >= 86) return true;
+	if (tile >=90 && tile >= 92 || tile >=96 && tile >= 98 || tile >=103 && tile >= 105) return true;
+	if (tile >=108 && tile >= 110 || tile >=114 && tile >= 116 || tile >=120 && tile >= 122) return true; 
+	return false;
+}
+
+bool isDoor(int what){
+	return (what == 22 || what == 28 || what == 34);
+}
+
+bool isLockedDoor(int what){
+	return what == 136;
+}
 
 cScene::cScene(void)
 {
@@ -31,10 +65,10 @@ bool cScene::PrintMainMenu(int id) {
 }
 
 void cScene::generateCallLevel(){
-	float bordeX = (float)INTERTALE_SPACE/(TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
-	float bordeY = (float)INTERTALE_SPACE/(TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
-	float blockX = (float)TILE_SIZE/(TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
-	float blockY = (float)TILE_SIZE/(TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
+	float bordeX = (float)INTERTALE_SPACE/(SCENE_TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
+	float bordeY = (float)INTERTALE_SPACE/(SCENE_TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
+	float blockX = (float)TILE_SIZE/(SCENE_TEXTURES_WIDTH*(TILE_SIZE+INTERTALE_SPACE));
+	float blockY = (float)TILE_SIZE/(SCENE_TEXTURES_HEIGHT*(TILE_SIZE+INTERTALE_SPACE));
 
 	id_DL=glGenLists(1);
 	glNewList(id_DL,GL_COMPILE);
@@ -47,8 +81,8 @@ void cScene::generateCallLevel(){
 				py = SCENE_Yo+BLOCK_SIZE*j;
 				for(i=0;i<SCENE_WIDTH;i++){
 					pos = map[(j*SCENE_WIDTH)+i];
-					x = pos%TEXTURES_WIDTH;
-					y = pos/TEXTURES_WIDTH;
+					x = pos%SCENE_TEXTURES_WIDTH;
+					y = pos/SCENE_TEXTURES_WIDTH;
 					coordx_tile = x*(blockX+bordeX);
 					coordy_tile = y*(blockY+bordeY);
 
@@ -63,7 +97,7 @@ void cScene::generateCallLevel(){
 	glEndList();
 }
 
-bool cScene::LoadLevel(char level[])
+bool cScene::LoadLevel(char level[],bool overrided)
 {
 	FILE *fd;
 	char buffer[42];
@@ -78,6 +112,7 @@ bool cScene::LoadLevel(char level[])
 		for(i=0;i<SCENE_WIDTH;i++){
 			fscanf(fd,"%d",&tile);
 			tile--;
+			if(overrided && isLockedDoor(tile)) tile = TILE_DOOR;
 			map[(j*SCENE_WIDTH)+i] = tile;
 			fscanf(fd,"%c",&coma);//pass coma
 		}
@@ -100,28 +135,17 @@ void cScene::setId(char Nid[]){
 	id[1] = Nid[1];
 }
 
-void printText( int x, int y, char *st, void *font ){
-	int i,len;
-	len = strlen(st);
-	glColor3f(0.0, 0.0, 0.0);
-	glRasterPos2i( x, y);
-	for( i=0; i < len; i++){
-		glutBitmapCharacter(font, st[i]); // Print a character on the screen
-	}
-	glColor3f(1.0, 1.0, 1.0);
-}
-
 void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
 	if(mainMenu) {
 		PrintMainMenu(state);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18,0,0,0);
 		currentText = (currentText + 1)%3;
-		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
 		currentText = (currentText + 1)%3;
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
 	}
 	else{
 		glCallList(id_DL);
@@ -167,59 +191,23 @@ char* cScene::getId() {
 }
 
 void cScene::drawPauseMenu(char *t1, char* t2, char *t3, int select) {
-	printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE*2, "PAUSE", GLUT_BITMAP_TIMES_ROMAN_24);
+	printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE*2, "PAUSE", GLUT_BITMAP_TIMES_ROMAN_24,0,0,0);
 	if(select == 0) {
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_18);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_10);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_10);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_18,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_10,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_10,0,0,0);
 	} else if (select == 1) {
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_10);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_18);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_10);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_10,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_18,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/2, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_10,0,0,0);
 	} else if (select == 2) {
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_10);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_10);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/8, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_18);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2+BLOCK_SIZE, t1, GLUT_BITMAP_HELVETICA_10,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*2, SCENE_HEIGHT*BLOCK_SIZE/2, t2, GLUT_BITMAP_HELVETICA_10,0,0,0);
+		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE/8, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, t3, GLUT_BITMAP_HELVETICA_18,0,0,0);
 	}
 }
 
-
-int BoxOut(cRect box){
-	if(box.bottom <= 0) return DOWN;
-	if(box.top >= SCENE_HEIGHT*BLOCK_SIZE) return UP;
-	if(box.left <= 0)return LEFT;
-	if(box.right >= SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
-	return -1;
-}
-
-bool isWallkable(int tile) {
-	if (tile == 2 || tile == 8 || tile == 14) return true;	//tierra
-	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//escaleras verticales
-	if (tile >= 126 && tile <= 129 || tile >= 132 && tile <= 135 || tile >= 138 && tile <=141 ) return true;  //esquinas
-	if (tile >=75 && tile >= 77 || tile >=81 && tile >= 83 || tile >=87 && tile >= 89) return true;  //desierto
-	if (tile >=93 && tile >= 95 || tile >=99 && tile >= 101 || tile >=105 && tile >= 107) return true;  //desierto
-	if (tile >=111 && tile >= 113 || tile >=117 && tile >= 119 || tile >=123 && tile >= 125) return true;  //desierto
-	if (tile ==  59 || tile == 65 ||tile == 71) return true;	//desierto
-	if (tile ==  131 || tile == 137 ||tile == 143) return true;	//puente
-	return false;
-}
-
-bool isWater(int tile){
-	if (tile >=72 && tile >= 74 || tile >=78 && tile >= 81 || tile >=84 && tile >= 86) return true;
-	if (tile >=90 && tile >= 92 || tile >=96 && tile >= 98 || tile >=103 && tile >= 105) return true;
-	if (tile >=108 && tile >= 110 || tile >=114 && tile >= 116 || tile >=120 && tile >= 122) return true; 
-	return false;
-}
-
-bool isDoor(int what){
-	return (what == 22 || what == 28 || what == 34);
-}
-
-bool isLockedDoor(int what){
-	return what == 136;
-}
-
-int cScene::Process(cRect *BoxOrg){
+int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 	cRect Box = *BoxOrg;
 	Box.bottom-=SCENE_Yo;
 	Box.top-=SCENE_Yo;
@@ -249,7 +237,14 @@ int cScene::Process(cRect *BoxOrg){
 			id[0]++;
 			break;
 		}
-		LoadLevel(id);
+		int i = 0;
+		bool overridable = false;
+		while(unlockedDoors[i]!=nullptr && !overridable){
+			int comp = strcmp(unlockedDoors[i],id);
+			if (comp == 0)overridable = true;
+			i++;
+		}
+		LoadLevel(id,overridable);
 		BoxOrg->top = Box.top+SCENE_Yo;
 		BoxOrg->bottom = Box.bottom+SCENE_Yo;
 		BoxOrg->left = Box.left+SCENE_Xo;
@@ -282,8 +277,6 @@ int cScene::Process(cRect *BoxOrg){
 
 	return COLLIDES;
 }
-
-
 
 int cScene::whatsThere(int x,int y){
 	int bx,by;

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "utils.h"
 #include "cTexture.h"
 #include "cEnemy.h"
 
@@ -34,7 +34,7 @@ public:
 	cScene(void);
 	virtual ~cScene(void);
 
-	bool LoadLevel(char* level);
+	bool LoadLevel(char* level,bool overridable);
 	bool PrintMainMenu(int id);
 	bool LoadDungeon(int dungeon);
 	void Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state);
@@ -44,7 +44,7 @@ public:
 	void setId(char Nid[]);
 
 	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
-	int Process(cRect *Box);
+	int Process(cRect *Box,String unlockedDoors[]);
 	int whatsThere(int x,int y);
 	void unlock();
 

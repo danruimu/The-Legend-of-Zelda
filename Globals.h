@@ -8,9 +8,86 @@
 #define TILE_SIZE		16
 #define BLOCK_SIZE		32
 
-#define TEXTURES_WIDTH	18	//how many textures are in a row of the sprite
-#define TEXTURES_HEIGHT	8	//how many textures are in a columm of the sprite
+#define SCENE_TEXTURES_WIDTH	18	//how many textures are in a row of the sprite
+#define SCENE_TEXTURES_HEIGHT	8	//how many textures are in a columm of the sprite
 #define INTERTALE_SPACE	1	//space between two textures
+
+#define WIDTH_OBJECT_TEXTURE	5
+#define HEIGHT_OBJECT_TEXTURE	12
+
+//Id de las texturas de los objectos
+#define BLUE_HEART		0
+#define HEART_CONTAINER	1
+#define KEY				2
+#define RUPY			3
+#define FAIRY_N_MOV		4
+
+#define RED_HEART		5
+#define HALF_HEART		6
+#define EMPTY_HEART		7
+#define RUPY_X5			8
+#define FAIRY_MOV		9
+
+#define TRIFORCE_Y		10
+#define BOMB			11
+#define MAP_Y			12
+#define CROISSANT		13
+#define CANDLE_R		14
+
+#define TRIFORCE_B		15
+#define FOOD			16
+#define MAP_B			17
+#define ROCK			18
+#define CANDLE_B		19
+
+#define SWORD_DOWN		20
+#define SWORD_LEFT		21
+#define SWORD_UP		22
+#define SWORD_RIGHT		23
+#define SHIELD			24
+
+#define A_SWORD_DOWN	25
+#define A_SWORD_LEFT	26
+#define A_SWORD_UP		27
+#define A_SWORD_RIGHT	28
+#define ULTIMATE_SWORD	29
+
+#define W_SWORD_DOWN	30
+#define W_SWORD_LEFT	31
+#define W_WORD_UP		32
+#define W_SWORD_RIGHT	33
+#define RED_RING		34
+
+#define A_W_SWORD_DOWN	35
+#define A_W_SWORD_LEFT	36
+#define A_W_WORD_UP		37
+#define A_W_SWORD_RIGHT	38
+#define BLUE_RING		39
+
+#define ARROW_G_DOWN	40
+#define ARROW_G_LEFT	41
+#define ARROW_G_UP		42
+#define ARROW_G_RIGHT	43
+#define COMPASS			44
+
+#define ARROW_R_DOWN	45
+#define ARROW_R_LEFT	46
+#define ARROW_R_UP		47
+#define ARROW_R_RIGHT	48
+#define BOW				49
+
+#define ARROW_B_DOWN	50
+#define ARROW_B_LEFT	51
+#define ARROW_B_UP		52
+#define ARROW_B_RIGHT	53
+#define BIBLE			54
+
+#define BLUE_RAFT		55
+#define RED_RAFT		56
+#define GREEN_RAFT		57
+#define RED_POTION		58
+#define BLUE_POTION		59
+
 
 #define SCENE_Xo		BLOCK_SIZE	//how many space there is between the left of the screen and the game
 #define SCENE_Yo		BLOCK_SIZE	//how many space there is between the bottom of the screen and the game
@@ -32,11 +109,13 @@
 #define IMG_BOSS	5
 #define IMG_MAINMENU 6
 
-#define GAME_WIDTH	(BLOCK_SIZE*SCENE_WIDTH+2*BLOCK_SIZE)
-#define GAME_HEIGHT (BLOCK_SIZE*SCENE_HEIGHT+2*BLOCK_SIZE)
+#define GAME_WIDTH	BLOCK_SIZE*(SCENE_WIDTH+2)
+#define GAME_HEIGHT BLOCK_SIZE*(SCENE_HEIGHT+2)
 
 #define FPS	60
 #define NUM_PROPS	4
+
+#define NUM_MAX_GATES 42
 
 #define OPT_DIR	"opts"
 #define OPT_FILE "opts/options.txt"
