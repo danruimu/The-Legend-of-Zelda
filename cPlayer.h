@@ -2,6 +2,7 @@
 
 #include "cBicho.h"
 #include "utils.h"
+#include "cObject.h"
 
 #define PLAYER_START_CX		8
 #define PLAYER_START_CY		5
@@ -15,13 +16,6 @@
 
 #define STATE_LOOKUP		1
 #define NUM_TRANS			8
-
-struct Sword{
-	bool alive;
-	int x,y;
-	int direction;
-	int state;
-};
 
 class cPlayer: public cBicho
 {
@@ -38,10 +32,11 @@ public:
 	bool useKey();
 	void getKey();
 	void Logic(bool pause);
+	void sayonaraSword();
 private:
 	void printInfo(int obj_id);
-	Sword espasa;
 	int life,max_life;
 	int points,keys;
 	int triforce,max_triforces;
+	cObject *espasa;
 };

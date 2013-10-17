@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cTexture.h"
-#include "Globals.h"
+#include "utils.h"
 
 #define FRAME_DELAY		4
 #define STEP_LENGTH		BLOCK_SIZE/FRAME_DELAY
@@ -12,18 +12,6 @@
 #define STATE_ATTACK_2		3
 #define STATE_SWORD			4
 
-#define DIRECTION_DOWN			0
-#define DIRECTION_UP			2
-#define DIRECTION_LEFT		1
-#define DIRECTION_RIGHT		3
-
-
-class cRect
-{
-public:
-	int left,top,
-		right,bottom;
-};
 
 class cBicho
 {

@@ -3,8 +3,8 @@
 
 
 cPlayer::cPlayer() {
-	espasa.alive =false;
-	life = 3;
+	espasa = nullptr;
+	life = 6;
 	max_life = 6;
 	points = 0;
 	keys = 3;
@@ -44,14 +44,9 @@ void cPlayer::printInfo(int obj_id){
 }
 
 void cPlayer::Logic(bool pause){
-	if(espasa.alive && !pause){
-		espasa.x+= espasa.direction==DIRECTION_RIGHT?STEP_LENGTH:0;
-		espasa.x-= espasa.direction==DIRECTION_LEFT?STEP_LENGTH:0;
-		espasa.y+= espasa.direction==DIRECTION_UP?STEP_LENGTH:0;
-		espasa.y-= espasa.direction==DIRECTION_DOWN?STEP_LENGTH:0;
-		if (espasa.x-BLOCK_SIZE <= 0 || espasa.y-BLOCK_SIZE<=0 || espasa.x >=BLOCK_SIZE*SCENE_WIDTH||espasa.y >= BLOCK_SIZE*SCENE_HEIGHT){
-			espasa.alive = false;			
-		}
+	if(espasa != nullptr && !pause){
+		if (!espasa->process())
+		espasa = nullptr;
 	}
 }
 
@@ -104,9 +99,8 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		SetPosition(posx,posy);
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
-	if(espasa.alive){
-		DrawObject(obj_id,espasa.x,espasa.y,SWORD_DOWN+espasa.direction);
-		//cambiarla de color
+	if(espasa != nullptr){
+		espasa->Render(obj_id);
 	}
 	printInfo(obj_id);
 }
@@ -117,47 +111,41 @@ int cPlayer::ataca(){
 	int direction = GetDirection();
 	if (!(state == STATE_IDLE || state==STATE_MOVE))return 0;
 	GetPosition(&posx,&posy);
+	SetState(STATE_ATTACK_1);
 	switch(direction){
 		case DIRECTION_UP:
-			if(posy+BLOCK_SIZE > BLOCK_SIZE*SCENE_HEIGHT)return 0;
-			if(!espasa.alive){
-				espasa.direction = DIRECTION_UP;
-				espasa.x=posx;
-				espasa.y=posy+2*BLOCK_SIZE;
+			if(posy+SCENE_Yo > BLOCK_SIZE*SCENE_HEIGHT)return 0;
+			if (life == max_life && espasa == nullptr) {
+				espasa = new cObject(posx,posy+2*BLOCK_SIZE,SWORD_DOWN);
+				espasa->setMovable(true,GetSpeed(),direction);
+				return 2;
 			}
 			break;
 		case DIRECTION_DOWN:
-			if(posy-BLOCK_SIZE < 0)return 0;
-			if(!espasa.alive){
-				espasa.direction = DIRECTION_DOWN;
-				espasa.x=posx;
-				espasa.y=posy-2*BLOCK_SIZE;
+			if(posy-SCENE_Yo < 0)return 0;
+			if (life == max_life && espasa == nullptr) {
+				espasa = new cObject(posx,posy-2*BLOCK_SIZE,SWORD_DOWN);
+				espasa->setMovable(true,GetSpeed(),direction);
+				return 2;
 			}
 			break;
 		case DIRECTION_RIGHT:
-			if(posx+BLOCK_SIZE > BLOCK_SIZE*SCENE_WIDTH)return 0;
-			if(!espasa.alive){
-				espasa.direction = DIRECTION_RIGHT;
-				espasa.x=posx+2*BLOCK_SIZE;
-				espasa.y=posy;
+			if(posx+SCENE_Xo > BLOCK_SIZE*SCENE_WIDTH)return 0;
+			if (life == max_life && espasa == nullptr) {
+				espasa = new cObject(posx+2*BLOCK_SIZE,posy,SWORD_DOWN);
+				espasa->setMovable(true,GetSpeed(),direction);
+				return 2;
 			}
 			break;
 		case DIRECTION_LEFT:
-			if(posx-BLOCK_SIZE < 0)return 0;
-			if(!espasa.alive){
-				espasa.direction = DIRECTION_LEFT;
-				espasa.x=posx-2*BLOCK_SIZE;
-				espasa.y=posy;
+			if(posx-SCENE_Xo < 0)return 0;
+			if (life == max_life && espasa == nullptr) {
+				espasa = new cObject(posx-2*BLOCK_SIZE,posy,SWORD_DOWN);
+				espasa->setMovable(true,GetSpeed(),direction);
+				return 2;
 			}
 			break;
 	}
-	if(!espasa.alive){
-		//PlaySound("sounds\\LOZ_Sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-		espasa.alive=true;
-		espasa.state=0;
-		return 2;
-	}
-	SetState(STATE_ATTACK_1);
 	return 1;
 }
 
@@ -187,3 +175,6 @@ void cPlayer::getKey(){
 	keys++;
 }
 
+void cPlayer::sayonaraSword(){
+	espasa = nullptr;
+}
