@@ -4,7 +4,8 @@
 #include "Globals.h"
 
 #define FRAME_DELAY		4
-#define STEP_LENGTH		BLOCK_SIZE/FRAME_DELAY
+#define FRAME_DELAY_WALK	10
+#define STEP_LENGTH		4
 
 #define STATE_IDLE			1
 #define STATE_MOVE			0

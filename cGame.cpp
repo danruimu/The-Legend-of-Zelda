@@ -441,28 +441,25 @@ bool cGame::Process()
 			Link.GetArea(&linkBox);
 			speed = Link.GetSpeed();
 			if(keys['w']) {
-				keys['w'] = false;
+				//keys['w'] = false;
 				if (Link.GetDirection()!=DIRECTION_UP)
 				Link.SetDirection(DIRECTION_UP);
 				linkBox.bottom+=speed;
 				linkBox.top+=speed;
-			}
-			if(keys['a']) {
-				keys['a'] = false;
+			} else if(keys['a']) {
+				//keys['a'] = false;
 				if (Link.GetDirection()!=DIRECTION_LEFT)
 				Link.SetDirection(DIRECTION_LEFT);
 				linkBox.left-=speed;
 				linkBox.right-=speed;
-			}
-			if(keys['s']) {
-				keys['s'] = false;
+			} else if(keys['s']) {
+				//keys['s'] = false;
 				if (Link.GetDirection()!=DIRECTION_DOWN)
 				Link.SetDirection(DIRECTION_DOWN);
 				linkBox.top-=speed;
 				linkBox.bottom-=speed;
-			}
-			if(keys['d']) {
-				keys['d'] = false;
+			} else if(keys['d']) {
+				//keys['d'] = false;
 				if (Link.GetDirection()!=DIRECTION_RIGHT)
 				Link.SetDirection(DIRECTION_RIGHT);
 				linkBox.left+=speed;
@@ -471,7 +468,7 @@ bool cGame::Process()
 			switch (Scene.Process(&linkBox,unLockedLevels)){
 				case OK:
 					Link.SetArea(linkBox);
-					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY);
+					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY_WALK);
 				break;
 				case COLLIDES:
 					return true;
