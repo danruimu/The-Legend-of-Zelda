@@ -105,8 +105,9 @@ void cPlayer::Draw(int tex_id,int obj_id){
 	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 	if(espasa.alive){
+		glColor3f((float)rand()/(float)RAND_MAX,(float)rand()/(float)RAND_MAX,(float)rand()/(float)RAND_MAX);
 		DrawObject(obj_id,espasa.x,espasa.y,SWORD_DOWN+espasa.direction);
-		//cambiarla de color
+		glColor3f(1.0, 1.0, 1.0);
 	}
 	printInfo(obj_id);
 }
@@ -169,6 +170,7 @@ int cPlayer::heal(int num_hearts){//-1 -> full recovery
 	else life = min(max_life,life+num_hearts);
 	return life;
 }
+
 int cPlayer::damage(int num_hearts){ 
 	life = max(0,life-num_hearts);
 	return life;
@@ -186,6 +188,7 @@ bool cPlayer::useKey(){
 	return false;
 	
 }
+
 void cPlayer::getKey(){
 	keys++;
 }
