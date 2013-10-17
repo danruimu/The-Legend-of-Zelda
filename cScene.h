@@ -3,16 +3,16 @@
 #include "cTexture.h"
 #include "cEnemy.h"
 
-#define STR_LOCKED		"locked"
-#define STR_TRIFORCE	"triforce"
-#define LOCKED			0
-#define TRIFORCE		1
+#define STR_DUNGEON	"dungeon"
+#define DUNGEON_PROP		0//if its true indicates that the entry in this level its a dungeon; otherwise it indicates that it's a shop
 
 
 #define OK						0
 #define COLLIDES				1
 #define COLLIDES_LOCKED_DOOR	2
 #define OUTLIMITS				3
+#define DUNGEON					4
+#define MARKET					5
 
 #define WALKABLE	0
 #define DOOR		1
@@ -35,8 +35,7 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level,bool overridable);
-	bool PrintMainMenu(int id);
-	bool LoadDungeon(int dungeon);
+	bool PrintMainMenu(int idMM);
 	void Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state);
 	void newGameAnimation(int texID,int currentAnimation);
 	int *GetMap();
@@ -55,6 +54,9 @@ private:
 	char id[3];
 	bool prop[NUM_PROPS];
 	char *names[NUM_PROPS];
-	cEnemy foes[42];
 	void generateCallLevel();
+	int xDoor,yDoor;//indicates the position of the door previusly gone by, if theres one; otherwise this value it's -1
+	bool dungeon;//indicates if the current level is a dungeon or a market
+	bool LoadDungeon(bool dungeon);
+	bool exitingDoor;
 };

@@ -8,7 +8,15 @@ int BoxOut(cRect box){
 	return -1;
 }
 
+bool isWater(int tile){
+	if (tile >=72 && tile >= 74 || tile >=78 && tile >= 81 || tile >=84 && tile >= 86) return true;
+	if (tile >=90 && tile >= 92 || tile >=96 && tile >= 98 || tile >=103 && tile >= 105) return true;
+	if (tile >=108 && tile >= 110 || tile >=114 && tile >= 116 || tile >=120 && tile >= 122) return true; 
+	return false;
+}
+
 bool isWallkable(int tile) {
+	if (isWater(tile))return false;//caso de que link consiga la barca cambiar esto
 	if (tile == 2 || tile == 8 || tile == 14) return true;	//tierra
 	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//escaleras verticales
 	if (tile >= 126 && tile <= 129 || tile >= 132 && tile <= 135 || tile >= 138 && tile <=141 ) return true;  //esquinas
@@ -20,12 +28,7 @@ bool isWallkable(int tile) {
 	return false;
 }
 
-bool isWater(int tile){
-	if (tile >=72 && tile >= 74 || tile >=78 && tile >= 81 || tile >=84 && tile >= 86) return true;
-	if (tile >=90 && tile >= 92 || tile >=96 && tile >= 98 || tile >=103 && tile >= 105) return true;
-	if (tile >=108 && tile >= 110 || tile >=114 && tile >= 116 || tile >=120 && tile >= 122) return true; 
-	return false;
-}
+
 
 bool isDoor(int what){
 	return (what == 22 || what == 28 || what == 34);
@@ -40,18 +43,19 @@ cScene::cScene(void)
 	id[0] = 'H';
 	id[1] = '8';
 	id[2] = '\0';
-	names[LOCKED] = STR_LOCKED;
-	names[TRIFORCE] = STR_TRIFORCE;
+	names[DUNGEON_PROP] = STR_DUNGEON;
+	dungeon = false;
+	exitingDoor = false;
 }
 
 cScene::~cScene(void)
 {
 }
 
-bool cScene::PrintMainMenu(int id) {
+bool cScene::PrintMainMenu(int idMM) {
 	float xi,yi,xf,yf;
-	xi=0.5*(id%2);
-	yi=(id<<1)*0.5;
+	xi=0.5*(idMM%2);
+	yi=(idMM<<1)*0.5;
 	xf=xi+0.5;
 	yf=0.5+yi;
 	glBegin(GL_QUADS);
@@ -103,29 +107,35 @@ bool cScene::LoadLevel(char level[],bool overrided)
 	char buffer[42];
 	char coma;
 	int i,j,tile,n;
-
 	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
-
+	if (!dungeon)xDoor = yDoor = -1;
 	fd=fopen(buffer,"r");
 	if(fd==NULL) return false;
 	for(j=SCENE_HEIGHT-1;j>=0;j--){
 		for(i=0;i<SCENE_WIDTH;i++){
 			fscanf(fd,"%d",&tile);
 			tile--;
-			if(overrided && isLockedDoor(tile)) tile = TILE_DOOR;
+			if(!dungeon && (isLockedDoor(tile) || isDoor(tile))){
+				if(overrided) tile = TILE_DOOR;
+				yDoor = j;
+				xDoor = i;
+			}
 			map[(j*SCENE_WIDTH)+i] = tile;
 			fscanf(fd,"%c",&coma);//pass coma
 		}
 		fscanf(fd,"%c",&coma); //pass enter
 	}
-	fscanf(fd,"%d",&n);
-	fscanf(fd,"%c",&coma);//pass enter
-	for(i=0;i<n;i++){
-		fscanf(fd,"%s",buffer);
-		prop[i] = strcmp(names[i],buffer) == 0;
+	if (!dungeon){// de momento las dungeons no tienen propiedades
+		fscanf(fd,"%d",&n);
+		fscanf(fd,"%c",&coma);//pass enter
+		for(i=0;i<n;i++){
+			fscanf(fd,"%s",buffer);
+			prop[i] = strcmp(names[i],buffer) == 0;
+		}
+		setId(level);
 	}
+	
 	fclose(fd);
-	setId(level);
 	generateCallLevel();
 	return true;
 }
@@ -215,34 +225,45 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 	Box.right-=SCENE_Xo;
 	int out = BoxOut(Box);
 	if(out != -1){
-		switch (out){
-		case UP:
-			Box.bottom=0;
-			Box.top=BLOCK_SIZE;
-			id[1]--;
-			break;
-		case DOWN:
-			Box.top=SCENE_HEIGHT*BLOCK_SIZE;
-			Box.bottom=Box.top-BLOCK_SIZE;
-			id[1]++;
-			break;
-		case LEFT:
-			Box.right=SCENE_WIDTH*BLOCK_SIZE;
-			Box.left=Box.right-BLOCK_SIZE;
-			id[0]--;
-			break;
-		case RIGHT:
-			Box.left=0;
-			Box.right=BLOCK_SIZE;
-			id[0]++;
-			break;
-		}
-		int i = 0;
 		bool overridable = false;
-		while(unlockedDoors[i]!=nullptr && !overridable){
-			int comp = strcmp(unlockedDoors[i],id);
-			if (comp == 0)overridable = true;
-			i++;
+		if(dungeon){
+			dungeon = false;
+			Box.left = xDoor*BLOCK_SIZE;
+			Box.right = Box.left + BLOCK_SIZE;
+			Box.bottom = yDoor*BLOCK_SIZE;
+			Box.top =  Box.bottom+BLOCK_SIZE;
+			overridable = true;
+		}
+		else{
+			switch (out){
+			case UP:
+				Box.bottom=0;
+				Box.top=BLOCK_SIZE;
+				id[1]--;
+				break;
+			case DOWN:
+				Box.top=SCENE_HEIGHT*BLOCK_SIZE;
+				Box.bottom=Box.top-BLOCK_SIZE;
+				id[1]++;
+				break;
+			case LEFT:
+				Box.right=SCENE_WIDTH*BLOCK_SIZE;
+				Box.left=Box.right-BLOCK_SIZE;
+				id[0]--;
+				break;
+			case RIGHT:
+				Box.left=0;
+				Box.right=BLOCK_SIZE;
+				id[0]++;
+				break;
+			}
+		
+			int i = 0;
+			while(unlockedDoors[i]!=nullptr && !overridable){
+				int comp = strcmp(unlockedDoors[i],id);
+				if (comp == 0)overridable = true;
+				i++;
+			}
 		}
 		LoadLevel(id,overridable);
 		BoxOrg->top = Box.top+SCENE_Yo;
@@ -267,14 +288,25 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 	if(numlockeddoors>=2){
 		return COLLIDES_LOCKED_DOOR;
 	}
-	if(numdoors>=2){
-		//TODO fer les mazmorres
-		return COLLIDES;
+	if(!dungeon && numdoors>=2){
+		if(exitingDoor){
+			if(numwalkables + numdoors >= 4)return OK;
+		}
+		else{
+			dungeon = true;
+			exitingDoor = true;
+			LoadLevel(prop[DUNGEON_PROP]?"dungeon":"market",false);
+			BoxOrg->bottom = SCENE_Yo;
+			BoxOrg->top=SCENE_Yo + BLOCK_SIZE;
+			BoxOrg->left = SCENE_Xo + 7*BLOCK_SIZE;
+			BoxOrg->right=BoxOrg->left+BLOCK_SIZE;
+			return prop[DUNGEON_PROP]?DUNGEON:MARKET;
+		}
 	}
 	if(numwalkables == 4){
+		if(!dungeon)exitingDoor = false;
 		return OK;
 	}
-
 	return COLLIDES;
 }
 
@@ -290,7 +322,6 @@ int cScene::whatsThere(int x,int y){
 }
 
 void cScene::unlock(){
-	prop[LOCKED] = false;
 	for(int i=0;i<SCENE_HEIGHT*SCENE_WIDTH;i++){
 		if (isLockedDoor(map[i])){
 			map[i] = TILE_DOOR;

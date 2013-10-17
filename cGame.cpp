@@ -396,7 +396,6 @@ bool cGame::Process()
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		}
-
 		if(keys['j'] || keys[' ']) {
 			keys['j'] = keys[' '] = false;
 			int ataca=Link.ataca();
@@ -484,12 +483,19 @@ bool cGame::Process()
 						sound.playSound(sounds[LOZ_UNLOCK]);
 					}
 				break;
+				case DUNGEON:
+					Link.sayonaraSword();
+					Link.SetArea(linkBox);
+				case MARKET:
+					Link.sayonaraSword();
+					Link.SetArea(linkBox);
 				case OUTLIMITS:
+					Link.sayonaraSword();
 					Link.SetArea(linkBox);
 				break;
 			}
+			return true;
 		}
-		return true;
 	}
 
 	if (mainMenu){

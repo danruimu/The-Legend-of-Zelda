@@ -117,6 +117,11 @@
 
 #define NUM_MAX_GATES 42
 
+#define DIRECTION_DOWN		0
+#define DIRECTION_UP		2
+#define DIRECTION_LEFT		1
+#define DIRECTION_RIGHT		3
+
 #define OPT_DIR	"opts"
 #define OPT_FILE "opts/options.txt"
 

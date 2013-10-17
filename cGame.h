@@ -49,7 +49,6 @@ private:
 	cScene Scene;
 	cData Data;
 	cPlayer Link;
-	cPlayer LinkSword;
 	cBicho	monsters[MAX_N_MONSTERS];
 	cSound sound;
 	map<char,int> sounds;
