@@ -92,6 +92,8 @@ bool cGame::Init()
 	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true, EFFECT);
 	sounds[LOZ_TEXT] = sound.addSound("sounds/LOZ_Text.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_DEATH_MOUNTAIN] = sound.addSound("sounds/LOZ_MUSIC_Death_mountain_dungeon.wav", true, MUSIC);
+	sounds[LOZ_HURT] = sound.addSound("sounds/LOZ_Hurt.wav", false, EFFECT);
+	sounds[LOZ_GET_HEART] = sound.addSound("sounds/LOZ_Get_Heart.wav", false, EFFECT);
 	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
@@ -406,6 +408,33 @@ bool cGame::Process()
 			}
 			return true;
 		}
+
+		/****************************************/
+		// TO BE REMOVED
+		if(keys['q']) {
+			keys['q'] = false;
+			int lifes = Link.heal(1);
+			sound.playSound(sounds[LOZ_GET_HEART]);
+			if(lifes <= 2) {
+				sound.playSound(sounds[LOZ_LOW_HEALTH]);
+			} else {
+				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+			}
+			return true;
+		}
+		if(keys['e']) {
+			keys['e'] = false;
+			int lifes = Link.damage(1);
+			sound.playSound(sounds[LOZ_HURT]);
+			if(lifes <= 2) {
+				sound.playSound(sounds[LOZ_LOW_HEALTH]);
+			} else {
+				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+			}
+			return true;
+		}
+		/****************************************/
+
 		if (keys['w']||keys['s']||keys['d']||keys['a']){
 			int speed;
 			cRect linkBox;

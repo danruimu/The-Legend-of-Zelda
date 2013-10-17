@@ -34,6 +34,7 @@ public:
 	int ataca();//0 = no ataca; 1 = ataca; 2 = ataca i dispara
 	int heal(int num_hearts);//-1 -> full recovery
 	int damage(int num_hearts);//devuelve el numero de corazones, quien llame a esto 
+	bool fullLife();
 	void givePoints(int num_points);
 	bool useKey();
 	void getKey();

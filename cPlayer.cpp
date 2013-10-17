@@ -4,7 +4,7 @@
 
 cPlayer::cPlayer() {
 	espasa.alive =false;
-	life = 3;
+	life = 6;
 	max_life = 6;
 	points = 0;
 	keys = 3;
@@ -151,13 +151,16 @@ int cPlayer::ataca(){
 			}
 			break;
 	}
-	if(!espasa.alive){
-		//PlaySound("sounds\\LOZ_Sword_shoot.wav",NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP);
-		espasa.alive=true;
+	SetState(STATE_ATTACK_1);
+
+	if(!espasa.alive && life==max_life){
+		espasa.alive = true;
 		espasa.state=0;
 		return 2;
+	} else if(espasa.alive && life!=max_life) {
+		espasa.alive = false;
+		return 1;
 	}
-	SetState(STATE_ATTACK_1);
 	return 1;
 }
 
