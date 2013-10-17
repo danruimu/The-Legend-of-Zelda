@@ -135,6 +135,23 @@ bool cScene::LoadLevel(char level[],bool overrided)
 		setId(level);
 	}
 	
+	//Leer enemigos del nivel
+	int nEnem;
+	nEnemies = 0;
+	fscanf(fd, "%d", &nEnem);
+	if ( nEnem > 0) {
+		while (nEnem >= 0) {
+			char *enemyType = (char*) malloc(42);
+			int quants;
+			fscanf(fd, "%s%d", enemyType, quants);
+			for(int i=0; i<quants; ++i) {
+				enemies[nEnemies+i] = new cEnemy((int) (float)SCENE_WIDTH * ((float)rand()/(float)RAND_MAX), (int) (float)SCENE_HEIGHT * ((float)rand()/(float)RAND_MAX), enemyType);
+			}
+			nEnem -= quants;
+			nEnemies += quants;
+		}
+	}
+
 	fclose(fd);
 	generateCallLevel();
 	return true;
@@ -161,6 +178,8 @@ void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText,int s
 		glCallList(id_DL);
 	}
 	glDisable(GL_TEXTURE_2D);
+
+	this->drawEnemies();
 }
 
 void cScene::newGameAnimation(int texID,int currentAnimation) {
@@ -328,4 +347,15 @@ void cScene::unlock(){
 		}
 	}
 	generateCallLevel();
+}
+
+void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
+	//TODO: hacer animacion de transicion entre levels
+}
+
+
+void cScene::drawEnemies() {
+	for(int i = 0; i < nEnemies; ++i) {
+		enemies[i]->draw();
+	}
 }
