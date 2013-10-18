@@ -516,7 +516,6 @@ bool cGame::Process()
 //Output
 void cGame::Render()
 {
-	int i;
 		glClear(GL_COLOR_BUFFER_BIT);
 	
 	glLoadIdentity();
