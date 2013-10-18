@@ -48,8 +48,11 @@ cScene::cScene(void)
 	exitingDoor = false;
 }
 
-cScene::~cScene(void)
-{
+cScene::~cScene(void){
+	int i=0;
+	while (objects[i]!=nullptr)free(objects[i++]);
+	i=0;
+	while (monsters[i]!=nullptr)free(monsters[i++]);
 }
 
 bool cScene::PrintMainMenu(int idMM) {
@@ -107,6 +110,16 @@ bool cScene::LoadLevel(char level[],bool overrided)
 	char buffer[42];
 	char coma;
 	int i,j,tile,n;
+	i=0;
+	while (objects[i]!=nullptr){
+		free(objects[i]);//buidar objectes
+		objects[i++] = nullptr;
+	}
+	i=0;
+	while (monsters[i]!=nullptr){
+		free(monsters[i]);
+		monsters[i++] = nullptr;
+	}//buidar monstres
 	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
 	if (!dungeon)xDoor = yDoor = -1;
 	fd=fopen(buffer,"r");
@@ -126,17 +139,18 @@ bool cScene::LoadLevel(char level[],bool overrided)
 		fscanf(fd,"%c",&coma); //pass enter
 	}
 	if (!dungeon){// de momento las dungeons no tienen propiedades
-		fscanf(fd,"%d",&n);
+		fscanf(fd,"%d",&n);//leemos el numero de propiedades de la escena
 		fscanf(fd,"%c",&coma);//pass enter
-		for(i=0;i<n;i++){
+		for(i=0;i<n;i++){//leemos las propiedades per se
 			fscanf(fd,"%s",buffer);
 			prop[i] = strcmp(names[i],buffer) == 0;
 		}
-		setId(level);
+		setId(level);//seteamos el nivel
 	}
 	
 	fclose(fd);
 	generateCallLevel();
+
 	return true;
 }
 
@@ -145,7 +159,7 @@ void cScene::setId(char Nid[]){
 	id[1] = Nid[1];
 }
 
-void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state)
+void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int currentText,int state)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
@@ -159,6 +173,9 @@ void cScene::Draw(int tex_id, bool mainMenu, char* text[], int currentText,int s
 	}
 	else{
 		glCallList(id_DL);
+		if(dungeon && !prop[DUNGEON_PROP])printText(SCENE_Xo+2*BLOCK_SIZE,SCENE_Yo+8*BLOCK_SIZE,"Wellcome to da market, BITCH",GLUT_BITMAP_TIMES_ROMAN_24,1.,1.,1.);
+		int i=0;
+		while(objects[i]!=nullptr)objects[i++]->Render(obj_id);
 	}
 	glDisable(GL_TEXTURE_2D);
 }
@@ -223,6 +240,9 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 	Box.top-=SCENE_Yo;
 	Box.left-=SCENE_Xo;
 	Box.right-=SCENE_Xo;
+	int i=0;
+	while (objects[i]!=nullptr)objects[i++]->process();//process objectes
+	//TODO: colisiones de objetos en process o separado
 	int out = BoxOut(Box);
 	if(out != -1){
 		bool overridable = false;
@@ -300,7 +320,16 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 			BoxOrg->top=SCENE_Yo + BLOCK_SIZE;
 			BoxOrg->left = SCENE_Xo + 7*BLOCK_SIZE;
 			BoxOrg->right=BoxOrg->left+BLOCK_SIZE;
-			return prop[DUNGEON_PROP]?DUNGEON:MARKET;
+			if(prop[DUNGEON_PROP]){//dungeon
+				objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
+				int vector[] = {TRIFORCE_Y,TRIFORCE_B};
+				objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+				objects[0]->setCollectable(10);
+			}
+			else{//market
+				
+			}
+			return OUTLIMITS;
 		}
 	}
 	if(numwalkables == 4){

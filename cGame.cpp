@@ -4,8 +4,14 @@ cGame::cGame(void)
 {
 }
 
-cGame::~cGame(void)
-{
+cGame::~cGame(void){
+	int i ;
+	for (i= 0; i < 3; i++){
+		free(menuText[i]);
+	}
+	i=0;
+	while(unLockedLevels[i]!=nullptr)
+		free(unLockedLevels[i++]);
 }
 
 bool cGame::startGame() {
@@ -117,6 +123,7 @@ bool cGame::Loop()
 void cGame::Finalize()
 {
 	this->saveSettings();
+	Link.sayonaraSword();//liberar memoria
 	exit(0);
 }
 
@@ -483,12 +490,6 @@ bool cGame::Process()
 						sound.playSound(sounds[LOZ_UNLOCK]);
 					}
 				break;
-				case DUNGEON:
-					Link.sayonaraSword();
-					Link.SetArea(linkBox);
-				case MARKET:
-					Link.sayonaraSword();
-					Link.SetArea(linkBox);
 				case OUTLIMITS:
 					Link.sayonaraSword();
 					Link.SetArea(linkBox);
@@ -510,8 +511,7 @@ bool cGame::Process()
 //Output
 void cGame::Render()
 {
-	int i;
-		glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glLoadIdentity();
 	
@@ -539,14 +539,11 @@ void cGame::Render()
 				nTransMM++;
 			}
 		}
-		Scene.Draw(Data.GetID(IMG_MAINMENU), mainMenu, menuText, currentOptMM,currentMM);
+		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM);
 	}
 	else{//mainMenu= false
-		Scene.Draw(Data.GetID(IMG_BLOCKS), mainMenu, NULL, 0,0);
+		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
-		for(i = 0; i < MAX_N_MONSTERS; ++i) {
-			//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
-		}
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} 
 
@@ -563,6 +560,7 @@ void cGame::saveSettings() {
 	if (fd != NULL) {
 		fwrite(buffer, strlen(buffer), 1, fd);
 	}
+	free(buffer);
 }
 
 void cGame::loadSettings() {

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "cTexture.h"
 #include "cEnemy.h"
+#include "cObject.h"
 
 #define STR_DUNGEON	"dungeon"
 #define DUNGEON_PROP		0//if its true indicates that the entry in this level its a dungeon; otherwise it indicates that it's a shop
@@ -36,7 +37,7 @@ public:
 
 	bool LoadLevel(char* level,bool overridable);
 	bool PrintMainMenu(int idMM);
-	void Draw(int tex_id, bool mainMenu, char* text[], int currentText,int state);
+	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state);
 	void newGameAnimation(int texID,int currentAnimation);
 	int *GetMap();
 	char *getId();
@@ -59,4 +60,7 @@ private:
 	bool dungeon;//indicates if the current level is a dungeon or a market
 	bool LoadDungeon(bool dungeon);
 	bool exitingDoor;
+
+	cEnemy	*monsters[MAX_N_MONSTERS];
+	cObject *objects[NUM_MAX_OBJECTS];
 };

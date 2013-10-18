@@ -8,14 +8,25 @@ public:
 	void Render(int tex_id);
 	bool process();
 	cRect getArea();
-	void setMovable(bool movable,int velocity,int direction);
+	bool collides(cRect target);
+	void setMovable(int velocity,int direction,int damage);
+	int getDamage();
+	void setCollectable(int price);
+	int getPrice();
+	void setAnimated(int *animation,int num_animations,int frame_delay);
+
 private:
 	int x,y,id;
-	bool collectable,moving,animated;
-	int direction,velocity;
-	int *animation;//vector donde guardar los objid animados diferentes
-	int frame;
-	int num_animations;
 
+	bool collectable;
+	int price;
+
+	bool moving;
+	int direction,velocity,damage;
+
+	bool animated;
+	int *animation;//vector donde guardar los objid animados diferentes
+	int frame,seq;
+	int frame_delay,num_animations;
 };
 

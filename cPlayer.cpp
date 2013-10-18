@@ -44,8 +44,9 @@ void cPlayer::printInfo(int obj_id){
 }
 
 void cPlayer::Logic(bool pause){
-	if(espasa != nullptr && !pause){
-		if (!espasa->process())
+	if (pause) return;
+	if(espasa != nullptr && !espasa->process()){
+		free(espasa);
 		espasa = nullptr;
 	}
 }
@@ -117,7 +118,7 @@ int cPlayer::ataca(){
 			if(posy+SCENE_Yo > BLOCK_SIZE*SCENE_HEIGHT)return 0;
 			if (life == max_life && espasa == nullptr) {
 				espasa = new cObject(posx,posy+2*BLOCK_SIZE,SWORD_DOWN);
-				espasa->setMovable(true,GetSpeed(),direction);
+				espasa->setMovable(GetSpeed()*2,direction,1);
 				return 2;
 			}
 			break;
@@ -125,7 +126,7 @@ int cPlayer::ataca(){
 			if(posy-SCENE_Yo < 0)return 0;
 			if (life == max_life && espasa == nullptr) {
 				espasa = new cObject(posx,posy-2*BLOCK_SIZE,SWORD_DOWN);
-				espasa->setMovable(true,GetSpeed(),direction);
+				espasa->setMovable(GetSpeed()*2,direction,1);
 				return 2;
 			}
 			break;
@@ -133,7 +134,7 @@ int cPlayer::ataca(){
 			if(posx+SCENE_Xo > BLOCK_SIZE*SCENE_WIDTH)return 0;
 			if (life == max_life && espasa == nullptr) {
 				espasa = new cObject(posx+2*BLOCK_SIZE,posy,SWORD_DOWN);
-				espasa->setMovable(true,GetSpeed(),direction);
+				espasa->setMovable(GetSpeed()*2,direction,1);
 				return 2;
 			}
 			break;
@@ -141,7 +142,7 @@ int cPlayer::ataca(){
 			if(posx-SCENE_Xo < 0)return 0;
 			if (life == max_life && espasa == nullptr) {
 				espasa = new cObject(posx-2*BLOCK_SIZE,posy,SWORD_DOWN);
-				espasa->setMovable(true,GetSpeed(),direction);
+				espasa->setMovable(GetSpeed()*2,direction,1);
 				return 2;
 			}
 			break;
@@ -179,5 +180,6 @@ void cPlayer::getKey(){
 }
 
 void cPlayer::sayonaraSword(){
+	free(espasa);
 	espasa = nullptr;
 }

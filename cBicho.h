@@ -30,16 +30,10 @@ public:
 	void GetWidthHeight(int *w,int *h);
 
 	bool Collides(cRect *rc);
-	bool CollidesMapWall(int *map,int direction);
 	void GetArea(cRect *rc);
 	void SetArea(cRect rc);
 	void DrawRect(int tex_id,float xo,float yo,float xf,float yf);
 
-	void MoveRight(int *map);
-	void MoveLeft(int *map);
-	void Jump(int *map);
-	void Stop();
-	void Logic(int *map);
 
 	int  GetState();
 	void SetState(int s);
@@ -48,7 +42,6 @@ public:
 	void SetDirection(int s);
 
 	void NextFrame(int init,int max,int frame_delay);
-	int  GetFrame();
 
 	int GetSpeed();
 	void SetSpeed(int s);
@@ -63,6 +56,6 @@ private:
 	int state;
 	int speed;
 
-	int seq,delay;
+	int delay;
 	bool alive;
 };

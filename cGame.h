@@ -7,7 +7,6 @@
 #include "utils.h"
 #include <map>
 
-#define	MAX_N_MONSTERS	10
 
 #define TRANS_MAINMENU	7
 
@@ -49,7 +48,6 @@ private:
 	cScene Scene;
 	cData Data;
 	cPlayer Link;
-	cBicho	monsters[MAX_N_MONSTERS];
 	cSound sound;
 	map<char,int> sounds;
 
