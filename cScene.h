@@ -28,6 +28,8 @@
 
 #define TILE_DOOR	22
 
+#define N_MAX_ENEMIES 42
+
 
 class cScene
 {
@@ -36,6 +38,7 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level,bool overridable);
+	void LoadLevelAnimation(char *oldLevel, char *newLevel);
 	bool PrintMainMenu(int idMM);
 	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state);
 	void newGameAnimation(int texID,int currentAnimation);
@@ -47,6 +50,7 @@ public:
 	int Process(cRect *Box,String unlockedDoors[]);
 	int whatsThere(int x,int y);
 	void unlock();
+	void drawEnemies();
 
 
 private:
@@ -61,6 +65,7 @@ private:
 	bool LoadDungeon(bool dungeon);
 	bool exitingDoor;
 
-	cEnemy	*monsters[MAX_N_MONSTERS];
 	cObject *objects[NUM_MAX_OBJECTS];
+	cEnemy *enemies[N_MAX_ENEMIES];
+	int nEnemies;
 };

@@ -103,8 +103,8 @@
 //Image identifiers
 #define IMG_BLOCKS	0
 #define IMG_PLAYER	1
-#define IMG_ENEMY1	2
-#define IMG_ENEMY2	3
+#define IMG_ENEMY_FAT_DOG_O	2
+#define IMG_ENEMY_OCTOROK_B	3
 #define IMG_OBJECTS	4
 #define IMG_BOSS	5
 #define IMG_MAINMENU 6

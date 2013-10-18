@@ -35,6 +35,12 @@ bool cGame::startGame() {
 	res = Scene.LoadLevel("H8",false);
 	if(!res) return false;
 
+	res = Data.LoadImage(IMG_ENEMY_FAT_DOG_O, "sprites/fat-dog.png", GL_RGBA);
+	if(!res) return false;
+	res = Data.LoadImage(IMG_ENEMY_OCTOROK_B, "sprites/octorok-b.png", GL_RGBA);
+	if(!res) return false;
+
+
 	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;

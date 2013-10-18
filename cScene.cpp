@@ -1,10 +1,10 @@
 #include "cScene.h"
 
 int BoxOut(cRect box){
-	if(box.bottom <= 0) return DOWN;
-	if(box.top >= SCENE_HEIGHT*BLOCK_SIZE) return UP;
-	if(box.left <= 0)return LEFT;
-	if(box.right >= SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
+	if(box.bottom < 0) return DOWN;
+	if(box.top > SCENE_HEIGHT*BLOCK_SIZE) return UP;
+	if(box.left < 0)return LEFT;
+	if(box.right > SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
 	return -1;
 }
 
@@ -52,7 +52,7 @@ cScene::~cScene(void){
 	int i=0;
 	while (objects[i]!=nullptr)free(objects[i++]);
 	i=0;
-	while (monsters[i]!=nullptr)free(monsters[i++]);
+	while (enemies[i]!=nullptr)free(enemies[i++]);
 }
 
 bool cScene::PrintMainMenu(int idMM) {
@@ -116,9 +116,9 @@ bool cScene::LoadLevel(char level[],bool overrided)
 		objects[i++] = nullptr;
 	}
 	i=0;
-	while (monsters[i]!=nullptr){
-		free(monsters[i]);
-		monsters[i++] = nullptr;
+	while (enemies[i]!=nullptr){
+		free(enemies[i]);
+		enemies[i++] = nullptr;
 	}//buidar monstres
 	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
 	if (!dungeon)xDoor = yDoor = -1;
@@ -148,6 +148,23 @@ bool cScene::LoadLevel(char level[],bool overrided)
 		setId(level);//seteamos el nivel
 	}
 	
+	//Read Enemies from level
+	int nEnem;
+	nEnemies = 0;
+	fscanf(fd, "%d", &nEnem);
+	if ( nEnem > 0) {
+		while (nEnem > 0) {
+			char *enemyType = (char*) malloc(42);
+			int quants = 0;
+			fscanf(fd, "%s%d", enemyType, &quants);
+			for(int i=0; i<quants; ++i) {
+				enemies[nEnemies+i] = new cEnemy((int) (float)SCENE_WIDTH * ((float)rand()/(float)RAND_MAX), (int) (float)SCENE_HEIGHT * ((float)rand()/(float)RAND_MAX), enemyType);
+			}
+			nEnem -= quants;
+			nEnemies += quants;
+		}
+	}
+
 	fclose(fd);
 	generateCallLevel();
 
@@ -178,6 +195,8 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 		while(objects[i]!=nullptr)objects[i++]->Render(obj_id);
 	}
 	glDisable(GL_TEXTURE_2D);
+
+	this->drawEnemies();
 }
 
 void cScene::newGameAnimation(int texID,int currentAnimation) {
@@ -357,4 +376,16 @@ void cScene::unlock(){
 		}
 	}
 	generateCallLevel();
+}
+
+void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
+	//TODO: hacer animacion de transicion entre levels
+}
+
+
+void cScene::drawEnemies() {
+	for(int i = 0; i < nEnemies; ++i) {
+		if(enemies[i] != nullptr)
+			enemies[i]->draw();
+	}
 }

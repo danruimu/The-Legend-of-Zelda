@@ -1,4 +1,4 @@
 life 2
 damage 1
-rock 0.5
+none 0
 heart 0.5 rupy 1.0
