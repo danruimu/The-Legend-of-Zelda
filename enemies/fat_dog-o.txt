@@ -1,4 +1,4 @@
 life 2
 damage 1
-projectile rock 0.5
+projectile none 0
 heart 0.5 rupy 1.0

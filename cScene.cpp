@@ -135,7 +135,7 @@ bool cScene::LoadLevel(char level[],bool overrided)
 		setId(level);
 	}
 	
-	//Leer enemigos del nivel
+	//Read Enemies from level
 	int nEnem;
 	nEnemies = 0;
 	fscanf(fd, "%d", &nEnem);

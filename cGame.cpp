@@ -29,6 +29,12 @@ bool cGame::startGame() {
 	res = Scene.LoadLevel("H8",false);
 	if(!res) return false;
 
+	res = Data.LoadImage(IMG_ENEMY_FAT_DOG_O, "sprites/fat-dog.png", GL_RGBA);
+	if(!res) return false;
+	res = Data.LoadImage(IMG_ENEMY_OCTOROK_B, "sprites/octorok-b.png", GL_RGBA);
+	if(!res) return false;
+
+
 	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
 	if(!res) return false;
@@ -544,9 +550,6 @@ void cGame::Render()
 	else{//mainMenu= false
 		Scene.Draw(Data.GetID(IMG_BLOCKS), mainMenu, NULL, 0,0);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
-		for(i = 0; i < MAX_N_MONSTERS; ++i) {
-			//if(monsters[i].isAlive()) monsters[i].Draw(Data.GetID(IMG_MONSTER);
-		}
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} 
 
