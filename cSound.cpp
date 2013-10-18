@@ -38,7 +38,13 @@ void cSound::playSound(int id) {
 	if(id >= nSounds) return;
 	bool play;
 	channels[id]->isPlaying(&play);
-	if(!play) system->playSound(sounds[id], 0, false, &channels[id]);
+	FMOD_MODE *mode = (FMOD_MODE*) malloc(42);
+	sounds[id]->getMode(mode);
+	bool effect = false;
+	for(int i = 0; i<nEffects && !effect; ++i) {
+		effect = (id == effects[i]);
+	}
+	if(!play || ((*mode == FMOD_LOOP_OFF) && effect) ) system->playSound(sounds[id], 0, false, &channels[id]);
 	else {
 		bool paused;
 		channels[id]->getPaused(&paused);

@@ -1,15 +1,3 @@
-[header]
-width=16
-height=11
-tilewidth=16
-tileheight=16
-
-[tilesets]
-tileset=../sprites/blocks.png,16,16,0,0
-
-[layer]
-type=Capa de Patrones 1
-data=
 56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,
 56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,
 56,3,3,3,3,55,56,56,57,3,56,56,56,56,56,56,
