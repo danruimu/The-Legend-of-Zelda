@@ -1,10 +1,10 @@
 #include "cScene.h"
 
 int BoxOut(cRect box){
-	if(box.bottom <= 0) return DOWN;
-	if(box.top >= SCENE_HEIGHT*BLOCK_SIZE) return UP;
-	if(box.left <= 0)return LEFT;
-	if(box.right >= SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
+	if(box.bottom < 0) return DOWN;
+	if(box.top > SCENE_HEIGHT*BLOCK_SIZE) return UP;
+	if(box.left < 0)return LEFT;
+	if(box.right > SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
 	return -1;
 }
 
