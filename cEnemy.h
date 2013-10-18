@@ -29,6 +29,7 @@ public:
 	void draw();
 
 private:
+	void readEnemyProps(FILE *propFile);
 	int life;
 	int maxLife;
 	char *type;

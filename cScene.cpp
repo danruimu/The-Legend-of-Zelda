@@ -140,7 +140,7 @@ bool cScene::LoadLevel(char level[],bool overrided)
 	nEnemies = 0;
 	fscanf(fd, "%d", &nEnem);
 	if ( nEnem > 0) {
-		while (nEnem >= 0) {
+		while (nEnem > 0) {
 			char *enemyType = (char*) malloc(42);
 			int quants = 0;
 			fscanf(fd, "%s%d", enemyType, &quants);
