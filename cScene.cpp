@@ -142,8 +142,8 @@ bool cScene::LoadLevel(char level[],bool overrided)
 	if ( nEnem > 0) {
 		while (nEnem >= 0) {
 			char *enemyType = (char*) malloc(42);
-			int quants;
-			fscanf(fd, "%s%d", enemyType, quants);
+			int quants = 0;
+			fscanf(fd, "%s%d", enemyType, &quants);
 			for(int i=0; i<quants; ++i) {
 				enemies[nEnemies+i] = new cEnemy((int) (float)SCENE_WIDTH * ((float)rand()/(float)RAND_MAX), (int) (float)SCENE_HEIGHT * ((float)rand()/(float)RAND_MAX), enemyType);
 			}
@@ -356,6 +356,6 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
 
 void cScene::drawEnemies() {
 	for(int i = 0; i < nEnemies; ++i) {
-		enemies[i]->draw();
+		//enemies[i]->draw();
 	}
 }

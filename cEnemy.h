@@ -14,7 +14,7 @@
 #define OCTOROK_B	"octorok-b"
 #define FAT_DOG_O	"fat_dog-o"
 
-#define ROCK	0
+#define ROCK_ID	0
 
 #define ENEMY_SIZE	16
 
