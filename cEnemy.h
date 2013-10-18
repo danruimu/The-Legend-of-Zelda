@@ -17,6 +17,8 @@
 #define ROCK_ID	0
 
 #define ENEMY_SIZE	16
+#define ENEMY_TEXTURE_WIDTH 64
+#define ENEMY_TEXTURE_HEIGHT 32
 
 class cEnemy :
 	public cBicho
@@ -39,10 +41,6 @@ private:
 	float probShoot;
 	float probDropHeart;
 	float probDropRuppe;
-	int x;
-	int y;
-	int state;
-	int direction;
 	int tex_id;
 };
 

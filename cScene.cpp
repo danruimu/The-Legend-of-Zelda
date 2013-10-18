@@ -356,6 +356,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
 
 void cScene::drawEnemies() {
 	for(int i = 0; i < nEnemies; ++i) {
-		//enemies[i]->draw();
+		if(enemies[i] != nullptr)
+			enemies[i]->draw();
 	}
 }

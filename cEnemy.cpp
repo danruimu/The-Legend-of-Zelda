@@ -20,12 +20,11 @@ cEnemy::cEnemy(void)
 cEnemy::cEnemy(int x, int y, char *type) {
 	this->maxLife = 1;
 	this->life = maxLife;
-	this->x = x;
-	this->y = y;
+	SetPosition(x,y);
 	this->type = (char*) malloc(42);
 	strcpy(this->type, type);
-	this->state = ENEMY_STATE_IDLE;
-	this->direction = ENEMY_DOWN;
+	SetState(ENEMY_STATE_IDLE);
+	SetDirection(ENEMY_DOWN);
 	this->typeProyectile = (char*) malloc(42);
 
 	int Ntype;
@@ -58,5 +57,15 @@ cEnemy::~cEnemy(void)
 }
 
 void cEnemy::draw() {
-	
+	int posx,posy;
+	GetPosition(&posx,&posy);
+	float bordeX = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_WIDTH;
+	float bordeY = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_HEIGHT;
+	float blockX = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_WIDTH;
+	float blockY = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_HEIGHT;
+	float xo,yo;
+	int direction = GetDirection(), state = GetState();
+	xo = direction*(blockX+bordeX);
+	yo = state*(blockY+bordeY);
+	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
 }
