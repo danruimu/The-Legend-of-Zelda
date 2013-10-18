@@ -4,6 +4,7 @@
 
 cBicho::cBicho(void)
 {
+	seq=0;
 	delay=0;
 }
 cBicho::~cBicho(void){}
@@ -52,6 +53,26 @@ bool cBicho::Collides(cRect *rc)
 	return ((x>rc->left) && (x+w<rc->right) && (y>rc->bottom) && (y+h<rc->top));
 	return false;
 }
+bool cBicho::CollidesMapWall(int *map,int direction)
+{
+	//int tile_x,tile_y;
+	//int j;
+	//int width_tiles,height_tiles;
+
+	//tile_x = x / TILE_SIZE;
+	//tile_y = y / TILE_SIZE;
+	//width_tiles  = w / TILE_SIZE;
+	//height_tiles = h / TILE_SIZE;
+
+	//if(right)	tile_x += width_tiles;
+	//
+	//for(j=0;j<height_tiles;j++)
+	//{
+	//	if(map[ tile_x + ((tile_y+j)*SCENE_WIDTH) ] != 0)	return true;
+	//}
+	//
+	return false;
+}
 
 void cBicho::GetArea(cRect *rc)
 {
@@ -86,6 +107,115 @@ void cBicho::DrawRect(int tex_id,float xo,float yo,float xf,float yf)
 	glDisable(GL_TEXTURE_2D);
 }
 
+void cBicho::MoveLeft(int *map)
+{
+	//int xaux;
+	//
+	////Whats next tile?
+	//if( (x % TILE_SIZE) == 0)
+	//{
+	//	xaux = x;
+	//	x -= STEP_LENGTH;
+
+	//	if(CollidesMapWall(map,false))
+	//	{
+	//		x = xaux;
+	//		state = STATE_LOOKLEFT;
+	//	}
+	//}
+	////Advance, no problem
+	//else
+	//{
+	//	x -= STEP_LENGTH;
+	//	if(state != STATE_WALKLEFT)
+	//	{
+	//		state = STATE_WALKLEFT;
+	//		seq = 0;
+	//		delay = 0;
+	//	}
+	//}
+}
+void cBicho::MoveRight(int *map)
+{
+	//int xaux;
+
+	////Whats next tile?
+	//if( (x % TILE_SIZE) == 0)
+	//{
+	//	xaux = x;
+	//	x += STEP_LENGTH;
+
+	//	if(CollidesMapWall(map,true))
+	//	{
+	//		x = xaux;
+	//		state = STATE_LOOKRIGHT;
+	//	}
+	//}
+	////Advance, no problem
+	//else
+	//{
+	//	x += STEP_LENGTH;
+
+	//	if(state != STATE_WALKRIGHT)
+	//	{
+	//		state = STATE_WALKRIGHT;
+	//		seq = 0;
+	//		delay = 0;
+	//	}
+	//}
+}
+void cBicho::Stop()
+{
+	//switch(state)
+	//{
+	//	case STATE_WALKLEFT:	state = STATE_LOOKLEFT;		break;
+	//	case STATE_WALKRIGHT:	state = STATE_LOOKRIGHT;	break;
+	//}
+}
+void cBicho::Jump(int *map)
+{
+	//if(!jumping)
+	//{
+	//	if(CollidesMapFloor(map))
+	//	{
+	//		jumping = true;
+	//		jump_alfa = 0;
+	//		jump_y = y;
+	//	}
+	//}
+}
+void cBicho::Logic(int *map)
+{
+	//float alfa;
+
+	//if(jumping)
+	//{
+	//	jump_alfa += JUMP_STEP;
+	//	
+	//	if(jump_alfa == 180)
+	//	{
+	//		jumping = false;
+	//		y = jump_y;
+	//	}
+	//	else
+	//	{
+	//		alfa = ((float)jump_alfa) * 0.017453f;
+	//		y = jump_y + (int)( ((float)JUMP_HEIGHT) * sin(alfa) );
+	//	
+	//		if(jump_alfa > 90)
+	//		{
+	//			//Over floor?
+	//			jumping = !CollidesMapFloor(map);
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	//Over floor?
+	//	if(!CollidesMapFloor(map))
+	//		y -= (2*STEP_LENGTH);
+	//}
+}
 void cBicho::NextFrame(int init,int max,int frame_delay)
 {
 	delay++;
@@ -95,7 +225,10 @@ void cBicho::NextFrame(int init,int max,int frame_delay)
 		delay = 0;
 	}
 }
-
+int cBicho::GetFrame()
+{
+	return seq;
+}
 int cBicho::GetState()
 {
 	return state;
@@ -111,7 +244,7 @@ int  cBicho::GetDirection(){
 
 void cBicho::SetDirection(int d){
 	direction = d;
-	delay = 0;
+	seq = 0;
 }
 
 int cBicho::GetSpeed(){
