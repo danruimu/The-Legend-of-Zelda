@@ -380,51 +380,85 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
 	//BoXOrg en como tocar a LINK
 	//TODO: mover a link si hurt
-	if(tiles[0] == HURT && tiles[1]== HURT) { //move link to DOWN -> LEFT -> RIGHT
-		if(whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-42) == WALKABLE)  {
-			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
-		} else if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top && whatsThere(BoxOrg->right-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right-42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right -= 42;	BoxOrg->left -= 42;
-		} else if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right += 42;	BoxOrg->left += 42;
+	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
+		bool pos[] = { false, false, false, false}; //DOWN, UP, RIGHT, LEFT
+		pos[DOWN] = (whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-42) == WALKABLE);
+		pos[UP] = (whatsThere(BoxOrg->right, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE);
+		pos[RIGHT] = (whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->top) == WALKABLE);
+		pos[LEFT] = (whatsThere(BoxOrg->right-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right-42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE);
+
+		if(tiles[0] == HURT && tiles[1] == HURT) {  //DOWN -> LEFT -> RIGHT
+			if(pos[DOWN]) {
+				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			}
+		} else if(tiles[1] == HURT && tiles[2] == HURT) {  //LEFT -> UP -> DOWN
+			if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += 42; BoxOrg->top += 42;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+			}
+		} else if(tiles[2] == HURT && tiles[3] == HURT) {  //UP -> LEFT -> RIGHT
+			if(pos[UP]) {
+				BoxOrg->bottom += 42; BoxOrg->top += 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			}
+		} else if(tiles[3] == HURT && tiles[0] == HURT) {  //RIGHT -> UP -> DOWN
+			if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += 42; BoxOrg->top += 42;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+			}
+		} else if(tiles[0] == HURT) {  //DOWN-RIGHT -> LEFT -> RIGHT
+			if(pos[DOWN] && pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			}
+		} else if(tiles[1] == HURT) {  //DOWN-LEFT -> RIGHT -> LEFT
+			if(pos[LEFT] && pos[DOWN]) {
+				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			}
+		} else if(tiles[2] == HURT) {  //UP-RIGHT -> LEFT -> RIGHT
+			if(pos[UP] && pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->bottom += 42; BoxOrg->top += 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			}
+		} else if(tiles[3] == HURT) {  //UP-LEFT -> RIGHT -> LEFT
+			if(pos[LEFT] && pos[UP]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->bottom += 42; BoxOrg->top += 42;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += 42; BoxOrg->right += 42;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= 42; BoxOrg->right -= 42;
+			}
 		}
 		return HURT;
-	} else if (tiles[1] == HURT && tiles[2] == HURT) { //move link to LEFT -> UP -> DOWN
-		if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right -= 42;	BoxOrg->left -= 42;
-		} else if(whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE)  {
-			BoxOrg->bottom += 42;	BoxOrg->top += 42;
-		} else if(whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE)  {
-			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
-		}
-		return HURT;
-	} else if (tiles[2] == HURT && tiles[3] == HURT) { //move link to UP -> LEFT -> RIGHT
-		if(whatsThere(BoxOrg->left, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->bottom+42) == WALKABLE)  {
-			BoxOrg->bottom += 42;	BoxOrg->top += 42;
-		} else if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right -= 42;	BoxOrg->left -= 42;
-		} else if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right += 42;	BoxOrg->left += 42;
-		}
-		return HURT;
-	} else if (tiles[3] == HURT && tiles[0] == HURT) { //move link to RIGHT -> UP -> DOWN
-		if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE)  {
-			BoxOrg->right += 42;	BoxOrg->left += 42;
-		} else if(whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE)  {
-			BoxOrg->bottom += 42;	BoxOrg->top += 42;
-		} else if(whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE)  {
-			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
-		}
-		return HURT;
-	} else if(tiles[0] == HURT) { //move link to RIGHT-DOWN or RIGHT
-		return HURT;
-	} else if(tiles[1] == HURT) { //move link to LEFT-DOWN
-		return HURT;
-	} else if(tiles[2] == HURT) { //move link to LEFT-UP
-		return HURT;
-	} else if(tiles[3] == HURT) { //move link to RIGHT-UP
-		return HURT;
-	} 
+	}
+
 
 	for (int i = 0; i < 4; i++){
 		if(tiles[i] == LOCKED_DOOR)numlockeddoors++;
