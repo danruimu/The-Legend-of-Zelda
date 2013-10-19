@@ -13,5 +13,6 @@
 1
 dungeon
 
-4
-fat_dog-o 4
+2
+fat_dog-o 1 5 4
+octorok-b 1 4 5

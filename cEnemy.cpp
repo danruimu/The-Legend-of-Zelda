@@ -15,9 +15,12 @@ void cEnemy::readEnemyProps(FILE *propFile) {
 
 cEnemy::cEnemy(void)
 {
+	
 }
 
-cEnemy::cEnemy(int x, int y, char *type) {
+cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
+	this->movementDelay=movementDelay;
+	movementSeq=0;
 	this->maxLife = 1;
 	this->life = maxLife;
 	SetPosition(x,y);
@@ -26,6 +29,7 @@ cEnemy::cEnemy(int x, int y, char *type) {
 	SetState(ENEMY_STATE_IDLE);
 	SetDirection(ENEMY_DOWN);
 	this->typeProyectile = (char*) malloc(42);
+	this->tex_id = tex_id;
 
 	int Ntype;
 	Ntype = strcmp(type, OCTOROK_B);
@@ -36,7 +40,6 @@ cEnemy::cEnemy(int x, int y, char *type) {
 			readEnemyProps(propFile);
 			fclose(propFile);
 		}
-		this->tex_id = IMG_ENEMY_OCTOROK_B;
 	}
 	Ntype = strcmp(type, FAT_DOG_O);
 	if(Ntype == 0) {
@@ -46,7 +49,6 @@ cEnemy::cEnemy(int x, int y, char *type) {
 			readEnemyProps(propFile);
 			fclose(propFile);
 		}
-		this->tex_id = IMG_ENEMY_FAT_DOG_O;
 	}
 }
 
@@ -59,13 +61,40 @@ cEnemy::~cEnemy(void)
 void cEnemy::draw() {
 	int posx,posy;
 	GetPosition(&posx,&posy);
-	float bordeX = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_WIDTH;
-	float bordeY = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_HEIGHT;
-	float blockX = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_WIDTH;
-	float blockY = (0.+ENEMY_SIZE)/ENEMY_TEXTURE_HEIGHT;
-	float xo,yo;
 	int direction = GetDirection(), state = GetState();
-	xo = direction*(blockX+bordeX);
-	yo = state*(blockY+bordeY);
-	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+	Draw(tex_id,  direction, state,posx, posy, 2, 4);
+}
+
+void cEnemy::process(int dir) {
+	int x,y;
+	movementSeq++;
+	if(movementSeq == movementDelay)movementSeq=0;
+	if(movementSeq == 0){
+		SetDirection(dir);
+		SetState(1-GetState());
+		GetPosition(&x,&y);
+		switch(dir){
+			case ENEMY_DOWN:
+				y-=GetSpeed();
+				break;
+			case ENEMY_UP:
+				y+=GetSpeed();
+				break;
+			case ENEMY_RIGHT:
+				x+=GetSpeed();
+				break;
+			case ENEMY_LEFT:
+				x-=GetSpeed();
+				break;
+		}
+		SetPosition(x,y);
+	}
+}
+
+int cEnemy::getIA(){
+	return IA;
+}
+
+void cEnemy::setIA(int IA){
+	this->IA = IA;
 }

@@ -15,6 +15,8 @@
 #define WIDTH_OBJECT_TEXTURE	5
 #define HEIGHT_OBJECT_TEXTURE	12
 
+#define NUM_ENEMIES		2
+
 //Id de las texturas de los objectos
 #define BLUE_HEART		0
 #define HEART_CONTAINER	1
@@ -103,11 +105,13 @@
 //Image identifiers
 #define IMG_BLOCKS	0
 #define IMG_PLAYER	1
-#define IMG_ENEMY_FAT_DOG_O	2
-#define IMG_ENEMY_OCTOROK_B	3
-#define IMG_OBJECTS	4
-#define IMG_BOSS	5
-#define IMG_MAINMENU 6
+#define IMG_OBJECTS	2
+#define IMG_BOSS	3
+#define IMG_MAINMENU 4
+#define START_ENEMIES	5
+#define IMG_ENEMY_OCTOROK_B	5
+#define IMG_ENEMY_FAT_DOG_O	6
+
 
 #define GAME_WIDTH	BLOCK_SIZE*(SCENE_WIDTH+2)
 #define GAME_HEIGHT BLOCK_SIZE*(SCENE_HEIGHT+2)

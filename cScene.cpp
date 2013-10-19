@@ -1,4 +1,5 @@
 #include "cScene.h"
+#include <algorithm>
 
 int BoxOut(cRect box){
 	if(box.bottom < 0) return DOWN;
@@ -28,7 +29,20 @@ bool isWallkable(int tile) {
 	return false;
 }
 
-
+void zSort(int v[],int d[]){
+	int n = 3;
+	for(int i = 0; i<4; ++i) {
+		n = 3;
+		while(n>0) {
+			if(v[n] > v[n-1]) {
+				int aux = v[n], auxd = d[n];
+				v[n-1] = v[n]; d[n-1] = d[n];
+				v[n] = aux; d[n] = aux;
+			}
+			--n;
+		}
+	}
+}
 
 bool isDoor(int what){
 	return (what == 22 || what == 28 || what == 34);
@@ -36,6 +50,13 @@ bool isDoor(int what){
 
 bool isLockedDoor(int what){
 	return what == 136;
+}
+
+int cScene::findTextureId(String str, cData *data){
+	for (int i = 0; i < NUM_ENEMIES; i++){
+		if(strcmp(str, enemyTypes[i]) == 0) return data->GetID(START_ENEMIES+i);
+	}
+	return -1;
 }
 
 cScene::cScene(void)
@@ -46,13 +67,23 @@ cScene::cScene(void)
 	names[DUNGEON_PROP] = STR_DUNGEON;
 	dungeon = false;
 	exitingDoor = false;
+
+	nEnemies = 0;
+	nObjects = 0;
+
+	//Enemy Types;
+	enemyTypes[0] = OCTOROK_B;
+	enemyTypes[1] = FAT_DOG_O;
 }
 
 cScene::~cScene(void){
 	int i=0;
-	while (objects[i]!=nullptr)free(objects[i++]);
+	while (i<nObjects)
+		if(objects[i]!=nullptr)free(objects[i++]);
 	i=0;
-	while (enemies[i]!=nullptr)free(enemies[i++]);
+	while (i<nEnemies) 
+		if(enemies[i]!=nullptr)
+			free(enemies[i++]);
 }
 
 bool cScene::PrintMainMenu(int idMM) {
@@ -104,22 +135,23 @@ void cScene::generateCallLevel(){
 	glEndList();
 }
 
-bool cScene::LoadLevel(char level[],bool overrided)
+bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 {
 	FILE *fd;
 	char buffer[42];
 	char coma;
 	int i,j,tile,n;
 	i=0;
-	while (objects[i]!=nullptr){
-		free(objects[i]);//buidar objectes
-		objects[i++] = nullptr;
-	}
+	while (i<nObjects)
+		if(objects[i]!=nullptr)
+			free(objects[i++]);
+	nObjects=0;
 	i=0;
-	while (enemies[i]!=nullptr){
-		free(enemies[i]);
-		enemies[i++] = nullptr;
-	}//buidar monstres
+	while (i<nEnemies) 
+		if(enemies[i]!=nullptr)
+			free(enemies[i++]);
+	nEnemies = 0;
+	//buidar monstres
 	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
 	if (!dungeon)xDoor = yDoor = -1;
 	fd=fopen(buffer,"r");
@@ -150,15 +182,21 @@ bool cScene::LoadLevel(char level[],bool overrided)
 	
 	//Read Enemies from level
 	int nEnem;
-	nEnemies = 0;
 	fscanf(fd, "%d", &nEnem);
 	if ( nEnem > 0) {
 		while (nEnem > 0) {
 			char *enemyType = (char*) malloc(42);
 			int quants = 0;
 			fscanf(fd, "%s%d", enemyType, &quants);
+			int posx, posy;
+			int tex_id = findTextureId(enemyType, data);
 			for(int i=0; i<quants; ++i) {
-				enemies[nEnemies+i] = new cEnemy((int) (float)SCENE_WIDTH * ((float)rand()/(float)RAND_MAX), (int) (float)SCENE_HEIGHT * ((float)rand()/(float)RAND_MAX), enemyType);
+				fscanf(fd, "%d%d", &posx, &posy);
+				if(tex_id>=0){
+					enemies[nEnemies+i] = new cEnemy(SCENE_Xo+posx*BLOCK_SIZE,SCENE_Yo+ posy*BLOCK_SIZE, enemyType, tex_id,FPS/12);
+					enemies[nEnemies+i]->SetSpeed(BLOCK_SIZE/12);
+					enemies[nEnemies+i]->setIA(RAND);
+				}
 			}
 			nEnem -= quants;
 			nEnemies += quants;
@@ -192,7 +230,9 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 		glCallList(id_DL);
 		if(dungeon && !prop[DUNGEON_PROP])printText(SCENE_Xo+2*BLOCK_SIZE,SCENE_Yo+8*BLOCK_SIZE,"Wellcome to da market, BITCH",GLUT_BITMAP_TIMES_ROMAN_24,1.,1.,1.);
 		int i=0;
-		while(objects[i]!=nullptr)objects[i++]->Render(obj_id);
+		while(i<nObjects)
+			if(objects[i]!=nullptr)
+				objects[i++]->Render(obj_id);
 	}
 	glDisable(GL_TEXTURE_2D);
 
@@ -253,15 +293,32 @@ void cScene::drawPauseMenu(char *t1, char* t2, char *t3, int select) {
 	}
 }
 
-int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
+int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	cRect Box = *BoxOrg;
 	Box.bottom-=SCENE_Yo;
 	Box.top-=SCENE_Yo;
 	Box.left-=SCENE_Xo;
 	Box.right-=SCENE_Xo;
 	int i=0;
-	while (objects[i]!=nullptr)objects[i++]->process();//process objectes
+	while (i<nObjects)
+		if(objects[i]!=nullptr)
+			objects[i++]->process();
+	i=0;
+	while (i<nEnemies){
+		if(enemies[i]!=nullptr){
+			switch(enemies[i]->getIA()){
+			case RAND:
+				//TODO:  y sin colisiones
+				//TODO: movimiento no random
+				enemies[i]->process(ENEMY_DOWN);
+				break;
+			}
+		}
+		i++;
+	}
+	//process objectes
 	//TODO: colisiones de objetos en process o separado
+	//while(
 	int out = BoxOut(Box);
 	if(out != -1){
 		bool overridable = false;
@@ -304,7 +361,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 				i++;
 			}
 		}
-		LoadLevel(id,overridable);
+		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top+SCENE_Yo;
 		BoxOrg->bottom = Box.bottom+SCENE_Yo;
 		BoxOrg->left = Box.left+SCENE_Xo;
@@ -315,10 +372,60 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 	int numdoors = 0;
 	int numwalkables = 0;
 	int tiles[4];
+	//TODO: revisar altura de colision con puerta y que cuando salgas de puerta no ir parriba
+	//TODO: ser mas permisivos al entrar y desbloquear puertas
 	tiles[0] = whatsThere(Box.left+1,Box.top-21);
 	tiles[1] = whatsThere(Box.right-1,Box.top-21);
 	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
 	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
+	//BoXOrg en como tocar a LINK
+	//TODO: mover a link si hurt
+	if(tiles[0] == HURT && tiles[1]== HURT) { //move link to DOWN -> LEFT -> RIGHT
+		if(whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-42) == WALKABLE)  {
+			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
+		} else if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top && whatsThere(BoxOrg->right-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right-42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right -= 42;	BoxOrg->left -= 42;
+		} else if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right += 42;	BoxOrg->left += 42;
+		}
+		return HURT;
+	} else if (tiles[1] == HURT && tiles[2] == HURT) { //move link to LEFT -> UP -> DOWN
+		if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right -= 42;	BoxOrg->left -= 42;
+		} else if(whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE)  {
+			BoxOrg->bottom += 42;	BoxOrg->top += 42;
+		} else if(whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE)  {
+			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
+		}
+		return HURT;
+	} else if (tiles[2] == HURT && tiles[3] == HURT) { //move link to UP -> LEFT -> RIGHT
+		if(whatsThere(BoxOrg->left, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->bottom+42) == WALKABLE)  {
+			BoxOrg->bottom += 42;	BoxOrg->top += 42;
+		} else if(whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right -= 42;	BoxOrg->left -= 42;
+		} else if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right += 42;	BoxOrg->left += 42;
+		}
+		return HURT;
+	} else if (tiles[3] == HURT && tiles[0] == HURT) { //move link to RIGHT -> UP -> DOWN
+		if(whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE)  {
+			BoxOrg->right += 42;	BoxOrg->left += 42;
+		} else if(whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE)  {
+			BoxOrg->bottom += 42;	BoxOrg->top += 42;
+		} else if(whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE)  {
+			BoxOrg->bottom -= 42;	BoxOrg->top -= 42;
+		}
+		return HURT;
+	} else if(tiles[0] == HURT) { //move link to RIGHT-DOWN or RIGHT
+		return HURT;
+	} else if(tiles[1] == HURT) { //move link to LEFT-DOWN
+		return HURT;
+	} else if(tiles[2] == HURT) { //move link to LEFT-UP
+		return HURT;
+	} else if(tiles[3] == HURT) { //move link to RIGHT-UP
+		return HURT;
+	} 
+
 	for (int i = 0; i < 4; i++){
 		if(tiles[i] == LOCKED_DOOR)numlockeddoors++;
 		else if(tiles[i] == DOOR)numdoors++;
@@ -334,7 +441,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 		else{
 			dungeon = true;
 			exitingDoor = true;
-			LoadLevel(prop[DUNGEON_PROP]?"dungeon":"market",false);
+			LoadLevel(prop[DUNGEON_PROP]?"dungeon":"market",false, data);
 			BoxOrg->bottom = SCENE_Yo;
 			BoxOrg->top=SCENE_Yo + BLOCK_SIZE;
 			BoxOrg->left = SCENE_Xo + 7*BLOCK_SIZE;
@@ -344,9 +451,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 				int vector[] = {TRIFORCE_Y,TRIFORCE_B};
 				objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 				objects[0]->setCollectable(10);
+				nObjects=1;
 			}
 			else{//market
-				
+				//TODO: leer de disco los objetos a vender
 			}
 			return OUTLIMITS;
 		}
@@ -359,9 +467,18 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[]){
 }
 
 int cScene::whatsThere(int x,int y){
+	for (int i = 0; i < nEnemies; i++) {
+		if(enemies[i] != nullptr) {
+			cRect target;
+			enemies[i]->GetArea(&target);
+			if (target.left >= x && target.left <= x+BLOCK_SIZE && target.bottom >= y && target.bottom <= y+BLOCK_SIZE)return HURT;
+		}
+	}
 	int bx,by;
 	bx = x/BLOCK_SIZE;
 	by = y/BLOCK_SIZE;
+	//TODO: relative
+	if (bx < 0 || by < 0 || bx > SCENE_WIDTH ||by > SCENE_HEIGHT ) return OTHERS;
 	if (isDoor(map[by*SCENE_WIDTH+bx]))return DOOR;
 	if (isLockedDoor(map[by*SCENE_WIDTH+bx]))return LOCKED_DOOR;
 	if (isWallkable(map[by*SCENE_WIDTH+bx]))return WALKABLE;

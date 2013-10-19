@@ -3,6 +3,7 @@
 #include "cTexture.h"
 #include "cEnemy.h"
 #include "cObject.h"
+#include "cData.h"
 
 #define STR_DUNGEON	"dungeon"
 #define DUNGEON_PROP		0//if its true indicates that the entry in this level its a dungeon; otherwise it indicates that it's a shop
@@ -14,6 +15,7 @@
 #define OUTLIMITS				3
 #define DUNGEON					4
 #define MARKET					5
+#define HURT					6
 
 #define WALKABLE	0
 #define DOOR		1
@@ -37,7 +39,7 @@ public:
 	cScene(void);
 	virtual ~cScene(void);
 
-	bool LoadLevel(char* level,bool overridable);
+	bool LoadLevel(char* level,bool overridable, cData *data);
 	void LoadLevelAnimation(char *oldLevel, char *newLevel);
 	bool PrintMainMenu(int idMM);
 	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state);
@@ -47,13 +49,14 @@ public:
 	void setId(char Nid[]);
 
 	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
-	int Process(cRect *Box,String unlockedDoors[]);
+	int Process(cRect *Box,String unlockedDoors[], cData *data);
 	int whatsThere(int x,int y);
 	void unlock();
 	void drawEnemies();
 
 
 private:
+	int findTextureId(String str, cData *data);
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene
 	int id_DL;								//actual level display list
 	char id[3];
@@ -65,7 +68,10 @@ private:
 	bool LoadDungeon(bool dungeon);
 	bool exitingDoor;
 
+
 	cObject *objects[NUM_MAX_OBJECTS];
+	int nObjects;
 	cEnemy *enemies[N_MAX_ENEMIES];
 	int nEnemies;
+	char *enemyTypes[NUM_ENEMIES];
 };

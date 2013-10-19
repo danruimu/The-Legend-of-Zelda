@@ -1,5 +1,7 @@
 #pragma once
 #include "cbicho.h"
+#include "utils.h"
+
 #define	ENEMY_DOWN	0
 #define	ENEMY_RIGHT	1
 #define	ENEMY_UP	2
@@ -14,6 +16,8 @@
 #define OCTOROK_B	"octorok-b"
 #define FAT_DOG_O	"fat_dog-o"
 
+#define RAND	0
+
 #define ROCK_ID	0
 
 #define ENEMY_SIZE	16
@@ -25,10 +29,13 @@ class cEnemy :
 {
 public:
 	cEnemy(void);
-	cEnemy(int x, int y, char *type);
+	cEnemy(int x, int y, char *type, int tex_id,int movementDelay);
 	~cEnemy(void);
 
 	void draw();
+	void process(int direct);
+	int getIA();
+	void setIA(int IA);
 
 private:
 	void readEnemyProps(FILE *propFile);
@@ -42,5 +49,9 @@ private:
 	float probDropHeart;
 	float probDropRuppe;
 	int tex_id;
+	int IA;
+	int ratio;
+	int movementDelay;
+	int movementSeq;
 };
 
