@@ -736,9 +736,13 @@ void cScene::processAttacks(cRect swordBox) {
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
 					if(drop == DROP_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						int vector[] = {RED_HEART,BLUE_HEART};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					} else if(drop == DROP_RUPPE) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
+						int vector[] = {RUPY,RUPY_X5};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
@@ -763,9 +767,13 @@ void cScene::processAttacks(cRect swordBox) {
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
 					if(drop == DROP_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						int vector[] = {RED_HEART,BLUE_HEART};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					} else if(drop == DROP_RUPPE) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
+						int vector[] = {RUPY,RUPY_X5};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
@@ -789,9 +797,13 @@ void cScene::processAttacks(cRect swordBox) {
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
 					if(drop == DROP_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						int vector[] = {RED_HEART,BLUE_HEART};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					} else if(drop == DROP_RUPPE) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
+						int vector[] = {RUPY,RUPY_X5};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
@@ -815,9 +827,13 @@ void cScene::processAttacks(cRect swordBox) {
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
 					if(drop == DROP_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						int vector[] = {RED_HEART,BLUE_HEART};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					} else if(drop == DROP_RUPPE) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
+						int vector[] = {RUPY,RUPY_X5};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
