@@ -61,6 +61,7 @@ public:
 	void freeEnemies();
 	void freeObjects();
 
+	void processAttacks(cRect swordBox);
 
 private:
 	int findTextureId(String str, cData *data);

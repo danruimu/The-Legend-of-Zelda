@@ -209,3 +209,36 @@ void cPlayer::setGodMode(bool mode) {
 bool cPlayer::getGodMode() {
 	return godMode;
 }
+
+
+cRect cPlayer::getSwordBox() {
+	cRect swordBox, linkBox;
+	GetArea(&linkBox);
+	switch(GetDirection()) {
+	case DIRECTION_DOWN:
+		swordBox.bottom = linkBox.bottom - BLOCK_SIZE;
+		swordBox.top = linkBox.top - BLOCK_SIZE;
+		swordBox.right = linkBox.right;
+		swordBox.left = linkBox.left;
+		break;
+	case DIRECTION_LEFT:
+		swordBox.bottom = linkBox.bottom;
+		swordBox.top = linkBox.top;
+		swordBox.right = linkBox.right - BLOCK_SIZE;
+		swordBox.left = linkBox.left - BLOCK_SIZE;
+		break;
+	case DIRECTION_UP:
+		swordBox.bottom = linkBox.bottom + BLOCK_SIZE;
+		swordBox.top = linkBox.top + BLOCK_SIZE;
+		swordBox.right = linkBox.right;
+		swordBox.left = linkBox.left;
+		break;
+	case DIRECTION_RIGHT:
+		swordBox.bottom = linkBox.bottom;
+		swordBox.top = linkBox.top;
+		swordBox.right = linkBox.right + BLOCK_SIZE;
+		swordBox.left = linkBox.left + BLOCK_SIZE;
+		break;
+	}
+	return swordBox;
+}

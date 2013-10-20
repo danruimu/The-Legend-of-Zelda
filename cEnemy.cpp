@@ -113,3 +113,8 @@ int cEnemy::SetNewDirection() {
 	}
 	return GetDirection();
 }
+
+int cEnemy::Damage() {
+	life--;
+	return life;
+}

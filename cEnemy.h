@@ -37,6 +37,7 @@ public:
 	int getIA();
 	void setIA(int IA);
 	int SetNewDirection();
+	int Damage();
 
 private:
 	void readEnemyProps(FILE *propFile);

@@ -78,7 +78,7 @@ void cGame::GameOver() {
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE BUTTON' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 	glutSwapBuffers();
-	Sleep(3000);
+	Sleep(100);
 }
 
 bool cGame::Init()
@@ -429,6 +429,10 @@ bool cGame::Process()
 			else if(ataca == 2){
 				sound.playSound(sounds[LOZ_SWORD_COMBINED]);
 			}
+
+			cRect swordBox = Link.getSwordBox();
+			Scene.processAttacks(swordBox);
+			
 			return true;
 		}
 

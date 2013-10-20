@@ -35,6 +35,8 @@ public:
 	void Logic(bool pause);
 	void sayonaraSword();
 
+	cRect getSwordBox();
+
 	void setGodMode(bool mode);
 	bool getGodMode();
 

@@ -142,14 +142,20 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 	char coma;
 	int i,j,tile,n;
 	i=0;
-	while (i<nObjects)
-		if(objects[i]!=nullptr)
-			free(objects[i++]);
+	while (i<nObjects) {
+		if(objects[i]!=nullptr) {
+			free(objects[i]);
+		}
+		i++;
+	}
 	nObjects=0;
 	i=0;
-	while (i<nEnemies) 
-		if(enemies[i]!=nullptr)
-			free(enemies[i++]);
+	while (i<nEnemies) {
+		if(enemies[i]!=nullptr) {
+			free(enemies[i]);
+		}
+		i++;
+	}
 	nEnemies = 0;
 	//buidar monstres
 	sprintf(buffer,"%s%s%s",(char *)FILENAME,level,(char *)FILENAME_EXT);
@@ -712,4 +718,64 @@ void cScene::freeObjects() {
 		}
 	}
 	nObjects = 0;
+}
+
+void cScene::processAttacks(cRect swordBox) {
+	int right = swordBox.right-1, left = swordBox.left+1, bottom = swordBox.bottom+1, top = swordBox.top-1;
+	//bottom-left corner
+	for (int i = 0; i < nEnemies; i++) {
+		if(enemies[i] != nullptr) {
+			cRect target;
+			enemies[i]->GetArea(&target);
+			if (target.left >= left && target.left <= left+BLOCK_SIZE && target.bottom >= bottom && target.bottom <= bottom+BLOCK_SIZE) {
+				int restLife = enemies[i]->Damage();
+				if (restLife == 0) {
+					free(enemies[i]);
+					enemies[i] = nullptr;
+				}
+			}
+		}
+	}
+	//bottom-right corner
+	for (int i = 0; i < nEnemies; i++) {
+		if(enemies[i] != nullptr) {
+			cRect target;
+			enemies[i]->GetArea(&target);
+			if (target.left >= right && target.left <= right+BLOCK_SIZE && target.bottom >= bottom && target.bottom <= bottom+BLOCK_SIZE) {
+				int restLife = enemies[i]->Damage();
+				if (restLife == 0) {
+					free(enemies[i]);
+					enemies[i] = nullptr;
+				}
+			}
+		}
+	}
+	//top-left corner
+	for (int i = 0; i < nEnemies; i++) {
+		if(enemies[i] != nullptr) {
+			cRect target;
+			enemies[i]->GetArea(&target);
+			if (target.left >= left && target.left <= left+BLOCK_SIZE && target.bottom >= top && target.bottom <= top+BLOCK_SIZE) {
+				int restLife = enemies[i]->Damage();
+				if (restLife == 0) {
+					free(enemies[i]);
+					enemies[i] = nullptr;
+				}
+			}
+		}
+	}
+	//top-right corner
+	for (int i = 0; i < nEnemies; i++) {
+		if(enemies[i] != nullptr) {
+			cRect target;
+			enemies[i]->GetArea(&target);
+			if (target.left >= right && target.left <= right+BLOCK_SIZE && target.bottom >= top && target.bottom <= top+BLOCK_SIZE) {
+				int restLife = enemies[i]->Damage();
+				if (restLife == 0) {
+					free(enemies[i]);
+					enemies[i] = nullptr;
+				}
+			}
+		}
+	}
 }
