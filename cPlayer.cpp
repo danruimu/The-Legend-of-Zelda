@@ -103,7 +103,14 @@ void cPlayer::Draw(int tex_id,int obj_id){
 		}
 		SetPosition(posx,posy);
 	}
+	if(godMode) {
+		if(godModeDuration%2 == 0) glColor3f(1.0, 0.0, 0.0);
+		else glColor3f(0.0, 1.0, 1.0);
+	}
 	DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+	if(godMode) {
+		glColor3f(1.0, 1.0, 1.0);
+	}
 	if(espasa != nullptr){
 		espasa->Render(obj_id);
 	}
