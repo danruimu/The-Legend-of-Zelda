@@ -527,17 +527,17 @@ bool cGame::Process()
 					sound.playSound(sounds[LOZ_HURT]);
 					int restLifes = Link.damage(1);
 					//TODO: Game Over function
-					/*if(restLifes == 0) {
+					if(restLifes == 0) {
 						sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
-						sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-						sound.playSound(sounds[LOZ_DIE]);
-						glClear(GL_COLOR_BUFFER_BIT);
-						printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-						glutSwapBuffers();
-						Sleep(3000);
-						mainMenu = true;
+							sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+							sound.playSound(sounds[LOZ_DIE]);
+							glClear(GL_COLOR_BUFFER_BIT);
+							printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+							glutSwapBuffers();
+							Sleep(3000);
+							Finalize();
 						return true;
-					}*/
+					}
 				}
 				break;
 			}
