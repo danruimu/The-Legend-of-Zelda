@@ -33,9 +33,10 @@ public:
 	~cEnemy(void);
 
 	void draw();
-	void process(int direct);
+	void process();
 	int getIA();
 	void setIA(int IA);
+	int SetNewDirection();
 
 private:
 	void readEnemyProps(FILE *propFile);
@@ -53,5 +54,7 @@ private:
 	int ratio;
 	int movementDelay;
 	int movementSeq;
+	
+	int changeDirectionDelay;
 };
 

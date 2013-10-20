@@ -306,12 +306,44 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	i=0;
 	while (i<nEnemies){
 		if(enemies[i]!=nullptr){
-			switch(enemies[i]->getIA()){
-			case RAND:
-				//TODO:  y sin colisiones
-				//TODO: movimiento no random
-				enemies[i]->process(ENEMY_RIGHT);
+			enemies[i]->SetNewDirection();
+
+			cRect box; int direction = enemies[i]->GetDirection();
+			enemies[i]->GetArea(&box);
+			int tilesEnem[] = {-1, -1, -1, -1};
+			int speedEnem = enemies[i]->GetSpeed();
+			
+			//TODO:  y sin colisiones
+			switch(enemies[i]->GetDirection()) {
+			case ENEMY_DOWN:
+				tilesEnem[0] = whatsThere(box.left+1,box.top-21-speedEnem);
+				tilesEnem[1] = whatsThere(box.right-1,box.top-21-speedEnem);
+				tilesEnem[2] = whatsThere(box.right-1,box.bottom+1-speedEnem);
+				tilesEnem[3] = whatsThere(box.left+1,box.bottom+1-speedEnem);
 				break;
+			case ENEMY_LEFT:
+				tilesEnem[0] = whatsThere(box.left+1-speedEnem,box.top-21);
+				tilesEnem[1] = whatsThere(box.right-1-speedEnem,box.top-21);
+				tilesEnem[2] = whatsThere(box.right-1-speedEnem,box.bottom+1);
+				tilesEnem[3] = whatsThere(box.left+1-speedEnem,box.bottom+1);
+				break;
+			case ENEMY_UP:
+				tilesEnem[0] = whatsThere(box.left+1,box.top-21+speedEnem);
+				tilesEnem[1] = whatsThere(box.right-1,box.top-21+speedEnem);
+				tilesEnem[2] = whatsThere(box.right-1,box.bottom+1+speedEnem);
+				tilesEnem[3] = whatsThere(box.left+1,box.bottom+1+speedEnem);
+				break;
+			case ENEMY_RIGHT:
+				tilesEnem[0] = whatsThere(box.left+1+speedEnem,box.top-21);
+				tilesEnem[1] = whatsThere(box.right-1+speedEnem,box.top-21);
+				tilesEnem[2] = whatsThere(box.right-1+speedEnem,box.bottom+1);
+				tilesEnem[3] = whatsThere(box.left+1+speedEnem,box.bottom+1);
+				break;
+			}
+
+			if(tilesEnem[0] == WALKABLE && tilesEnem[1] == WALKABLE && tilesEnem[2] == WALKABLE && tilesEnem[3] == WALKABLE) {
+				int xpos, ypos; enemies[i]->GetPosition(&xpos, &ypos);
+				enemies[i]->process();
 			}
 		}
 		i++;
@@ -378,7 +410,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	tiles[1] = whatsThere(Box.right-1,Box.top-21);
 	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
 	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
-	//TODO: mover a link si hurt con enemy
+	//TODO: solve problems with knockback
 	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
 		BoxOrg->bottom +=2; BoxOrg->left +=2; BoxOrg->top -=2; BoxOrg->right -=2;
 
@@ -401,7 +433,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 
 		BoxOrg->bottom -=2; BoxOrg->left -=2; BoxOrg->top +=2; BoxOrg->right +=2;
 
-		if(tiles[0] == HURT && tiles[1] == HURT) {  //DOWN -> LEFT -> RIGHT
+		if(tiles[0] == HURT && tiles[1] == HURT) {
 			if(pos[DOWN]) {
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[LEFT]) {
@@ -423,7 +455,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			} else if(pos[UP]) {
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
-		} else if(tiles[1] == HURT && tiles[2] == HURT) {  //LEFT -> UP -> DOWN
+		} else if(tiles[1] == HURT && tiles[2] == HURT) {
 			if(pos[LEFT]) {
 				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 			} else if(pos[UP]) {
@@ -445,7 +477,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			} else if(pos[RIGHT]) {
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 			}
-		} else if(tiles[2] == HURT && tiles[3] == HURT) {  //UP -> LEFT -> RIGHT
+		} else if(tiles[2] == HURT && tiles[3] == HURT) {
 			if(pos[UP]) {
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[LEFT]) {
@@ -467,7 +499,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			} else if(pos[DOWN]) {
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			}
-		} else if(tiles[3] == HURT && tiles[0] == HURT) {  //RIGHT -> UP -> DOWN
+		} else if(tiles[3] == HURT && tiles[0] == HURT) {
 			if(pos[RIGHT]) {
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 			} else if(pos[UP]) {
@@ -489,7 +521,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			} else if(pos[LEFT]) {
 				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 			}
-		} else if(tiles[0] == HURT) {  //DOWN-RIGHT -> DOWN -> RIGHT -> LEFT
+		} else if(tiles[0] == HURT) {
 			if(pos[DOWN_RIGHT]) {
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
@@ -511,7 +543,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
-		} else if(tiles[1] == HURT) {  //DOWN-LEFT -> DOWN -> LEFT -> RIGHT
+		} else if(tiles[1] == HURT) {
 			if(pos[DOWN_LEFT]) {
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
@@ -533,7 +565,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
-		} else if(tiles[2] == HURT) {  //UP-LEFT -> UP -> LEFT -> RIGHT
+		} else if(tiles[2] == HURT) {
 			if(pos[UP_LEFT]) {
 				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
@@ -555,7 +587,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 			}
-		} else if(tiles[3] == HURT) {  //UP-RIGHT -> UP -> RIGHT -> LEFT
+		} else if(tiles[3] == HURT) {
 			if(pos[UP_RIGHT]) {
 				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
@@ -654,7 +686,6 @@ void cScene::unlock(){
 void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
 	//TODO: hacer animacion de transicion entre levels
 }
-
 
 void cScene::drawEnemies() {
 	for(int i = 0; i < nEnemies; ++i) {

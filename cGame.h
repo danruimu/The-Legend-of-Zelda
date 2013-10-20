@@ -30,7 +30,7 @@ public:
 	bool startGame();
 	bool Loop();
 	void Finalize();
-	void restartGame();
+	void GameOver();
 	void saveSettings();
 	void loadSettings();
 

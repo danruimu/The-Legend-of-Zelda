@@ -60,7 +60,7 @@ bool cGame::startGame() {
 	return res;
 }
 
-void cGame::restartGame() {
+void cGame::GameOver() {
 	gameOver = true;
 	Scene.freeEnemies();
 	Scene.freeObjects();
@@ -452,7 +452,7 @@ bool cGame::Process()
 			if(lifes <= 2 && lifes > 0) {
 				sound.playSound(sounds[LOZ_LOW_HEALTH]);
 			} else if(lifes == 0) {
-				restartGame();
+				GameOver();
 				return true;
 			} else {
 				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
@@ -515,9 +515,8 @@ bool cGame::Process()
 						Link.setGodMode(true);
 						sound.playSound(sounds[LOZ_HURT]);
 						int restLifes = Link.damage(1);
-						//TODO: Game Over function
 						if(restLifes == 0) {
-							restartGame();
+							GameOver();
 							return true;
 						} else if(restLifes <= 2) {
 							sound.playSound(sounds[LOZ_LOW_HEALTH]);
@@ -536,9 +535,8 @@ bool cGame::Process()
 					Link.setGodMode(true);
 					sound.playSound(sounds[LOZ_HURT]);
 					int restLifes = Link.damage(1);
-					//TODO: Game Over function
 					if(restLifes == 0) {
-						restartGame();
+						GameOver();
 						return true;
 					}
 				}
@@ -570,7 +568,7 @@ void cGame::Render()
 	
 	glLoadIdentity();
 	
-	if(mainMenu) { //TODO: ponerlo bonico
+	if(mainMenu) {
 		if(up) {
 			if(nTransMM == TRANS_MAINMENU) {
 				currentMM++;

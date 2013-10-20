@@ -30,6 +30,8 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 	SetDirection(ENEMY_DOWN);
 	this->typeProyectile = (char*) malloc(42);
 	this->tex_id = tex_id;
+	this->changeDirectionDelay = 0;
+	SetWidthHeight(BLOCK_SIZE, BLOCK_SIZE);
 
 	int Ntype;
 	Ntype = strcmp(type, OCTOROK_B);
@@ -65,15 +67,14 @@ void cEnemy::draw() {
 	Draw(tex_id,  direction, state,posx, posy, 2, 4);
 }
 
-void cEnemy::process(int dir) {
+void cEnemy::process() {
 	int x,y;
 	movementSeq++;
 	if(movementSeq == movementDelay)movementSeq=0;
 	if(movementSeq == 0){
-		SetDirection(dir);
 		SetState(1-GetState());
 		GetPosition(&x,&y);
-		switch(dir){
+		switch(GetDirection()){
 			case ENEMY_DOWN:
 				y-=GetSpeed();
 				break;
@@ -97,4 +98,18 @@ int cEnemy::getIA(){
 
 void cEnemy::setIA(int IA){
 	this->IA = IA;
+}
+
+int cEnemy::SetNewDirection() {
+	++changeDirectionDelay;
+	if(changeDirectionDelay == 60) {
+		changeDirectionDelay = 0;
+		switch(getIA()) {
+		case RAND:
+			int newDir = rand()%4;
+			SetDirection(newDir);
+			return newDir;
+		}
+	}
+	return GetDirection();
 }
