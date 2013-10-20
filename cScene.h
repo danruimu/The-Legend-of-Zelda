@@ -27,6 +27,10 @@
 #define UP		1
 #define RIGHT	2
 #define LEFT	3
+#define DOWN_LEFT	4
+#define UP_LEFT		5
+#define UP_RIGHT	6
+#define DOWN_RIGHT	7
 
 #define TILE_DOOR	22
 

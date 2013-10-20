@@ -194,7 +194,7 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 				fscanf(fd, "%d%d", &posx, &posy);
 				if(tex_id>=0){
 					enemies[nEnemies+i] = new cEnemy(SCENE_Xo+posx*BLOCK_SIZE,SCENE_Yo+ posy*BLOCK_SIZE, enemyType, tex_id,FPS/12);
-					enemies[nEnemies+i]->SetSpeed(BLOCK_SIZE/12);
+					enemies[nEnemies+i]->SetSpeed(BLOCK_SIZE/8);
 					enemies[nEnemies+i]->setIA(RAND);
 				}
 			}
@@ -310,7 +310,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			case RAND:
 				//TODO:  y sin colisiones
 				//TODO: movimiento no random
-				enemies[i]->process(ENEMY_DOWN);
+				enemies[i]->process(ENEMY_RIGHT);
 				break;
 			}
 		}
@@ -378,82 +378,201 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	tiles[1] = whatsThere(Box.right-1,Box.top-21);
 	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
 	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
-	//BoXOrg en como tocar a LINK
-	//TODO: mover a link si hurt
+	//TODO: mover a link si hurt con enemy
 	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
-		bool pos[] = { false, false, false, false}; //DOWN, UP, RIGHT, LEFT
-		pos[DOWN] = (whatsThere(BoxOrg->right, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-42) == WALKABLE);
-		pos[UP] = (whatsThere(BoxOrg->right, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom+42) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top+42) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+42) == WALKABLE);
-		pos[RIGHT] = (whatsThere(BoxOrg->right+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left+42, BoxOrg->top) == WALKABLE);
-		pos[LEFT] = (whatsThere(BoxOrg->right-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right-42, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left-42, BoxOrg->top) == WALKABLE);
+		bool pos[] = { false, false, false, false, false, false, false, false}; //DOWN, UP, RIGHT, LEFT, DOWN-LEFT, UP-LEFT, UP-RIGHT, DOWN-RIGHT
+		pos[DOWN] = (whatsThere(BoxOrg->right, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-BLOCK_SIZE) == WALKABLE);
+
+		pos[UP] = (whatsThere(BoxOrg->right, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top+BLOCK_SIZE) == WALKABLE);
+
+		pos[RIGHT] = (whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->top) == WALKABLE);
+
+		pos[LEFT] = (whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->bottom) == WALKABLE && whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->top) == WALKABLE && whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->top) == WALKABLE);
+
+		pos[DOWN_LEFT] = (whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE);
+
+		pos[UP_LEFT] = (whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->top+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->top+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left-BLOCK_SIZE, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right-BLOCK_SIZE, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE);
+
+		pos[UP_RIGHT] = (whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->top+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->top+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->bottom+BLOCK_SIZE) == WALKABLE);
+
+		pos[DOWN_RIGHT] = (whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE);
+
 
 		if(tiles[0] == HURT && tiles[1] == HURT) {  //DOWN -> LEFT -> RIGHT
 			if(pos[DOWN]) {
-				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
 		} else if(tiles[1] == HURT && tiles[2] == HURT) {  //LEFT -> UP -> DOWN
 			if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 			} else if(pos[UP]) {
-				BoxOrg->bottom += 42; BoxOrg->top += 42;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[DOWN]) {
-				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 			}
 		} else if(tiles[2] == HURT && tiles[3] == HURT) {  //UP -> LEFT -> RIGHT
 			if(pos[UP]) {
-				BoxOrg->bottom += 42; BoxOrg->top += 42;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]){
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			}
 		} else if(tiles[3] == HURT && tiles[0] == HURT) {  //RIGHT -> UP -> DOWN
 			if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
 			} else if(pos[UP]) {
-				BoxOrg->bottom += 42; BoxOrg->top += 42;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[DOWN]) {
-				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
-			}
-		} else if(tiles[0] == HURT) {  //DOWN-RIGHT -> LEFT -> RIGHT
-			if(pos[DOWN] && pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
-				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
-			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
 			}
-		} else if(tiles[1] == HURT) {  //DOWN-LEFT -> RIGHT -> LEFT
-			if(pos[LEFT] && pos[DOWN]) {
-				BoxOrg->bottom -= 42; BoxOrg->top -= 42;
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+		} else if(tiles[0] == HURT) {  //DOWN-RIGHT -> DOWN -> RIGHT -> LEFT
+			if(pos[DOWN_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
-		} else if(tiles[2] == HURT) {  //UP-RIGHT -> LEFT -> RIGHT
-			if(pos[UP] && pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
-				BoxOrg->bottom += 42; BoxOrg->top += 42;
+		} else if(tiles[1] == HURT) {  //DOWN-LEFT -> DOWN -> LEFT -> RIGHT
+			if(pos[DOWN_LEFT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			}
-		} else if(tiles[3] == HURT) {  //UP-LEFT -> RIGHT -> LEFT
-			if(pos[LEFT] && pos[UP]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
-				BoxOrg->bottom += 42; BoxOrg->top += 42;
-			} else if(pos[RIGHT]) {
-				BoxOrg->left += 42; BoxOrg->right += 42;
+		} else if(tiles[2] == HURT) {  //UP-LEFT -> UP -> LEFT -> RIGHT
+			if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
 			} else if(pos[LEFT]) {
-				BoxOrg->left -= 42; BoxOrg->right -= 42;
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			}
+		} else if(tiles[3] == HURT) {  //UP-RIGHT -> UP -> RIGHT -> LEFT
+			if(pos[UP_RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[UP]) {
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[RIGHT]) {
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[UP_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom += BLOCK_SIZE; BoxOrg->top += BLOCK_SIZE;
+			} else if(pos[DOWN_RIGHT]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+				BoxOrg->left += BLOCK_SIZE; BoxOrg->right += BLOCK_SIZE;
+			} else if(pos[LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+			} else if(pos[DOWN]) {
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
+			} else if(pos[DOWN_LEFT]) {
+				BoxOrg->left -= BLOCK_SIZE; BoxOrg->right -= BLOCK_SIZE;
+				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			}
 		}
 		return HURT;

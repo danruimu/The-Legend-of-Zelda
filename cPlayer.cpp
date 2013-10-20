@@ -49,6 +49,10 @@ void cPlayer::Logic(bool pause){
 		free(espasa);
 		espasa = nullptr;
 	}
+	if(godMode) {
+		--godModeDuration;
+		if(godModeDuration == 0) setGodMode(false);
+	}
 }
 
 void cPlayer::Draw(int tex_id,int obj_id){	
@@ -182,4 +186,17 @@ void cPlayer::getKey(){
 void cPlayer::sayonaraSword(){
 	free(espasa);
 	espasa = nullptr;
+}
+
+void cPlayer::setGodMode(bool mode) {
+	if (mode) {
+		godMode = true;
+		godModeDuration = 60;
+	} else {
+		godMode = false;
+	}
+}
+
+bool cPlayer::getGodMode() {
+	return godMode;
 }

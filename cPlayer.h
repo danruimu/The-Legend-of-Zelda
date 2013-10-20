@@ -34,10 +34,16 @@ public:
 	void getKey();
 	void Logic(bool pause);
 	void sayonaraSword();
+
+	void setGodMode(bool mode);
+	bool getGodMode();
+
 private:
 	void printInfo(int obj_id);
 	int life,max_life;
 	int points,keys;
 	int triforce,max_triforces;
 	cObject *espasa;
+	bool godMode;
+	int godModeDuration;
 };
