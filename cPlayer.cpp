@@ -10,6 +10,8 @@ cPlayer::cPlayer() {
 	keys = 3;
 	triforce = 0;
 	max_triforces = 3;
+	godMode = false;
+	godModeDuration = 0;
 }
 cPlayer::~cPlayer(){}
 

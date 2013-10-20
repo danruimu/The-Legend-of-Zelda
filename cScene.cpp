@@ -380,6 +380,8 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
 	//TODO: mover a link si hurt con enemy
 	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
+		BoxOrg->bottom +=2; BoxOrg->left +=2; BoxOrg->top -=2; BoxOrg->right -=2;
+
 		bool pos[] = { false, false, false, false, false, false, false, false}; //DOWN, UP, RIGHT, LEFT, DOWN-LEFT, UP-LEFT, UP-RIGHT, DOWN-RIGHT
 		pos[DOWN] = (whatsThere(BoxOrg->right, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left, BoxOrg->top-BLOCK_SIZE) == WALKABLE);
 
@@ -397,6 +399,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 
 		pos[DOWN_RIGHT] = (whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->top-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->left+BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE && whatsThere(BoxOrg->right+BLOCK_SIZE, BoxOrg->bottom-BLOCK_SIZE) == WALKABLE);
 
+		BoxOrg->bottom -=2; BoxOrg->left -=2; BoxOrg->top +=2; BoxOrg->right +=2;
 
 		if(tiles[0] == HURT && tiles[1] == HURT) {  //DOWN -> LEFT -> RIGHT
 			if(pos[DOWN]) {
@@ -624,7 +627,7 @@ int cScene::whatsThere(int x,int y){
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
-			if (target.left >= x && target.left <= x+BLOCK_SIZE && target.bottom >= y && target.bottom <= y+BLOCK_SIZE)return HURT;
+			if (target.left >= x && target.left <= x+BLOCK_SIZE && target.bottom >= y && target.bottom <= y+BLOCK_SIZE) return HURT;
 		}
 	}
 	int bx,by;
@@ -632,10 +635,10 @@ int cScene::whatsThere(int x,int y){
 	by = y/BLOCK_SIZE;
 	//TODO: relative
 	if (bx < 0 || by < 0 || bx > SCENE_WIDTH ||by > SCENE_HEIGHT ) return OTHERS;
-	if (isDoor(map[by*SCENE_WIDTH+bx]))return DOOR;
-	if (isLockedDoor(map[by*SCENE_WIDTH+bx]))return LOCKED_DOOR;
-	if (isWallkable(map[by*SCENE_WIDTH+bx]))return WALKABLE;
-	if (isWater(map[by*SCENE_WIDTH+bx]))return WATER;
+	if (isDoor(map[by*SCENE_WIDTH+bx])) return DOOR;
+	if (isLockedDoor(map[by*SCENE_WIDTH+bx])) return LOCKED_DOOR;
+	if (isWallkable(map[by*SCENE_WIDTH+bx])) return WALKABLE;
+	if (isWater(map[by*SCENE_WIDTH+bx])) return WATER;
 	return OTHERS;
 }
 
@@ -658,4 +661,24 @@ void cScene::drawEnemies() {
 		if(enemies[i] != nullptr)
 			enemies[i]->draw();
 	}
+}
+
+void cScene::freeEnemies() {
+	for(int i = 0; i < nEnemies; ++i ) {
+		if(enemies[i] != nullptr) {
+			free(enemies[i]);
+			enemies[i] = nullptr;
+		}
+	}
+	nEnemies = 0;
+}
+
+void cScene::freeObjects() {
+	for(int i = 0; i < nObjects; ++i ) {
+		if(objects[i] != nullptr) {
+			free(objects[i]);
+			objects[i] = nullptr;
+		}
+	}
+	nObjects = 0;
 }

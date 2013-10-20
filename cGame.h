@@ -30,6 +30,7 @@ public:
 	bool startGame();
 	bool Loop();
 	void Finalize();
+	void restartGame();
 	void saveSettings();
 	void loadSettings();
 
@@ -62,7 +63,7 @@ private:
 	int currentPauseOpt;
 
 	bool pause;
-
+	bool gameOver;
 	bool mainMenuProcess();
 
 	struct Options {

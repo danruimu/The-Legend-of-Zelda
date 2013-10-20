@@ -58,6 +58,9 @@ public:
 	void unlock();
 	void drawEnemies();
 
+	void freeEnemies();
+	void freeObjects();
+
 
 private:
 	int findTextureId(String str, cData *data);

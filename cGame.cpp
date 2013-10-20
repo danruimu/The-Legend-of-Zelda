@@ -60,6 +60,27 @@ bool cGame::startGame() {
 	return res;
 }
 
+void cGame::restartGame() {
+	gameOver = true;
+	Scene.freeEnemies();
+	Scene.freeObjects();
+	Link.sayonaraSword();
+	Link = *(new cPlayer());
+	mainMenu = false;
+	sprintf(menuText[0],"NEW GAME");
+	sprintf(menuText[1],"OPTIONS");
+	sprintf(menuText[2],"EXIT");
+
+	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
+	sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+	sound.playSound(sounds[LOZ_MUSIC_GAME_OVER]);
+	glClear(GL_COLOR_BUFFER_BIT);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE BUTTON' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+	glutSwapBuffers();
+	Sleep(3000);
+}
+
 bool cGame::Init()
 {
 	this->loadSettings();
@@ -67,6 +88,7 @@ bool cGame::Init()
 	mainMenu = true;
 	optMenu = false;
 	pause = false;
+	gameOver = false;
 	up = true;
 	nTransMM = 0;
 	currentMM = 0;
@@ -107,6 +129,7 @@ bool cGame::Init()
 	sounds[LOZ_HURT] = sound.addSound("sounds/LOZ_Hurt.wav", false, EFFECT);
 	sounds[LOZ_GET_HEART] = sound.addSound("sounds/LOZ_Get_Heart.wav", false, EFFECT);
 	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
+	sounds[LOZ_MUSIC_GAME_OVER] = sound.addSound("sounds/LOZ_MUSIC_Game_Over.wav", true, MUSIC);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -185,7 +208,7 @@ bool cGame::mainMenuProcess(){
 				break;
 			}
 		}
-		else{//we are in the options menu
+		else if(optMenu) {//we are in the options menu
 			if(currentOptMM == BACK){
 				sound.playSound(sounds[LOZ_SWORD]);
 				optMenu = false;
@@ -285,7 +308,6 @@ bool cGame::Process()
 	Link.GetArea(&linkBox);
 	Link.Logic(pause);
 	int resProcessScene;
-
 	if(pause) {
 		if(keys[27]) {
 			keys[27] = false;
@@ -381,7 +403,7 @@ bool cGame::Process()
 			return true;
 		}
 
-	} else if(!mainMenu) {    //NOT IN PAUSE and NOT IN MAIN MENU
+	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;
@@ -430,14 +452,7 @@ bool cGame::Process()
 			if(lifes <= 2 && lifes > 0) {
 				sound.playSound(sounds[LOZ_LOW_HEALTH]);
 			} else if(lifes == 0) {
-				sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
-				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-				sound.playSound(sounds[LOZ_DIE]);
-				glClear(GL_COLOR_BUFFER_BIT);
-				printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-				glutSwapBuffers();
-				Sleep(3000);
-				Finalize();
+				restartGame();
 				return true;
 			} else {
 				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
@@ -494,21 +509,15 @@ bool cGame::Process()
 					Link.SetArea(linkBox);
 				break;
 				case HURT:
+					Link.SetArea(linkBox);
+					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY_WALK);
 					if(!Link.getGodMode()) {
-						Link.SetArea(linkBox);
 						Link.setGodMode(true);
 						sound.playSound(sounds[LOZ_HURT]);
 						int restLifes = Link.damage(1);
 						//TODO: Game Over function
 						if(restLifes == 0) {
-							sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
-							sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-							sound.playSound(sounds[LOZ_DIE]);
-							glClear(GL_COLOR_BUFFER_BIT);
-							printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-							glutSwapBuffers();
-							Sleep(3000);
-							Finalize();
+							restartGame();
 							return true;
 						} else if(restLifes <= 2) {
 							sound.playSound(sounds[LOZ_LOW_HEALTH]);
@@ -517,30 +526,31 @@ bool cGame::Process()
 					break;
 			}
 			return true;
-		} else{
+		} else {
 			resProcessScene = Scene.Process(&linkBox,unLockedLevels, &Data);
 			switch(resProcessScene) {
 			case HURT:
+				Link.SetArea(linkBox);
+				Link.NextFrame(STATE_MOVE,2,FRAME_DELAY_WALK);
 				if(!Link.getGodMode()) {
-					Link.SetArea(linkBox);
 					Link.setGodMode(true);
 					sound.playSound(sounds[LOZ_HURT]);
 					int restLifes = Link.damage(1);
 					//TODO: Game Over function
 					if(restLifes == 0) {
-						sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
-							sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-							sound.playSound(sounds[LOZ_DIE]);
-							glClear(GL_COLOR_BUFFER_BIT);
-							printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-							glutSwapBuffers();
-							Sleep(3000);
-							Finalize();
+						restartGame();
 						return true;
 					}
 				}
 				break;
 			}
+		}
+	}
+
+	if(gameOver) {
+		if(keys[' ']) {
+			sound.stopSound(sounds[LOZ_MUSIC_GAME_OVER]);
+			Init();
 		}
 	}
 
@@ -585,12 +595,15 @@ void cGame::Render()
 			}
 		}
 		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM);
-	}
-	else{//mainMenu= false
+	} else if (!gameOver) {//mainMenu= false
 		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
-	} 
+	} else if(gameOver) {
+		glClear(GL_COLOR_BUFFER_BIT);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE BUTTON' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+	}
 
 	glutSwapBuffers();
 }
