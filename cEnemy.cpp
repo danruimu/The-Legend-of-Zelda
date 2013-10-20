@@ -118,3 +118,27 @@ int cEnemy::Damage() {
 	life--;
 	return life;
 }
+
+int cEnemy::getDrop() {
+	bool heartDropped = false, ruppeDropped = false;
+	float posHeart = (float)rand()/(float)RAND_MAX;
+	float posRuppe = (float)rand()/(float)RAND_MAX;
+	if(probDropHeart > 0.0) {
+		heartDropped = (probDropHeart - posHeart) > 0;
+	}
+	if(probDropRuppe > 0.0) {
+		ruppeDropped = (probDropRuppe - posRuppe) > 0;
+	}
+	if(heartDropped && ruppeDropped) {
+		if((probDropHeart - posHeart) >= (probDropRuppe - posRuppe)) { //drop heart
+			return DROP_HEART;
+		} else { //drop ruppe
+			return DROP_RUPPE;
+		}
+	} else if(heartDropped) {
+		return DROP_HEART;
+	} else if(ruppeDropped) {
+		return DROP_RUPPE;
+	}
+	return -1;
+}

@@ -166,3 +166,7 @@
 #define LOZ_MUSIC_GET_TRIFORCE	'F'	//music for collection triforce
 #define LOZ_MUSIC_UNDERWORLD	'G'	//muic theme for underworld
 #define LOZ_MUSIC_WHISTLE	'H'		//music for exit game
+
+//DROPS
+#define DROP_HEART	0
+#define DROP_RUPPE	1

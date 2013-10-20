@@ -123,7 +123,7 @@ int cPlayer::ataca(){
 	int posx,posy;
 	int state = GetState();
 	int direction = GetDirection();
-	if (!(state == STATE_IDLE || state==STATE_MOVE))return 0;
+	if (state != STATE_IDLE && state!=STATE_MOVE) return 0;
 	GetPosition(&posx,&posy);
 	SetState(STATE_ATTACK_1);
 	switch(direction){

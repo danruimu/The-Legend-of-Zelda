@@ -722,58 +722,108 @@ void cScene::freeObjects() {
 
 void cScene::processAttacks(cRect swordBox) {
 	int right = swordBox.right-1, left = swordBox.left+1, bottom = swordBox.bottom+1, top = swordBox.top-1;
+	bool hitted = false;
 	//bottom-left corner
-	for (int i = 0; i < nEnemies; i++) {
+	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
 			if (target.left >= left && target.left <= left+BLOCK_SIZE && target.bottom >= bottom && target.bottom <= bottom+BLOCK_SIZE) {
 				int restLife = enemies[i]->Damage();
 				if (restLife == 0) {
+					//get drop (if any)
+					int drop = enemies[i]->getDrop();
+					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+					if(drop == DROP_HEART) {
+						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						++nObjects;
+					} else if(drop == DROP_RUPPE) {
+						objects[nObjects] = new cObject(posx, posy, RUPY);
+						++nObjects;
+					}
+
+					//Free memory
 					free(enemies[i]);
 					enemies[i] = nullptr;
+					hitted = true;
 				}
 			}
 		}
 	}
 	//bottom-right corner
-	for (int i = 0; i < nEnemies; i++) {
+	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
 			if (target.left >= right && target.left <= right+BLOCK_SIZE && target.bottom >= bottom && target.bottom <= bottom+BLOCK_SIZE) {
 				int restLife = enemies[i]->Damage();
 				if (restLife == 0) {
+					//get drop (if any)
+					int drop = enemies[i]->getDrop();
+					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+					if(drop == DROP_HEART) {
+						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						++nObjects;
+					} else if(drop == DROP_RUPPE) {
+						objects[nObjects] = new cObject(posx, posy, RUPY);
+						++nObjects;
+					}
+
 					free(enemies[i]);
 					enemies[i] = nullptr;
+					hitted = true;
 				}
 			}
 		}
 	}
 	//top-left corner
-	for (int i = 0; i < nEnemies; i++) {
+	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
 			if (target.left >= left && target.left <= left+BLOCK_SIZE && target.bottom >= top && target.bottom <= top+BLOCK_SIZE) {
 				int restLife = enemies[i]->Damage();
 				if (restLife == 0) {
+					//get drop (if any)
+					int drop = enemies[i]->getDrop();
+					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+					if(drop == DROP_HEART) {
+						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						++nObjects;
+					} else if(drop == DROP_RUPPE) {
+						objects[nObjects] = new cObject(posx, posy, RUPY);
+						++nObjects;
+					}
+
 					free(enemies[i]);
 					enemies[i] = nullptr;
+					hitted = true;
 				}
 			}
 		}
 	}
 	//top-right corner
-	for (int i = 0; i < nEnemies; i++) {
+	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
 			if (target.left >= right && target.left <= right+BLOCK_SIZE && target.bottom >= top && target.bottom <= top+BLOCK_SIZE) {
 				int restLife = enemies[i]->Damage();
 				if (restLife == 0) {
+					//get drop (if any)
+					int drop = enemies[i]->getDrop();
+					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+					if(drop == DROP_HEART) {
+						objects[nObjects] = new cObject(posx, posy, RED_HEART);
+						++nObjects;
+					} else if(drop == DROP_RUPPE) {
+						objects[nObjects] = new cObject(posx, posy, RUPY);
+						++nObjects;
+					}
+
 					free(enemies[i]);
 					enemies[i] = nullptr;
+					hitted = true;
 				}
 			}
 		}
