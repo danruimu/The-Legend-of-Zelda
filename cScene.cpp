@@ -268,9 +268,14 @@ void cScene::newGameAnimation(int texID,int currentAnimation) {
 	PrintMainMenu(currentAnimation);
 	glutSwapBuffers();
 	Sleep(200);
-	glDisable(GL_TEXTURE_2D);
-	//TODO: falta esperarse 2,2 segundos mas
 
+	for(float i = 1.0; i>=0; i-=0.045) {
+		glColor3f(i, i, i);
+		PrintMainMenu(currentAnimation);
+		glutSwapBuffers();
+		Sleep(100);
+	}
+	glDisable(GL_TEXTURE_2D);
 }
 
 int* cScene::GetMap()
