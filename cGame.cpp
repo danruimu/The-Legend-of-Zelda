@@ -18,7 +18,7 @@ cGame::cGame(void)
 	credits[8] = "Oriol Vilarrubi";
 
 	//Fourth view
-	credits[9] = "MUSIC";
+	credits[9] = "MUSIC OBTAINED FROM";
 	credits[10] = "Dayjo";
 	credits[11] = "https://http://noproblo.dayjo.org/";
 
