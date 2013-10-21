@@ -28,6 +28,12 @@ void cGame::drawInstructions(float r, float g, float b) {
 
 void cGame::drawCredits(int n, char *text[]) {
 	//TODO: create the credits
+	glClear(GL_COLOR_BUFFER_BIT);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE, text[0], GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+	for(int i=1; i<n; ++i) {
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*(i+1), text[1], GLUT_BITMAP_HELVETICA_18, 1.0, 1.0, 1.0);
+	}
+	glutSwapBuffers();
 }
 
 bool cGame::finalGame() {
@@ -40,6 +46,8 @@ bool cGame::finalGame() {
 	text[0] = "CONGRATULATIONS!";
 	text[1] = "Now its time to relax and enjoy";
 	drawCredits(n, text);
+
+	return true;
 }
 
 bool cGame::startInstructions() {
@@ -204,7 +212,9 @@ bool cGame::Loop()
 			res = startGame();
 		}
 	} else if(gameFinal) {
+		if(nSecCreditsDuration%(FPS*5)) {
 
+		}
 	}
 
 	return res;
@@ -515,7 +525,6 @@ bool cGame::Process()
 				}
 			}
 		}
-		free(vector);
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;
