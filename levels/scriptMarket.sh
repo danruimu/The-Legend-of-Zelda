@@ -2,6 +2,10 @@
 
 for i in `ls`
 do
-	echo "1" >> $i
-	echo "market" >> $i
+	AUX=`grep market $i`
+	if [ -z "$i" ]
+	then
+		echo "1" >> $i
+		echo "market" >> $i
+	fi
 done
