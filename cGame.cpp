@@ -57,13 +57,13 @@ void cGame::drawInstructions(float r, float g, float b) {
 	glutSwapBuffers();
 }
 
-void cGame::drawCredits(char *text[]) {
+void cGame::drawCredits(char *text[], float r, float g, float b) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo +SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*2, text[0], GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo +SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*2, text[0], GLUT_BITMAP_TIMES_ROMAN_24, r, g, b);
 
 	for(int i = 1; i<3; ++i) {
-		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*(2-i), text[i], GLUT_BITMAP_HELVETICA_12, 1.0, 1.0, 1.0);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*(2-i), text[i], GLUT_BITMAP_HELVETICA_12, r, g, b);
 	}
 
 	glutSwapBuffers();
@@ -79,7 +79,7 @@ bool cGame::finalGame() {
 	text[0] = credits[actualCreditView];
 	text[1] = credits[actualCreditView+1];
 	text[2] = credits[actualCreditView+2];
-	drawCredits(text);
+	drawCredits(text, 0.0, 0.0, 0.0);
 
 	return true;
 }
@@ -260,7 +260,7 @@ bool cGame::Loop()
 			text[0] = credits[actualCreditView];
 			text[1] = credits[actualCreditView+1];
 			text[2] = credits[actualCreditView+2];
-			drawCredits(text);
+			drawCredits(text, 0.0, 0.0, 0.0);
 		} else if(nSecCreditsDuration == 0) {
 			Scene.freeEnemies();
 			Scene.freeObjects();
@@ -271,6 +271,22 @@ bool cGame::Loop()
 			sprintf(menuText[1],"OPTIONS");
 			sprintf(menuText[2],"EXIT");
 			Init();
+		} else {
+			int aux = nSecCreditsDuration%(FPS*5);
+			char *text[3];
+			text[0] = credits[actualCreditView];
+			text[1] = credits[actualCreditView+1];
+			text[2] = credits[actualCreditView+2];
+			float r,g,b;
+			if(aux < 50) {
+				r = g = b = ((float)aux*2)/100;
+			} else if(aux > 250) {
+				aux = 300 - aux;
+				r = g = b = ((float)aux*2)/100;
+			} else {
+				r = g = b = 1.0;
+			}
+			drawCredits(text, r, g, b);
 		}
 	}
 

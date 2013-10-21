@@ -46,7 +46,7 @@ public:
 
 private:
 	void drawInstructions(float r, float g, float b);
-	void drawCredits(char *text[]);
+	void drawCredits(char *text[], float r, float g, float b);
 	bool finalGame();
 
 	unsigned char keys[256];
