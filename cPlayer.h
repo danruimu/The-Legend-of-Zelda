@@ -34,6 +34,8 @@ public:
 	void getKey();
 	void Logic(bool pause);
 	void sayonaraSword();
+	int getHearts();
+	int getTriforces();
 
 	cRect getSwordBox();
 

@@ -270,3 +270,11 @@ bool cPlayer::hasMySwordHitAny(cRect enemy){
 	if(espasa==nullptr)return false;
 	return espasa->collides(enemy);
 }
+
+int cPlayer::getHearts() {
+	return life;
+}
+
+int cPlayer::getTriforces() {
+	return triforce;
+}

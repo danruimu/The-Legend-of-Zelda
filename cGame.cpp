@@ -26,6 +26,22 @@ void cGame::drawInstructions(float r, float g, float b) {
 	glutSwapBuffers();
 }
 
+void cGame::drawCredits(int n, char *text[]) {
+	//TODO: create the credits
+}
+
+bool cGame::finalGame() {
+	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
+	gameFinal = true;
+	nSecCreditsDuration = FPS*30;
+	sound.playSound(sounds[LOZ_MUSIC_UNDERWORLD]);
+	int n = 2;
+	char *text[2];
+	text[0] = "CONGRATULATIONS!";
+	text[1] = "Now its time to relax and enjoy";
+	drawCredits(n, text);
+}
+
 bool cGame::startInstructions() {
 	bool res = true;
 	instructions = true;
@@ -117,6 +133,7 @@ bool cGame::Init()
 	pause = false;
 	gameOver = false;
 	instructions = false;
+	gameFinal = false;
 	up = true;
 	nTransMM = 0;
 	currentMM = 0;
@@ -171,10 +188,10 @@ bool cGame::Loop()
 {
 	bool res=true;
 
-	if(!instructions) {
+	if(!instructions && !gameFinal) {
 		res = Process();
 		if(res) Render();
-	} else {
+	} else if(instructions) {
 		nSecInstructions--;
 		drawInstructions(1.0, 1.0, 1.0);
 		if(nSecInstructions==0) {
@@ -186,6 +203,8 @@ bool cGame::Loop()
 			}
 			res = startGame();
 		}
+	} else if(gameFinal) {
+
 	}
 
 	return res;
@@ -453,9 +472,15 @@ bool cGame::Process()
 			switch(vector[i]) {
 			case RED_HEART:
 				sound.playSound(sounds[LOZ_GET_HEART]);
+				if(Link.getHearts() > 2) {
+					sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+				}
 				break;
 			case BLUE_HEART:
 				sound.playSound(sounds[LOZ_GET_HEART]);
+				if(Link.getHearts() > 2) {
+					sound.stopSound(sounds[LOZ_LOW_HEALTH]);
+				}
 				break;
 			case RUPY:
 				sound.playSound(sounds[LOZ_GET_RUPEE]);
@@ -472,6 +497,9 @@ bool cGame::Process()
 				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
 				Sleep(9000);
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				if(Link.getTriforces() == 3) {
+					return finalGame();
+				}
 				break;
 			case TRIFORCE_Y:
 				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
@@ -480,6 +508,11 @@ bool cGame::Process()
 				Sleep(9000);
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				break;
+			case ROCK:
+				sound.playSound(sounds[LOZ_HURT]);
+				if(Link.getHearts() <= 2) {
+					sound.playSound(sounds[LOZ_LOW_HEALTH]);
+				}
 			}
 		}
 		free(vector);
