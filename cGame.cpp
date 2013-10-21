@@ -404,6 +404,7 @@ bool cGame::Process()
 		}
 
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
+		Scene.processObjects(&Link);
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;

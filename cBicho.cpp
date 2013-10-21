@@ -89,7 +89,7 @@ void cBicho::DrawRect(int tex_id,float xo,float yo,float xf,float yf)
 void cBicho::NextFrame(int init,int max,int frame_delay)
 {
 	delay++;
-	if(delay == frame_delay)
+	if(delay >= frame_delay)
 	{
 		state = init + ((state-init)+1)%max;
 		delay = 0;

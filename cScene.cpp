@@ -2,17 +2,17 @@
 #include <algorithm>
 
 int BoxOut(cRect box){
-	if(box.bottom < 0) return DOWN;
-	if(box.top > SCENE_HEIGHT*BLOCK_SIZE) return UP;
-	if(box.left < 0)return LEFT;
-	if(box.right > SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
+	if(box.bottom < SCENE_Yo) return DOWN;
+	if(box.top > SCENE_HEIGHT*BLOCK_SIZE + SCENE_Yo) return UP;
+	if(box.left < SCENE_Xo)return LEFT;
+	if(box.right > SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE) return RIGHT;
 	return -1;
 }
 
 bool isWater(int tile){
-	if (tile >=72 && tile >= 74 || tile >=78 && tile >= 81 || tile >=84 && tile >= 86) return true;
-	if (tile >=90 && tile >= 92 || tile >=96 && tile >= 98 || tile >=103 && tile >= 105) return true;
-	if (tile >=108 && tile >= 110 || tile >=114 && tile >= 116 || tile >=120 && tile >= 122) return true; 
+	if (tile >=72 && tile <= 74 || tile >=78 && tile <= 81 || tile >=84 && tile <= 86) return true;
+	if (tile >=90 && tile <= 92 || tile >=96 && tile <= 98 || tile >=103 && tile <= 105) return true;
+	if (tile >=108 && tile <= 110 || tile >=114 && tile <= 116 || tile >=120 && tile <= 122) return true; 
 	return false;
 }
 
@@ -21,9 +21,9 @@ bool isWallkable(int tile) {
 	if (tile == 2 || tile == 8 || tile == 14) return true;	//tierra
 	if (tile ==  18 || tile == 24 ||tile == 30) return true;	//escaleras verticales
 	if (tile >= 126 && tile <= 129 || tile >= 132 && tile <= 135 || tile >= 138 && tile <=141 ) return true;  //esquinas
-	if (tile >=75 && tile >= 77 || tile >=81 && tile >= 83 || tile >=87 && tile >= 89) return true;  //desierto
-	if (tile >=93 && tile >= 95 || tile >=99 && tile >= 101 || tile >=105 && tile >= 107) return true;  //desierto
-	if (tile >=111 && tile >= 113 || tile >=117 && tile >= 119 || tile >=123 && tile >= 125) return true;  //desierto
+	if (tile >=75 && tile <= 77 || tile >=81 && tile <= 83 || tile >=87 && tile <= 89) return true;  //desierto
+	if (tile >=93 && tile <= 95 || tile >=99 && tile <= 101 || tile >=105 && tile <= 107) return true;  //desierto
+	if (tile >=111 && tile <= 113 || tile >=117 && tile <= 119 || tile >=123 && tile <= 125) return true;  //desierto
 	if (tile ==  59 || tile == 65 ||tile == 71) return true;	//desierto
 	if (tile ==  131 || tile == 137 ||tile == 143) return true;	//puente
 	return false;
@@ -77,13 +77,8 @@ cScene::cScene(void)
 }
 
 cScene::~cScene(void){
-	int i=0;
-	while (i<nObjects)
-		if(objects[i]!=nullptr)free(objects[i++]);
-	i=0;
-	while (i<nEnemies) 
-		if(enemies[i]!=nullptr)
-			free(enemies[i++]);
+	freeEnemies();
+	freeObjects();
 }
 
 bool cScene::PrintMainMenu(int idMM) {
@@ -236,9 +231,11 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 		glCallList(id_DL);
 		if(dungeon && !prop[DUNGEON_PROP])printText(SCENE_Xo+2*BLOCK_SIZE,SCENE_Yo+8*BLOCK_SIZE,"Wellcome to da market, BITCH",GLUT_BITMAP_TIMES_ROMAN_24,1.,1.,1.);
 		int i=0;
-		while(i<nObjects)
+		while(i<nObjects){
 			if(objects[i]!=nullptr)
-				objects[i++]->Render(obj_id);
+				objects[i]->Render(obj_id);
+			i++;
+		}
 	}
 	glDisable(GL_TEXTURE_2D);
 
@@ -301,93 +298,76 @@ void cScene::drawPauseMenu(char *t1, char* t2, char *t3, int select) {
 
 int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	cRect Box = *BoxOrg;
-	Box.bottom-=SCENE_Yo;
-	Box.top-=SCENE_Yo;
-	Box.left-=SCENE_Xo;
-	Box.right-=SCENE_Xo;
 	int i=0;
-	while (i<nObjects)
-		if(objects[i]!=nullptr)
-			objects[i++]->process();
-	i=0;
 	while (i<nEnemies){
 		if(enemies[i]!=nullptr){
-			enemies[i]->SetNewDirection();
-
-			cRect box; int direction = enemies[i]->GetDirection();
-			enemies[i]->GetArea(&box);
-			int tilesEnem[] = {-1, -1, -1, -1};
+			cRect box;
 			int speedEnem = enemies[i]->GetSpeed();
-			
-			//TODO:  y sin colisiones
-			switch(enemies[i]->GetDirection()) {
+			int direction = enemies[i]->SetNewDirection();
+			enemies[i]->GetArea(&box);
+
+			int tilesEnem[] = {-1, -1, -1, -1};	
+			switch(direction) {
 			case ENEMY_DOWN:
-				tilesEnem[0] = whatsThere(box.left+1,box.top-21-speedEnem);
-				tilesEnem[1] = whatsThere(box.right-1,box.top-21-speedEnem);
-				tilesEnem[2] = whatsThere(box.right-1,box.bottom+1-speedEnem);
-				tilesEnem[3] = whatsThere(box.left+1,box.bottom+1-speedEnem);
+				box.top-=speedEnem;
+				box.bottom-=speedEnem;
 				break;
 			case ENEMY_LEFT:
-				tilesEnem[0] = whatsThere(box.left+1-speedEnem,box.top-21);
-				tilesEnem[1] = whatsThere(box.right-1-speedEnem,box.top-21);
-				tilesEnem[2] = whatsThere(box.right-1-speedEnem,box.bottom+1);
-				tilesEnem[3] = whatsThere(box.left+1-speedEnem,box.bottom+1);
+				box.right-=speedEnem;
+				box.left-=speedEnem;
 				break;
 			case ENEMY_UP:
-				tilesEnem[0] = whatsThere(box.left+1,box.top-21+speedEnem);
-				tilesEnem[1] = whatsThere(box.right-1,box.top-21+speedEnem);
-				tilesEnem[2] = whatsThere(box.right-1,box.bottom+1+speedEnem);
-				tilesEnem[3] = whatsThere(box.left+1,box.bottom+1+speedEnem);
+				box.top+=speedEnem;
+				box.bottom+=speedEnem;
 				break;
 			case ENEMY_RIGHT:
-				tilesEnem[0] = whatsThere(box.left+1+speedEnem,box.top-21);
-				tilesEnem[1] = whatsThere(box.right-1+speedEnem,box.top-21);
-				tilesEnem[2] = whatsThere(box.right-1+speedEnem,box.bottom+1);
-				tilesEnem[3] = whatsThere(box.left+1+speedEnem,box.bottom+1);
+				box.right+=speedEnem;
+				box.left+=speedEnem;
 				break;
 			}
-
-			if(tilesEnem[0] == WALKABLE && tilesEnem[1] == WALKABLE && tilesEnem[2] == WALKABLE && tilesEnem[3] == WALKABLE) {
-				int xpos, ypos; enemies[i]->GetPosition(&xpos, &ypos);
-				enemies[i]->process();
+			if (BoxOut(box) == -1){
+				tilesEnem[0] = whatsThereMonsterVersion(box.left+1,box.top-1);
+				tilesEnem[1] = whatsThereMonsterVersion(box.right-1,box.top-1);
+				tilesEnem[2] = whatsThereMonsterVersion(box.right-1,box.bottom+1);
+				tilesEnem[3] = whatsThereMonsterVersion(box.left+1,box.bottom+1);
+				if(tilesEnem[0] == WALKABLE && tilesEnem[1] == WALKABLE && tilesEnem[2] == WALKABLE && tilesEnem[3] == WALKABLE) {
+					enemies[i]->process();
+				}
 			}
 		}
 		i++;
 	}
-	//process objectes
-	//TODO: colisiones de objetos en process o separado
-	//while(
 	int out = BoxOut(Box);
 	if(out != -1){
 		bool overridable = false;
 		if(dungeon){
 			dungeon = false;
-			Box.left = xDoor*BLOCK_SIZE;
+			Box.left = SCENE_Xo + xDoor*BLOCK_SIZE;
 			Box.right = Box.left + BLOCK_SIZE;
-			Box.bottom = yDoor*BLOCK_SIZE;
+			Box.bottom = SCENE_Yo + yDoor*BLOCK_SIZE;
 			Box.top =  Box.bottom+BLOCK_SIZE;
 			overridable = true;
 		}
 		else{
 			switch (out){
 			case UP:
-				Box.bottom=0;
-				Box.top=BLOCK_SIZE;
+				Box.bottom=SCENE_Yo;
+				Box.top=Box.bottom + BLOCK_SIZE;
 				id[1]--;
 				break;
 			case DOWN:
-				Box.top=SCENE_HEIGHT*BLOCK_SIZE;
+				Box.top=SCENE_HEIGHT*BLOCK_SIZE + SCENE_Yo;
 				Box.bottom=Box.top-BLOCK_SIZE;
 				id[1]++;
 				break;
 			case LEFT:
-				Box.right=SCENE_WIDTH*BLOCK_SIZE;
+				Box.right=SCENE_WIDTH*BLOCK_SIZE + SCENE_Xo;
 				Box.left=Box.right-BLOCK_SIZE;
 				id[0]--;
 				break;
 			case RIGHT:
-				Box.left=0;
-				Box.right=BLOCK_SIZE;
+				Box.left=SCENE_Xo;
+				Box.right=Box.left - BLOCK_SIZE;
 				id[0]++;
 				break;
 			}
@@ -400,10 +380,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 			}
 		}
 		LoadLevel(id,overridable, data);
-		BoxOrg->top = Box.top+SCENE_Yo;
-		BoxOrg->bottom = Box.bottom+SCENE_Yo;
-		BoxOrg->left = Box.left+SCENE_Xo;
-		BoxOrg->right = Box.right+SCENE_Xo;
+		BoxOrg->top = Box.top;
+		BoxOrg->bottom = Box.bottom;
+		BoxOrg->left = Box.left;
+		BoxOrg->right = Box.right;
 		return OUTLIMITS;
 	}
 	int numlockeddoors = 0;
@@ -619,6 +599,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 		return HURT;
 	}
 
+	tiles[0] = whatsThere(Box.left+1,Box.top-21);
+	tiles[1] = whatsThere(Box.right-1,Box.top-21);
+	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
+	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
 
 	for (int i = 0; i < 4; i++){
 		if(tiles[i] == LOCKED_DOOR)numlockeddoors++;
@@ -644,7 +628,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
 				int vector[] = {TRIFORCE_Y,TRIFORCE_B};
 				objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
-				objects[0]->setCollectable(10);
+				objects[0]->setCollectable(0);
 				nObjects=1;
 			}
 			else{//market
@@ -665,13 +649,25 @@ int cScene::whatsThere(int x,int y){
 		if(enemies[i] != nullptr) {
 			cRect target;
 			enemies[i]->GetArea(&target);
-			if (target.left >= x && target.left <= x+BLOCK_SIZE && target.bottom >= y && target.bottom <= y+BLOCK_SIZE) return HURT;
+			if (x >= target.left && x <=target.right && y >= target.bottom && y <= target.top) return HURT;
 		}
 	}
 	int bx,by;
-	bx = x/BLOCK_SIZE;
-	by = y/BLOCK_SIZE;
-	//TODO: relative
+	bx = (x-SCENE_Xo)/BLOCK_SIZE;
+	by = (y-SCENE_Yo)/BLOCK_SIZE;
+	if (bx < 0 || by < 0 || bx > SCENE_WIDTH ||by > SCENE_HEIGHT ) return OTHERS;
+	if (isDoor(map[by*SCENE_WIDTH+bx])) return DOOR;
+	if (isLockedDoor(map[by*SCENE_WIDTH+bx])) return LOCKED_DOOR;
+	if (isWallkable(map[by*SCENE_WIDTH+bx])) return WALKABLE;
+	if (isWater(map[by*SCENE_WIDTH+bx])) return WATER;
+	return OTHERS;
+}
+
+int cScene::whatsThereMonsterVersion(int x,int y){
+
+	int bx,by;
+	bx = (x-SCENE_Xo)/BLOCK_SIZE;
+	by = (y-SCENE_Yo)/BLOCK_SIZE;
 	if (bx < 0 || by < 0 || bx > SCENE_WIDTH ||by > SCENE_HEIGHT ) return OTHERS;
 	if (isDoor(map[by*SCENE_WIDTH+bx])) return DOOR;
 	if (isLockedDoor(map[by*SCENE_WIDTH+bx])) return LOCKED_DOOR;
@@ -720,6 +716,107 @@ void cScene::freeObjects() {
 	nObjects = 0;
 }
 
+void cScene::processObjects(cPlayer *Link){
+	cRect linkBox ;
+	bool alive;
+	Link->GetArea(&linkBox);
+	for (int i = 0; i < nObjects; i++){
+		if(objects[i] != nullptr){
+			alive = objects[i]->process();
+			if(objects[i]->collides(linkBox)){
+				alive = false;
+				if(objects[i]->isCollectable()){
+					int price = objects[i]->getPrice();
+					if(Link->getWealth() >= price){
+						Link->paga(price);
+						int antes,despues;
+						switch (objects[i]->getId()){
+						case HEART_CONTAINER:
+							Link->incMaxLife();
+							//musica heart container??
+							break;
+						case KEY:
+							Link->getKey();
+							//musica llave?
+							break;
+						case RUPY:
+							//musica rupia?
+							break;
+						case RUPY_X5:
+							//musica rupia?
+							break;
+						case FAIRY:
+							Link->heal(-1);
+							//parar sonido corazon bajo
+							break;
+						case RED_HEART:
+							antes = Link->getLife();
+							despues = Link->heal(1);
+							if(despues >= 2){
+								//parar sonido corazon bajo
+							}
+							if (antes == despues)alive = true;
+							else alive = false;//reproducir sonido curar?
+							break;
+						case TRIFORCE_Y:
+							Link->acquireTriforce();
+							//reproducir sonido trifuerza
+							break;
+						default:
+							break;
+						}
+					}
+					else{//no puedo comprarlo
+						alive = true;
+					}
+				}
+				if(objects[i]->isMovable()){
+					//reproduir sonid de que ens han tocat
+					int num_cors = Link->damage(objects[i]->getDamage());
+					if (num_cors <= 2){
+						//reproduir so cors baixos
+					}
+					//animacio de Link quan rep tollina ???
+					//knockback ???
+				}
+			}
+			if(!alive) {
+				free(objects[i]);
+				objects[i] = nullptr;
+			}
+		}
+	}
+	cRect enemyBox;
+	if(Link->swordThrown()){
+		for (int i = 0; i < nEnemies; i++){
+			if(enemies[i] != nullptr){
+				enemies[i]->GetArea(&enemyBox);
+				if(Link->hasMySwordHitAny(enemyBox)){
+					if (enemies[i]->Damage() == 0){
+						int drop = enemies[i]->getDrop();
+						int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+						objects[nObjects] = new cObject(posx, posy, drop);
+						objects[nObjects]->setCollectable(0);
+						if(drop == RED_HEART) {
+							int vector[] = {RED_HEART,BLUE_HEART};
+							objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+							++nObjects;
+						} else if(drop == RUPY) {
+							int vector[] = {RUPY,RUPY_X5};
+							objects[nObjects]->setCollectable(-1);
+							objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+						}
+						++nObjects;
+						free(enemies[i]);
+						enemies[i] = nullptr;
+					}
+					Link->sayonaraSword();
+				}
+			}
+		}
+	}
+}
+
 void cScene::processAttacks(cRect swordBox) {
 	int right = swordBox.right-1, left = swordBox.left+1, bottom = swordBox.bottom+1, top = swordBox.top-1;
 	bool hitted = false;
@@ -734,15 +831,17 @@ void cScene::processAttacks(cRect swordBox) {
 					//get drop (if any)
 					int drop = enemies[i]->getDrop();
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
-					if(drop == DROP_HEART) {
+					if(drop == RED_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
 						int vector[] = {RED_HEART,BLUE_HEART};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setCollectable(0);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
-					} else if(drop == DROP_RUPPE) {
+					} else if(drop == RUPY) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
 						int vector[] = {RUPY,RUPY_X5};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setCollectable(-1);
 						++nObjects;
 					}
 
@@ -765,15 +864,17 @@ void cScene::processAttacks(cRect swordBox) {
 					//get drop (if any)
 					int drop = enemies[i]->getDrop();
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
-					if(drop == DROP_HEART) {
+					if(drop == RED_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
 						int vector[] = {RED_HEART,BLUE_HEART};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setCollectable(0);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
-					} else if(drop == DROP_RUPPE) {
+					} else if(drop == RUPY) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
 						int vector[] = {RUPY,RUPY_X5};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setCollectable(-1);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
@@ -795,15 +896,15 @@ void cScene::processAttacks(cRect swordBox) {
 					//get drop (if any)
 					int drop = enemies[i]->getDrop();
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
-					if(drop == DROP_HEART) {
+					if(drop == RED_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
 						int vector[] = {RED_HEART,BLUE_HEART};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
-					} else if(drop == DROP_RUPPE) {
+					} else if(drop == RUPY) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
 						int vector[] = {RUPY,RUPY_X5};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 
@@ -825,15 +926,15 @@ void cScene::processAttacks(cRect swordBox) {
 					//get drop (if any)
 					int drop = enemies[i]->getDrop();
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
-					if(drop == DROP_HEART) {
+					if(drop == RED_HEART) {
 						objects[nObjects] = new cObject(posx, posy, RED_HEART);
 						int vector[] = {RED_HEART,BLUE_HEART};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
-					} else if(drop == DROP_RUPPE) {
+					} else if(drop == RUPY) {
 						objects[nObjects] = new cObject(posx, posy, RUPY);
 						int vector[] = {RUPY,RUPY_X5};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						++nObjects;
 					}
 

@@ -97,3 +97,15 @@ void cObject::setAnimated(int *animation,int num_animations,int frame_delay){
 		this->animation[i] = animation[i];
 	}
 }
+
+bool cObject::isCollectable(){
+	return collectable;
+}
+
+bool cObject::isMovable(){
+	return moving;
+}
+
+int cObject::getId(){
+	return id;
+}

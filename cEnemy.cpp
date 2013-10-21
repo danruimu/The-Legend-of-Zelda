@@ -106,7 +106,8 @@ int cEnemy::SetNewDirection() {
 		changeDirectionDelay = 0;
 		switch(getIA()) {
 		case RAND:
-			int newDir = rand()%4;
+			int newDir;
+			newDir = rand()%4;
 			SetDirection(newDir);
 			return newDir;
 		}
@@ -131,14 +132,14 @@ int cEnemy::getDrop() {
 	}
 	if(heartDropped && ruppeDropped) {
 		if((probDropHeart - posHeart) >= (probDropRuppe - posRuppe)) { //drop heart
-			return DROP_HEART;
+			return RED_HEART;
 		} else { //drop ruppe
-			return DROP_RUPPE;
+			return RUPY;
 		}
 	} else if(heartDropped) {
-		return DROP_HEART;
+		return RED_HEART;
 	} else if(ruppeDropped) {
-		return DROP_RUPPE;
+		return RUPY;
 	}
 	return -1;
 }

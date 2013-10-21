@@ -40,6 +40,16 @@ public:
 	void setGodMode(bool mode);
 	bool getGodMode();
 
+	void paga(int price);
+	int getWealth();
+
+	void incMaxLife();
+	int getLife();
+
+	void acquireTriforce();
+	bool swordThrown();
+	bool hasMySwordHitAny(cRect enemy);
+
 private:
 	void printInfo(int obj_id);
 	int life,max_life;

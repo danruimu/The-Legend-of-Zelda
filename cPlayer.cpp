@@ -6,7 +6,7 @@ cPlayer::cPlayer() {
 	espasa = nullptr;
 	life = 6;
 	max_life = 6;
-	points = 0;
+	points = 100;
 	keys = 3;
 	triforce = 0;
 	max_triforces = 3;
@@ -48,8 +48,7 @@ void cPlayer::printInfo(int obj_id){
 void cPlayer::Logic(bool pause){
 	if (pause) return;
 	if(espasa != nullptr && !espasa->process()){
-		free(espasa);
-		espasa = nullptr;
+		sayonaraSword();
 	}
 	if(godMode) {
 		--godModeDuration;
@@ -170,6 +169,10 @@ int cPlayer::heal(int num_hearts){//-1 -> full recovery
 	return life;
 }
 
+int cPlayer::getLife(){
+	return life;
+}
+
 int cPlayer::damage(int num_hearts){ 
 	life = max(0,life-num_hearts);
 	return life;
@@ -241,4 +244,28 @@ cRect cPlayer::getSwordBox() {
 		break;
 	}
 	return swordBox;
+}
+
+void cPlayer::paga(int price){
+	points -= price;
+}
+
+int cPlayer::getWealth(){
+	return points;
+}
+
+void cPlayer::incMaxLife(){
+	max_life+=2;
+}
+
+void cPlayer::acquireTriforce(){
+	triforce++;
+}
+
+bool cPlayer::swordThrown(){
+	return espasa!=nullptr;
+}
+
+bool cPlayer::hasMySwordHitAny(cRect enemy){
+	return espasa->collides(enemy);
 }

@@ -22,7 +22,7 @@
 #define HEART_CONTAINER	1
 #define KEY				2
 #define RUPY			3
-#define FAIRY_N_MOV		4
+#define FAIRY			4
 
 #define RED_HEART		5
 #define HALF_HEART		6

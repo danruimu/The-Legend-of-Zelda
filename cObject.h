@@ -14,7 +14,9 @@ public:
 	void setCollectable(int price);
 	int getPrice();
 	void setAnimated(int *animation,int num_animations,int frame_delay);
-
+	bool isCollectable();
+	bool isMovable();
+	int getId();
 private:
 	int x,y,id;
 

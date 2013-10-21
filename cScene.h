@@ -4,6 +4,7 @@
 #include "cEnemy.h"
 #include "cObject.h"
 #include "cData.h"
+#include "cPlayer.h"
 
 #define STR_DUNGEON	"dungeon"
 #define DUNGEON_PROP		0//if its true indicates that the entry in this level its a dungeon; otherwise it indicates that it's a shop
@@ -53,7 +54,7 @@ public:
 	void setId(char Nid[]);
 
 	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
-	int Process(cRect *Box,String unlockedDoors[], cData *data);
+	int Process(cRect *BoxOrg,String unlockedDoors[], cData *data);
 	int whatsThere(int x,int y);
 	void unlock();
 	void drawEnemies();
@@ -62,6 +63,7 @@ public:
 	void freeObjects();
 
 	void processAttacks(cRect swordBox);
+	void processObjects(cPlayer *Link);
 
 private:
 	int findTextureId(String str, cData *data);
@@ -75,6 +77,9 @@ private:
 	bool dungeon;//indicates if the current level is a dungeon or a market
 	bool LoadDungeon(bool dungeon);
 	bool exitingDoor;
+
+	int whatsThereMonsterVersion(int x,int y);
+
 
 
 	cObject *objects[NUM_MAX_OBJECTS];
