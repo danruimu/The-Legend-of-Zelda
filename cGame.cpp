@@ -23,6 +23,8 @@ void cGame::drawInstructions(float r, float g, float b) {
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*2, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*6, "D -> Move RIGHT", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*7, "J or SPACE -> ATTACK/ENTER", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*8, "ESCAPE -> PAUSE", GLUT_BITMAP_HELVETICA_12, r, g, b);
+
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + BLOCK_SIZE, "Press 'SCAPE' key to start or wait...", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	glutSwapBuffers();
 }
 
@@ -183,6 +185,7 @@ bool cGame::Init()
 	sounds[LOZ_GET_HEART] = sound.addSound("sounds/LOZ_Get_Heart.wav", false, EFFECT);
 	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_GAME_OVER] = sound.addSound("sounds/LOZ_MUSIC_Game_Over.wav", true, MUSIC);
+	sounds[LOZ_MUSIC_GET_TRIFORCE] = sound.addSound("sounds/LOZ_MUSIC_Get_Triforce.wav", false, MUSIC);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -200,6 +203,10 @@ bool cGame::Loop()
 		res = Process();
 		if(res) Render();
 	} else if(instructions) {
+		if(keys[' ']) {
+			keys[' '] = false;
+			nSecInstructions = 1;
+		}
 		nSecInstructions--;
 		drawInstructions(1.0, 1.0, 1.0);
 		if(nSecInstructions==0) {
