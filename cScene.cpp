@@ -229,7 +229,6 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 	}
 	else{
 		glCallList(id_DL);
-		if(dungeon && !prop[DUNGEON_PROP])printText(SCENE_Xo+2*BLOCK_SIZE,SCENE_Yo+8*BLOCK_SIZE,"Wellcome to da market, BITCH",GLUT_BITMAP_TIMES_ROMAN_24,1.,1.,1.);
 		int i=0;
 		while(i<nObjects){
 			if(objects[i]!=nullptr)
@@ -598,12 +597,12 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 		}
 		return HURT;
 	}
-
-	tiles[0] = whatsThere(Box.left+1,Box.top-21);
-	tiles[1] = whatsThere(Box.right-1,Box.top-21);
-	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
-	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
-
+	if (whatsThere(Box.left+BLOCK_SIZE/2,Box.top-21) == LOCKED_DOOR)numlockeddoors++;
+	if (whatsThere(Box.left+BLOCK_SIZE/2,Box.top-21) == DOOR)numdoors++;
+	if(exitingDoor){
+		tiles[0] = whatsThere(Box.left+1,Box.top-1);
+		tiles[1] = whatsThere(Box.right-1,Box.top-1);
+	}
 	for (int i = 0; i < 4; i++){
 		if(tiles[i] == LOCKED_DOOR)numlockeddoors++;
 		else if(tiles[i] == DOOR)numdoors++;
@@ -632,7 +631,15 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				nObjects=1;
 			}
 			else{//market
-				//TODO: leer de disco los objetos a vender
+				objects[0] = new cObject(SCENE_Xo+4*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,KEY);
+				objects[0]->setCollectable(30);
+				objects[1] = new cObject(SCENE_Xo+7*BLOCK_SIZE,SCENE_Yo + 6*BLOCK_SIZE,RED_HEART);
+				objects[1]->setCollectable(15);
+				int vector[] = {RED_HEART,BLUE_HEART};
+				objects[1]->setAnimated(vector,2,FRAME_DELAY*2);
+				objects[2] = new cObject(SCENE_Xo+10*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,HEART_CONTAINER);
+				objects[2]->setCollectable(60);
+				nObjects=3;
 			}
 			return OUTLIMITS;
 		}
@@ -755,7 +762,10 @@ void cScene::processObjects(cPlayer *Link){
 							if(despues >= 2){
 								//parar sonido corazon bajo
 							}
-							if (antes == despues)alive = true;
+							if (antes == despues){
+								alive = true;
+								Link->paga(-price);
+							}
 							else alive = false;//reproducir sonido curar?
 							break;
 						case TRIFORCE_Y:
