@@ -764,42 +764,43 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 							Link->incMaxLife();
 							vector[*n]=HEART_CONTAINER;
 							(*n)++;
-							//musica heart container??
 							break;
 						case KEY:
 							Link->getKey();
 							vector[*n]=KEY;
 							(*n)++;
-							//musica llave?
 							break;
 						case RUPY:
 							vector[*n]=RUPY;
 							(*n)++;
-							//musica rupia?
 							break;
 						case RUPY_X5:
 							vector[*n]=RUPY;
 							(*n)++;
-							//musica rupia?
 							break;
 						case FAIRY:
+							vector[*n]=FAIRY;
+							(*n)++;
 							Link->heal(-1);
 							//parar sonido corazon bajo
 							break;
 						case RED_HEART:
 							antes = Link->getLife();
 							despues = Link->heal(1);
-							if(despues >= 2){
-								//parar sonido corazon bajo
-							}
 							if (antes == despues){
 								alive = true;
 								Link->paga(-price);
 							}
-							else alive = false;//reproducir sonido curar?
+							else {
+								alive = false;//reproducir sonido curar?
+								vector[*n]=RED_HEART;
+								(*n)++;
+							}
 							break;
 						case TRIFORCE_Y:
 							Link->acquireTriforce();
+							vector[*n]=TRIFORCE_Y;
+							(*n)++;
 							//reproducir sonido trifuerza
 							break;
 						default:
@@ -813,7 +814,8 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 				if(objects[i]->isMovable()){
 					int num_cors = Link->damage(objects[i]->getDamage());
 					Link->setGodMode(true);
-
+					vector[*n]=ROCK;
+					(*n)++;
 				}
 			}
 			if(!alive) {
@@ -829,6 +831,8 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 				enemies[i]->GetArea(&enemyBox);
 				if(Link->hasMySwordHitAny(enemyBox)){
 					if (enemies[i]->Damage() == 0){
+						vector[*n]=SWORD_DOWN;
+						(*n)++;
 						int drop = enemies[i]->getDrop();
 						if(drop!=-1){
 							int posx,posy; enemies[i]->GetPosition(&posx, &posy);
