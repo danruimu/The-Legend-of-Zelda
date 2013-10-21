@@ -2,6 +2,35 @@
 
 cGame::cGame(void)
 {
+	//First view
+	credits[0] = "CONGRATULATIONS!";
+	credits[1] = "Enjoy this time and";
+	credits[2] = "see the credits :-D";
+	
+	//Second view
+	credits[3] = "DIRECTORS";
+	credits[4] = "Dani Ruiz";
+	credits[5] = "Oriol Vilarrubi";
+
+	//Third view
+	credits[6] = "DEVELOPERS";
+	credits[7] = "Dani Ruiz";
+	credits[8] = "Oriol Vilarrubi";
+
+	//Fourth view
+	credits[9] = "MUSIC";
+	credits[10] = "Dayjo";
+	credits[11] = "https://http://noproblo.dayjo.org/";
+
+	//Fifth view
+	credits[12] = "SPECIAL THANKS";
+	credits[13] = "Raquel Recio";
+	credits[14] = "Coffe machine";
+
+	//Sixth view
+	credits[15] = "THANK YOU!";
+	credits[16] = "Remember that donations";
+	credits[17] = "will be very appreciated :-D";
 }
 
 cGame::~cGame(void){
@@ -24,17 +53,19 @@ void cGame::drawInstructions(float r, float g, float b) {
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*7, "J or SPACE -> ATTACK/ENTER", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*8, "ESCAPE -> PAUSE", GLUT_BITMAP_HELVETICA_12, r, g, b);
 
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + BLOCK_SIZE, "Press 'SCAPE' key to start or wait...", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + BLOCK_SIZE, "Press 'SPACE' key to start or wait...", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	glutSwapBuffers();
 }
 
-void cGame::drawCredits(int n, char *text[]) {
-	//TODO: create the credits
+void cGame::drawCredits(char *text[]) {
 	glClear(GL_COLOR_BUFFER_BIT);
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE, text[0], GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-	for(int i=1; i<n; ++i) {
-		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*(i+1), text[1], GLUT_BITMAP_HELVETICA_18, 1.0, 1.0, 1.0);
+	
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo +SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*2, text[0], GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+
+	for(int i = 1; i<3; ++i) {
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2 + BLOCK_SIZE*(2-i), text[i], GLUT_BITMAP_HELVETICA_12, 1.0, 1.0, 1.0);
 	}
+
 	glutSwapBuffers();
 }
 
@@ -43,11 +74,12 @@ bool cGame::finalGame() {
 	gameFinal = true;
 	nSecCreditsDuration = FPS*30;
 	sound.playSound(sounds[LOZ_MUSIC_UNDERWORLD]);
-	int n = 2;
-	char *text[2];
-	text[0] = "CONGRATULATIONS!";
-	text[1] = "Now its time to relax and enjoy";
-	drawCredits(n, text);
+	actualCreditView = 0;
+	char *text[3];
+	text[0] = credits[actualCreditView];
+	text[1] = credits[actualCreditView+1];
+	text[2] = credits[actualCreditView+2];
+	drawCredits(text);
 
 	return true;
 }
@@ -131,7 +163,7 @@ void cGame::GameOver() {
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 	glutSwapBuffers();
-	Sleep(100);
+	Sleep(3000);
 }
 
 bool cGame::Init()
@@ -186,6 +218,8 @@ bool cGame::Init()
 	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_GAME_OVER] = sound.addSound("sounds/LOZ_MUSIC_Game_Over.wav", true, MUSIC);
 	sounds[LOZ_MUSIC_GET_TRIFORCE] = sound.addSound("sounds/LOZ_MUSIC_Get_Triforce.wav", false, MUSIC);
+	sounds[LOZ_FANFARE] = sound.addSound("sounds/LOZ_Fanfare.wav", false, EFFECT);
+	sounds[LOZ_MUSIC_UNDERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Underworld_dungeon_theme.wav", true, MUSIC);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -201,7 +235,7 @@ bool cGame::Loop()
 
 	if(!instructions && !gameFinal) {
 		res = Process();
-		if(res) Render();
+		if(res && !gameFinal) Render();
 	} else if(instructions) {
 		if(keys[' ']) {
 			keys[' '] = false;
@@ -219,8 +253,24 @@ bool cGame::Loop()
 			res = startGame();
 		}
 	} else if(gameFinal) {
-		if(nSecCreditsDuration%(FPS*5)) {
-
+		--nSecCreditsDuration;
+		if(nSecCreditsDuration%(FPS*5)==0 && nSecCreditsDuration != 0) {
+			actualCreditView+=3;
+			char *text[3];
+			text[0] = credits[actualCreditView];
+			text[1] = credits[actualCreditView+1];
+			text[2] = credits[actualCreditView+2];
+			drawCredits(text);
+		} else if(nSecCreditsDuration == 0) {
+			Scene.freeEnemies();
+			Scene.freeObjects();
+			Link.sayonaraSword();
+			Link = *(new cPlayer());
+			sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
+			sprintf(menuText[0],"NEW GAME");
+			sprintf(menuText[1],"OPTIONS");
+			sprintf(menuText[2],"EXIT");
+			Init();
 		}
 	}
 
@@ -252,8 +302,8 @@ void cGame::ReadMouse(int button, int state, int x, int y)
 
 
 bool cGame::mainMenuProcess(){
-	if(keys['j'] || keys['\r']) {
-		keys['j'] = keys['\r'] = false;
+	if(keys['j'] || keys['\r'] || keys[' ']) {
+		keys['j'] = keys['\r'] = keys[' '] = false;
 		if (!optMenu){//we are in the main menu
 			switch(currentOptMM){
 			case NEW_GAME:
@@ -530,6 +580,8 @@ bool cGame::Process()
 				if(Link.getHearts() <= 2) {
 					sound.playSound(sounds[LOZ_LOW_HEALTH]);
 				}
+			case HEART_CONTAINER:
+				sound.playSound(sounds[LOZ_FANFARE]);
 			}
 		}
 		if(keys[27]) {
@@ -566,30 +618,9 @@ bool cGame::Process()
 
 		/****************************************/
 		// TO BE REMOVED
-		if(keys['q']) {
-			keys['q'] = false;
-			int lifes = Link.heal(1);
-			sound.playSound(sounds[LOZ_GET_HEART]);
-			if(lifes <= 2) {
-				sound.playSound(sounds[LOZ_LOW_HEALTH]);
-			} else {
-				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-			}
-			return true;
-		}
-		if(keys['e']) {
-			keys['e'] = false;
-			int lifes = Link.damage(1);
-			sound.playSound(sounds[LOZ_HURT]);
-			if(lifes <= 2 && lifes > 0) {
-				sound.playSound(sounds[LOZ_LOW_HEALTH]);
-			} else if(lifes == 0) {
-				GameOver();
-				return true;
-			} else {
-				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-			} 
-			return true;
+		if(keys['*']) {
+			keys['*'] = false;
+			return finalGame();
 		}
 		/****************************************/
 

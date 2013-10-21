@@ -46,7 +46,7 @@ public:
 
 private:
 	void drawInstructions(float r, float g, float b);
-	void drawCredits(int n, char *text[]);	//n=size of the vector of strings,  text contains the credits of the current window, when pos 0 is the title of the credits
+	void drawCredits(char *text[]);
 	bool finalGame();
 
 	unsigned char keys[256];
@@ -80,4 +80,7 @@ private:
 		float effectVolume;
 		float musicVolume;
 	} options;
+
+	char *credits[18];	//3 lines per 6 views
+	int actualCreditView;
 };
