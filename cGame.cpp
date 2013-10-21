@@ -404,7 +404,9 @@ bool cGame::Process()
 		}
 
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
-		Scene.processObjects(&Link);
+		int vector[MAX_N_MONSTERS];
+		int n=MAX_N_MONSTERS;
+		Scene.processObjects(&Link,&n,vector);//ACUERDATE DE HACER FREE DE VECTOR
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;

@@ -22,6 +22,7 @@
 #define DOOR		1
 #define LOCKED_DOOR	2
 #define WATER		3
+#define STAIRS		4
 #define OTHERS		-1
 
 #define DOWN	0
@@ -63,7 +64,7 @@ public:
 	void freeObjects();
 
 	void processAttacks(cRect swordBox);
-	void processObjects(cPlayer *Link);
+	void processObjects(cPlayer *Link,int *n,int *vector);
 
 private:
 	int findTextureId(String str, cData *data);

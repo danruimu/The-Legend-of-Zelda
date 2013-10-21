@@ -45,4 +45,3 @@ bool collides(cRect a,cRect b){
 	if(a.left <= b.right && a.right >= b.right && a.bottom <= b.top && a.top >= b.top)return true;
 	return false;
 }
-

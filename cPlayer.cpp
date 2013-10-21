@@ -267,5 +267,6 @@ bool cPlayer::swordThrown(){
 }
 
 bool cPlayer::hasMySwordHitAny(cRect enemy){
+	if(espasa==nullptr)return false;
 	return espasa->collides(enemy);
 }

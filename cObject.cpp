@@ -26,7 +26,7 @@ void cObject::Render(int tex_id){
 		}
 		localId = animation[frame];
 	}
-	if (moving) localId += direction;
+	if (moving && id != ROCK) localId += direction;
 	DrawObject(tex_id,x,y,localId);
 	if(collectable && price > 0){
 		char buffer[42];
@@ -69,6 +69,7 @@ void cObject::setMovable(int velocity,int direction,int damage){
 	moving = true;
 	this->velocity = velocity;
 	this->direction = direction;
+	this->damage = damage;
 }
 
 int cObject::getDamage(){

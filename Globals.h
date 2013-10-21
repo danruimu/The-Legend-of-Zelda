@@ -120,8 +120,8 @@
 #define NUM_PROPS	4
 
 #define NUM_MAX_GATES 42
-#define NUM_MAX_OBJECTS 42
 #define	MAX_N_MONSTERS	42
+#define NUM_MAX_OBJECTS MAX_N_MONSTERS * 2
 
 #define DIRECTION_DOWN		0
 #define DIRECTION_UP		2
