@@ -14,10 +14,36 @@ cGame::~cGame(void){
 		free(unLockedLevels[i++]);
 }
 
+void cGame::drawInstructions(float r, float g, float b) {
+	glClear(GL_COLOR_BUFFER_BIT);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE, "INSTRUCTIONS", GLUT_BITMAP_TIMES_ROMAN_24, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*3, "W -> Move UP", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*4, "S -> Move DOWN", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*5, "A -> Move LEFT", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*6, "D -> Move RIGHT", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*7, "J or SPACE -> ATTACK", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	glutSwapBuffers();
+}
+
+bool cGame::startInstructions() {
+	bool res = true;
+	instructions = true;
+	nSecInstructions = FPS*10;
+	sound.playSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+
+	/**********************************/
+	/* DRAW INSTRUCTIONS              */
+	drawInstructions(1.0, 1.0, 1.0);
+	/**********************************/
+
+	return res;
+}
+
 bool cGame::startGame() {
 	bool res=true;
 	mainMenu = false;
 	pause = false;
+	instructions = false;
 
 	//Graphics initialization
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -76,7 +102,7 @@ void cGame::GameOver() {
 	sound.playSound(sounds[LOZ_MUSIC_GAME_OVER]);
 	glClear(GL_COLOR_BUFFER_BIT);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE BUTTON' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 	glutSwapBuffers();
 	Sleep(100);
 }
@@ -89,6 +115,7 @@ bool cGame::Init()
 	optMenu = false;
 	pause = false;
 	gameOver = false;
+	instructions = false;
 	up = true;
 	nTransMM = 0;
 	currentMM = 0;
@@ -143,8 +170,22 @@ bool cGame::Loop()
 {
 	bool res=true;
 
-	res = Process();
-	if(res) Render();
+	if(!instructions) {
+		res = Process();
+		if(res) Render();
+	} else {
+		nSecInstructions--;
+		drawInstructions(1.0, 1.0, 1.0);
+		if(nSecInstructions==0) {
+			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
+			sound.playSound(sounds[LOZ_TEXT]);
+			for(float i = 1.0; i>=0; i-=0.05) {
+				drawInstructions(i,i,i);
+				Sleep(100);
+			}
+			res = startGame();
+		}
+	}
 
 	return res;
 }
@@ -182,7 +223,7 @@ bool cGame::mainMenuProcess(){
 				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 				sound.playSound(sounds[LOZ_MUSIC_WHISTLE]);
 				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU),currentMM);
-				startGame();
+				startInstructions();
 				break;
 			case OPTIONS:
 				sound.playSound(sounds[LOZ_SWORD]);
@@ -605,7 +646,7 @@ void cGame::Render()
 	} else if(gameOver) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE BUTTON' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 	}
 
 	glutSwapBuffers();

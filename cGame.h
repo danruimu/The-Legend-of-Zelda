@@ -28,6 +28,7 @@ public:
 
 	bool Init();
 	bool startGame();
+	bool startInstructions();
 	bool Loop();
 	void Finalize();
 	void GameOver();
@@ -44,6 +45,8 @@ public:
 	void Render();
 
 private:
+	void drawInstructions(float r, float g, float b);
+
 	unsigned char keys[256];
 	unsigned char specialKeys[256];
 	cScene Scene;
@@ -65,6 +68,9 @@ private:
 	bool pause;
 	bool gameOver;
 	bool mainMenuProcess();
+	bool instructions;
+
+	int nSecInstructions;
 
 	struct Options {
 		float effectVolume;
