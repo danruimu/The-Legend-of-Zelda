@@ -38,3 +38,11 @@ bool folderExists(const char* folderName) {
 	return (attribs & FILE_ATTRIBUTE_DIRECTORY)!= 0;
 }
 
+bool collides(cRect a,cRect b){
+	if(a.left <= b.left && a.right >= b.left && a.bottom <= b.bottom && a.top >= b.bottom)return true;
+	if(a.left <= b.left && a.right >= b.left && a.bottom <= b.top && a.top >= b.top)return true;
+	if(a.left <= b.right && a.right >= b.right && a.bottom <= b.bottom && a.top >= b.bottom)return true;
+	if(a.left <= b.right && a.right >= b.right && a.bottom <= b.top && a.top >= b.top)return true;
+	return false;
+}
+
