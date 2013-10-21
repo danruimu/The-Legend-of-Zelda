@@ -64,7 +64,7 @@ public:
 	void freeObjects();
 
 	void processAttacks(cRect swordBox);
-	void processObjects(cPlayer *Link,int *n,int *vector);
+	void processObjects(cPlayer *Link,int *n, int *vector);
 
 private:
 	int findTextureId(String str, cData *data);

@@ -448,7 +448,41 @@ bool cGame::Process()
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
 		int vector[MAX_N_MONSTERS];
 		int n=MAX_N_MONSTERS;
-		Scene.processObjects(&Link,&n,vector);//ACUERDATE DE HACER FREE DE VECTOR
+		Scene.processObjects(&Link, &n, vector);
+		for(int i=0; i<n; ++i) {
+			switch(vector[i]) {
+			case RED_HEART:
+				sound.playSound(sounds[LOZ_GET_HEART]);
+				break;
+			case BLUE_HEART:
+				sound.playSound(sounds[LOZ_GET_HEART]);
+				break;
+			case RUPY:
+				sound.playSound(sounds[LOZ_GET_RUPEE]);
+				break;
+			case RUPY_X5:
+				sound.playSound(sounds[LOZ_GET_RUPEE]);
+				break;
+			case KEY:
+				sound.playSound(sounds[LOZ_KEY]);
+				break;
+			case TRIFORCE_B:
+				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
+				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
+				Sleep(9000);
+				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				break;
+			case TRIFORCE_Y:
+				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
+				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
+				Sleep(9000);
+				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				break;
+			}
+		}
+		free(vector);
 		if(keys[27]) {
 			keys[27] = false;
 			pause = true;
