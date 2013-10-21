@@ -39,6 +39,8 @@ public:
 	int SetNewDirection();
 	int Damage();
 	int getDrop();
+	int shoot();
+	int getDamage();
 
 private:
 	void readEnemyProps(FILE *propFile);
@@ -46,8 +48,7 @@ private:
 	int maxLife;
 	char *type;
 	int damage;
-	bool proyectile;
-	char *typeProyectile;
+	int typeProyectile;
 	float probShoot;
 	float probDropHeart;
 	float probDropRuppe;

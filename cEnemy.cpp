@@ -4,12 +4,19 @@ void cEnemy::readEnemyProps(FILE *propFile) {
 	char *readed = (char*) malloc(42);
 	fscanf(propFile, "%s%d", readed, &maxLife);
 	fscanf(propFile, "%s%d", readed, &damage);
-	fscanf(propFile, "%s", typeProyectile);
+	fscanf(propFile, "%d", &typeProyectile);
 	fscanf(propFile, "%f", &probShoot);
-	if(strcmp(typeProyectile, "none") == 0) proyectile = false;
-	else proyectile = true;
 	char *proy = (char*) malloc(42);
 	fscanf(propFile, "%s%f%s%f", readed, &probDropHeart, proy, &probDropRuppe);
+}
+
+int cEnemy::shoot(){
+	if(rand()/((float)RAND_MAX)<probShoot)return typeProyectile;
+	return 0;
+}
+
+int cEnemy::getDamage(){
+	return damage;
 }
 
 
@@ -28,7 +35,6 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 	strcpy(this->type, type);
 	SetState(ENEMY_STATE_IDLE);
 	SetDirection(ENEMY_DOWN);
-	this->typeProyectile = (char*) malloc(42);
 	this->tex_id = tex_id;
 	this->changeDirectionDelay = 0;
 	SetWidthHeight(BLOCK_SIZE, BLOCK_SIZE);
@@ -57,7 +63,6 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 cEnemy::~cEnemy(void)
 {
 	free(type);
-	free(typeProyectile);
 }
 
 void cEnemy::draw() {

@@ -52,6 +52,10 @@ bool isLockedDoor(int what){
 	return what == 136;
 }
 
+bool isStairs(int what){
+	return (what == 0 || what == 6 || what == 12);
+}
+
 int cScene::findTextureId(String str, cData *data){
 	for (int i = 0; i < NUM_ENEMIES; i++){
 		if(strcmp(str, enemyTypes[i]) == 0) return data->GetID(START_ENEMIES+i);
@@ -301,27 +305,35 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 	while (i<nEnemies){
 		if(enemies[i]!=nullptr){
 			cRect box;
+			int sx,sy;
 			int speedEnem = enemies[i]->GetSpeed();
+			int directionOld = enemies[i]->GetDirection();
 			int direction = enemies[i]->SetNewDirection();
 			enemies[i]->GetArea(&box);
 
-			int tilesEnem[] = {-1, -1, -1, -1};	
+			int tilesEnem[] = {-1, -1, -1, -1};
+			sx=box.left;
+			sy=box.bottom;
 			switch(direction) {
 			case ENEMY_DOWN:
 				box.top-=speedEnem;
 				box.bottom-=speedEnem;
+				sy-=BLOCK_SIZE;
 				break;
 			case ENEMY_LEFT:
 				box.right-=speedEnem;
 				box.left-=speedEnem;
+				sx-=BLOCK_SIZE;
 				break;
 			case ENEMY_UP:
 				box.top+=speedEnem;
 				box.bottom+=speedEnem;
+				sy+=BLOCK_SIZE;
 				break;
 			case ENEMY_RIGHT:
 				box.right+=speedEnem;
 				box.left+=speedEnem;
+				sx+=BLOCK_SIZE;
 				break;
 			}
 			if (BoxOut(box) == -1){
@@ -331,6 +343,14 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
 				tilesEnem[3] = whatsThereMonsterVersion(box.left+1,box.bottom+1);
 				if(tilesEnem[0] == WALKABLE && tilesEnem[1] == WALKABLE && tilesEnem[2] == WALKABLE && tilesEnem[3] == WALKABLE) {
 					enemies[i]->process();
+				}
+				if(directionOld!=direction){
+					int proy = enemies[i]->shoot();
+					if (proy!= 0){
+						objects[nObjects] = new cObject(sx,sy,proy);
+						objects[nObjects]->setMovable(speedEnem,direction,1);
+						nObjects++;
+					}
 				}
 			}
 		}
@@ -667,6 +687,7 @@ int cScene::whatsThere(int x,int y){
 	if (isLockedDoor(map[by*SCENE_WIDTH+bx])) return LOCKED_DOOR;
 	if (isWallkable(map[by*SCENE_WIDTH+bx])) return WALKABLE;
 	if (isWater(map[by*SCENE_WIDTH+bx])) return WATER;
+	if (isStairs(map[by*SCENE_WIDTH+bx]))return STAIRS;
 	return OTHERS;
 }
 
@@ -723,9 +744,10 @@ void cScene::freeObjects() {
 	nObjects = 0;
 }
 
-void cScene::processObjects(cPlayer *Link){
+void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 	cRect linkBox ;
 	bool alive;
+	*n=0;
 	Link->GetArea(&linkBox);
 	for (int i = 0; i < nObjects; i++){
 		if(objects[i] != nullptr){
@@ -740,36 +762,45 @@ void cScene::processObjects(cPlayer *Link){
 						switch (objects[i]->getId()){
 						case HEART_CONTAINER:
 							Link->incMaxLife();
-							//musica heart container??
+							vector[*n]=HEART_CONTAINER;
+							(*n)++;
 							break;
 						case KEY:
 							Link->getKey();
-							//musica llave?
+							vector[*n]=KEY;
+							(*n)++;
 							break;
 						case RUPY:
-							//musica rupia?
+							vector[*n]=RUPY;
+							(*n)++;
 							break;
 						case RUPY_X5:
-							//musica rupia?
+							vector[*n]=RUPY;
+							(*n)++;
 							break;
 						case FAIRY:
+							vector[*n]=FAIRY;
+							(*n)++;
 							Link->heal(-1);
 							//parar sonido corazon bajo
 							break;
 						case RED_HEART:
 							antes = Link->getLife();
 							despues = Link->heal(1);
-							if(despues >= 2){
-								//parar sonido corazon bajo
-							}
 							if (antes == despues){
 								alive = true;
 								Link->paga(-price);
 							}
-							else alive = false;//reproducir sonido curar?
+							else {
+								alive = false;//reproducir sonido curar?
+								vector[*n]=RED_HEART;
+								(*n)++;
+							}
 							break;
 						case TRIFORCE_Y:
 							Link->acquireTriforce();
+							vector[*n]=TRIFORCE_Y;
+							(*n)++;
 							//reproducir sonido trifuerza
 							break;
 						default:
@@ -781,13 +812,10 @@ void cScene::processObjects(cPlayer *Link){
 					}
 				}
 				if(objects[i]->isMovable()){
-					//reproduir sonid de que ens han tocat
 					int num_cors = Link->damage(objects[i]->getDamage());
-					if (num_cors <= 2){
-						//reproduir so cors baixos
-					}
-					//animacio de Link quan rep tollina ???
-					//knockback ???
+					Link->setGodMode(true);
+					vector[*n]=ROCK;
+					(*n)++;
 				}
 			}
 			if(!alive) {
@@ -803,20 +831,24 @@ void cScene::processObjects(cPlayer *Link){
 				enemies[i]->GetArea(&enemyBox);
 				if(Link->hasMySwordHitAny(enemyBox)){
 					if (enemies[i]->Damage() == 0){
+						vector[*n]=SWORD_DOWN;
+						(*n)++;
 						int drop = enemies[i]->getDrop();
-						int posx,posy; enemies[i]->GetPosition(&posx, &posy);
-						objects[nObjects] = new cObject(posx, posy, drop);
-						objects[nObjects]->setCollectable(0);
-						if(drop == RED_HEART) {
-							int vector[] = {RED_HEART,BLUE_HEART};
-							objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+						if(drop!=-1){
+							int posx,posy; enemies[i]->GetPosition(&posx, &posy);
+							objects[nObjects] = new cObject(posx, posy, drop);
+							objects[nObjects]->setCollectable(0);
+							if(drop == RED_HEART) {
+								int vector[] = {RED_HEART,BLUE_HEART};
+								objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+								++nObjects;
+							} else if(drop == RUPY) {
+								int vector[] = {RUPY,RUPY_X5};
+								objects[nObjects]->setCollectable(-1);
+								objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
+							}
 							++nObjects;
-						} else if(drop == RUPY) {
-							int vector[] = {RUPY,RUPY_X5};
-							objects[nObjects]->setCollectable(-1);
-							objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						}
-						++nObjects;
 						free(enemies[i]);
 						enemies[i] = nullptr;
 					}
@@ -837,6 +869,7 @@ void cScene::processAttacks(cRect swordBox) {
 			enemies[i]->GetArea(&target);
 			if (collides(swordBox,target)){
 				int drop = enemies[i]->getDrop();
+				if(drop != -1){
 					int posx,posy; enemies[i]->GetPosition(&posx, &posy);
 					objects[nObjects] = new cObject(posx, posy, drop);
 					objects[nObjects]->setCollectable(0);
@@ -855,11 +888,11 @@ void cScene::processAttacks(cRect swordBox) {
 						break;
 					}
 					++nObjects;
-
+				}
 					//Free memory
-					free(enemies[i]);
-					enemies[i] = nullptr;
-					hitted = true;
+				free(enemies[i]);
+				enemies[i] = nullptr;
+				hitted = true;
 			}
 		}
 	}
