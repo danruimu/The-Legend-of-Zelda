@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in `ls`
+for i in `ls *.txt`
 do
 	AUX=`grep market $i`
 	if [ -z "$i" ]
