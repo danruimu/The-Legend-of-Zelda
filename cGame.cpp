@@ -335,7 +335,7 @@ void cGame::ReadMouse(int button, int state, int x, int y)
 }
 
 
-
+//TODO: savegame
 bool cGame::mainMenuProcess(){
 	if(keys['j'] || keys['J'] || keys['\r'] || keys[' ']) {
 		keys['J'] = keys['j'] = keys['\r'] = keys[' '] = false;
