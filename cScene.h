@@ -46,7 +46,7 @@ public:
 	virtual ~cScene(void);
 
 	bool LoadLevel(char* level,bool overridable, cData *data);
-	void LoadLevelAnimation(char *oldLevel, char *newLevel);
+	void LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_id,int tex_id, cPlayer *Link, int link_id);
 	bool PrintMainMenu(int idMM);
 	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state);
 	void newGameAnimation(int texID,int currentAnimation);
@@ -55,7 +55,7 @@ public:
 	void setId(char Nid[]);
 
 	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
-	int Process(cRect *BoxOrg,String unlockedDoors[], String triforcesCollected[],cData *data);
+	int Process(cRect *BoxOrg,String unlockedDoors[], String triforcesCollected[],cData *data, cPlayer *link);
 	int whatsThere(int x,int y);
 	void unlock();
 	void drawEnemies();
