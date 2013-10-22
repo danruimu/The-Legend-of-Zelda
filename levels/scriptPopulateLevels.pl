@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-my @numbers = (1, 3, 4, 5, 6, 7, 8);
+my @numbers = (1, 2, 3, 4, 5, 6, 7, 8);
 my @chars = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P');
 my $file_ext = ".txt";
 
