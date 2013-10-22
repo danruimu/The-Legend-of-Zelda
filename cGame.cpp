@@ -39,8 +39,12 @@ cGame::~cGame(void){
 		free(menuText[i]);
 	}
 	i=0;
-	while(unLockedLevels[i]!=nullptr)
+	while(unLockedLevels[i]!=nullptr){
 		free(unLockedLevels[i++]);
+	}
+	while(triforcesCollected[i]!=nullptr){
+		free(triforcesCollected[i++]);
+	}
 }
 
 void cGame::drawInstructions(float r, float g, float b) {
@@ -201,6 +205,13 @@ bool cGame::Init()
 	//Main Menu initialization
 	res = Data.LoadImage(IMG_MAINMENU, "sprites/main_menu.png", GL_RGBA);
 	if(!res) return false;
+
+	for (int i = 0; i < NUM_MAX_GATES; i++){
+		free(triforcesCollected[i]);
+		free(unLockedLevels[i]);
+		triforcesCollected[i] = nullptr;
+		unLockedLevels[i] = nullptr;
+	}
 
 	//Sounds Initialization
 	sounds[LOZ_MUSIC_OVERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Overworld_theme.wav", true, MUSIC);
@@ -572,9 +583,17 @@ bool cGame::Process()
 			case TRIFORCE_Y:
 				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
+				char* buffer = Scene.getId();
+				while (triforcesCollected[i] != nullptr)i++;
+				triforcesCollected[i] = (char*) malloc(3);
+				triforcesCollected[i][0] = buffer[0];
+				triforcesCollected[i][1] = buffer[1];
+				triforcesCollected[i][1] = '\0';
 				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
 				for (int i = 0; i < 90; i++){
+					glClear(GL_COLOR_BUFFER_BIT);
 					Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),true);
+					glutSwapBuffers();
 					Sleep(100);
 				}
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
@@ -654,7 +673,7 @@ bool cGame::Process()
 				linkBox.left+=speed;
 				linkBox.right+=speed;
 			}
-			switch (Scene.Process(&linkBox,unLockedLevels, &Data)){
+			switch (Scene.Process(&linkBox,unLockedLevels,triforcesCollected, &Data)){
 				case OK:
 					Link.SetArea(linkBox);
 					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY_WALK);
@@ -695,7 +714,7 @@ bool cGame::Process()
 			}
 			return true;
 		} else {
-			resProcessScene = Scene.Process(&linkBox,unLockedLevels, &Data);
+			resProcessScene = Scene.Process(&linkBox,unLockedLevels, triforcesCollected,&Data);
 			switch(resProcessScene) {
 			case HURT:
 				Link.SetArea(linkBox);

@@ -24,19 +24,24 @@ void cPlayer::printInfo(int obj_id){
 		else DrawObject(obj_id,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,EMPTY_HEART);
 		pos+=BLOCK_SIZE/2;
 	}
-	pos += 5;
+	char *buffer = (char*)malloc(42);
+	char *bufferLlaves = (char*)malloc(42);
+	sprintf(buffer,"X%d",points);
+	sprintf(bufferLlaves,"X%d",keys);
+	pos = SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - (BLOCK_SIZE + strlen(buffer)*10);
+
 	DrawObject(obj_id,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,RUPY);
 	pos+=BLOCK_SIZE;
-	char *buffer = (char*)malloc(42);
-	sprintf(buffer,"X%d",points);
 	printText(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer,GLUT_BITMAP_HELVETICA_18,1,1,1);
 	pos += strlen(buffer)*10;
 	DrawObject(obj_id,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,KEY);
-	pos+=BLOCK_SIZE;
-	sprintf(buffer,"X%d",keys);
-	printText(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),buffer,GLUT_BITMAP_HELVETICA_18,1,1,1);
-	pos += strlen(buffer)*10;
+	pos+=BLOCK_SIZE-4;
+	printText(pos,(SCENE_HEIGHT+1)*BLOCK_SIZE+(BLOCK_SIZE/4),bufferLlaves,GLUT_BITMAP_HELVETICA_18,1,1,1);
+
 	free(buffer);
+	free(bufferLlaves);
+
+	pos = SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE - (BLOCK_SIZE-BLOCK_SIZE/4)*max_triforces - 3;
 	for(i=0;i<max_triforces;i++){
 		if(triforce>i)DrawObject(obj_id,pos,(SCENE_HEIGHT+1)*BLOCK_SIZE,TRIFORCE_Y);
 		else
@@ -67,10 +72,8 @@ void cPlayer::Draw(int tex_id,int obj_id,bool trifuerza){
 	if(trifuerza){
 		anim_trifuerza++;
 		yo= 150.0/185.0;
-		xo= (anim_trifuerza%2) * (blockX+bordeX);
-		DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+		DrawRect(tex_id,0,yo + blockY,blockX,yo);
 		DrawObject(obj_id,posx,posy+BLOCK_SIZE-5,anim_trifuerza%2?TRIFORCE_B:TRIFORCE_Y);
-		printInfo(obj_id);
 		return;
 	}else{
 		anim_trifuerza = 0;

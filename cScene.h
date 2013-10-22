@@ -55,7 +55,7 @@ public:
 	void setId(char Nid[]);
 
 	void drawPauseMenu(char *t1, char* t2, char *t3, int select);
-	int Process(cRect *BoxOrg,String unlockedDoors[], cData *data);
+	int Process(cRect *BoxOrg,String unlockedDoors[], String triforcesCollected[],cData *data);
 	int whatsThere(int x,int y);
 	void unlock();
 	void drawEnemies();

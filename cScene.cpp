@@ -304,7 +304,7 @@ void cScene::drawPauseMenu(char *t1, char* t2, char *t3, int select) {
 	}
 }
 
-int cScene::Process(cRect *BoxOrg,String unlockedDoors[], cData *data){
+int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollected[], cData *data){
 	cRect Box = *BoxOrg;
 	int i=0;
 	while (i<nEnemies){
@@ -804,7 +804,6 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 								Link->paga(-price);
 							}
 							else {
-								alive = false;//reproducir sonido curar?
 								vector[*n]=RED_HEART;
 								(*n)++;
 							}
@@ -813,7 +812,6 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 							Link->acquireTriforce();
 							vector[*n]=TRIFORCE_Y;
 							(*n)++;
-							//reproducir sonido trifuerza
 							break;
 						default:
 							break;

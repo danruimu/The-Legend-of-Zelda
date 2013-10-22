@@ -64,6 +64,7 @@ private:
 	bool up;
 	String menuText[3];
 	String unLockedLevels[NUM_MAX_GATES];
+	String triforcesCollected[NUM_MAX_GATES];
 	int currentOptMM;
 	int currentPauseOpt;
 
