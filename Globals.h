@@ -101,7 +101,7 @@
 #define FILENAME_EXT	".txt"
 
 //Image array size
-#define NUM_IMG		8
+#define NUM_IMG		7
 //Image identifiers
 #define IMG_BLOCKS	0
 #define IMG_PLAYER	1
@@ -111,7 +111,6 @@
 #define START_ENEMIES	5
 #define IMG_ENEMY_OCTOROK_B	5
 #define IMG_ENEMY_FAT_DOG_O	6
-#define IMG_BOSS 7
 
 
 #define GAME_WIDTH	BLOCK_SIZE*(SCENE_WIDTH+2)

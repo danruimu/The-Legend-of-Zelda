@@ -50,6 +50,7 @@ public:
 	int getTex_ID();
 	int getMovementDelay();
 	int getMovementSeq();
+	void setType(char *type);
 
 private:
 	void readEnemyProps(FILE *propFile);

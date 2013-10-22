@@ -1,15 +1,47 @@
 #include "cBoss.h"
 
-
 cBoss::cBoss(void)
+{
+}
+
+cBoss::cBoss(int tex_id)
 {
 	SetWidthHeight(BOSS_WIDTH, BOSS_HEIGHT);
 	SetPosition(SCENE_Xo+SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE, SCENE_Yo+SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*4);
 	setAlive(true);
-	setMovementDelay(FPS);
+	setMovementDelay(FPS/2);
+	setTex_ID(tex_id);
+	SetState(0);
 }
 
 
 cBoss::~cBoss(void)
 {
+}
+
+void cBoss::draw() {
+	int posx,posy;
+	GetPosition(&posx,&posy);
+	int movDelay = getMovementDelay();
+	setMovementDelay(drawBoss(getTex_ID(), movDelay, posx, posy, GetState()));
+}
+
+int cBoss::process() {
+	int movDelay = getMovementDelay();
+	int shoot = 0;
+	if(movDelay%FPS/2 == 0) {
+		if(movDelay == 0) {
+			movDelay = FPS;
+			shoot = 1;
+		}
+		setMovementDelay(movDelay);
+		int state = GetState();
+		state = ++state%5;
+		SetState(state);
+		int x,y; GetPosition(&x, &y);
+		float r = (float)rand()/(float)RAND_MAX;
+		if(r>0.5 && (x+BLOCK_SIZE) < SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH-BLOCK_SIZE*2) SetPosition(x+BLOCK_SIZE, y);
+		else if((x-BLOCK_SIZE)>SCENE_Xo+BLOCK_SIZE*2 )SetPosition(x-BLOCK_SIZE, y);
+	}
+	return shoot;
 }

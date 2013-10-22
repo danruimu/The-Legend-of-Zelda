@@ -170,7 +170,7 @@ void cEnemy::setMovementDelay(int movDelay) {
 }
 
 void cEnemy::setMovementSeq(int moveSeq) {
-	this->setMovementSeq = moveSeq;
+	this->movementSeq = moveSeq;
 }
 
 int cEnemy::getTex_ID() {
@@ -183,4 +183,8 @@ int cEnemy::getMovementDelay() {
 
 int cEnemy::getMovementSeq() {
 	return movementSeq;
+}
+
+void cEnemy::setType(char *type) {
+	strcpy(this->type, type);
 }

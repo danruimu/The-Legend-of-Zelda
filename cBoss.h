@@ -10,12 +10,14 @@ class cBoss :
 {
 public:
 	cBoss(void);
+	cBoss(int tex_id);
 	~cBoss(void);
 
 	void draw();
-	void process();
+	int process();
 
 private:
 	void dropTriforce();
+	void bossShoot();
 };
 
