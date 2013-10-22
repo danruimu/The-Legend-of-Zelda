@@ -681,7 +681,7 @@ bool cGame::Process()
 				linkBox.left+=speed;
 				linkBox.right+=speed;
 			}
-			switch (Scene.Process(&linkBox,unLockedLevels,triforcesCollected, &Data)){
+			switch (Scene.Process(&linkBox,unLockedLevels,triforcesCollected, &Data, &Link)){
 				case OK:
 					Link.SetArea(linkBox);
 					Link.NextFrame(STATE_MOVE,2,FRAME_DELAY_WALK);
@@ -722,7 +722,7 @@ bool cGame::Process()
 			}
 			return true;
 		} else {
-			resProcessScene = Scene.Process(&linkBox,unLockedLevels, triforcesCollected,&Data);
+			resProcessScene = Scene.Process(&linkBox,unLockedLevels, triforcesCollected,&Data, &Link);
 			switch(resProcessScene) {
 			case HURT:
 				Link.SetArea(linkBox);

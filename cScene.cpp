@@ -306,8 +306,10 @@ void cScene::drawPauseMenu(char *t1, char* t2, char *t3, int select) {
 	}
 }
 
-int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollected[], cData *data){
+int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollected[], cData *data, cPlayer *link){
 	cRect Box = *BoxOrg;
+	char *oldId = (char*) malloc(3);
+	oldId = getId();
 	int i=0;
 	while (i<nEnemies){
 		if(enemies[i]!=nullptr){
@@ -405,6 +407,8 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 				i++;
 			}
 		}
+		//LoadLevel(id,overridable, data);
+		LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;
 		BoxOrg->bottom = Box.bottom;
@@ -420,7 +424,6 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 	tiles[1] = whatsThere(Box.right-10,Box.top-21);
 	tiles[2] = whatsThere(Box.right-10,Box.bottom+1);
 	tiles[3] = whatsThere(Box.left+10,Box.bottom+1);
-	//TODO: solve problems with knockback
 	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
 		BoxOrg->bottom +=2; BoxOrg->left +=2; BoxOrg->top -=2; BoxOrg->right -=2;
 
@@ -732,8 +735,112 @@ void cScene::unlock(){
 	generateCallLevel();
 }
 
-void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel) {
-	//TODO: hacer animacion de transicion entre levels
+void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_id,int tex_id, cPlayer *Link, int link_id) {
+	FILE *fdNew;
+	char bufferNew[42];
+	char coma;
+	int i,j,tile,n;
+	i=0;
+
+	freeEnemies();
+	freeObjects();
+
+	sprintf(bufferNew,"%s%s%s",(char *)FILENAME,newLevel,(char *)FILENAME_EXT);
+
+	fdNew=fopen(bufferNew,"r");
+
+	int *newMap = (int *) malloc(sizeof(int)*SCENE_WIDTH*SCENE_HEIGHT);
+	for(j=SCENE_HEIGHT-1;j>=0;j--) {
+		for(i=0;i<SCENE_WIDTH;i++) {
+			fscanf(fdNew,"%d",&tile);
+			tile--;
+			newMap[(j*SCENE_WIDTH)+i] = tile;
+			fscanf(fdNew,"%c",&coma);//pass coma
+		}
+		fscanf(fdNew,"%c",&coma); //pass enter
+	}
+
+	switch(dir) {
+	case DOWN:
+		for (int k = SCENE_HEIGHT-1; k > 0; k--){
+			for(i=SCENE_HEIGHT-2; i>=0; --i) {
+				for(j=0; j<SCENE_WIDTH; ++j) {
+					map[(i+1)*SCENE_WIDTH+j] = map[i*SCENE_WIDTH+j];
+				}
+			}
+			for(j=0; j<SCENE_WIDTH; ++j) {
+				map[j] = newMap[k*SCENE_WIDTH+j];
+			}
+			generateCallLevel();
+			Draw(tex_id,obj_id,false,nullptr,0,0);
+			int x, y; Link->GetPosition(&x, &y);
+			Link->SetPosition(x,y+BLOCK_SIZE);
+			Link->Draw(link_id, obj_id, false);
+			glutSwapBuffers();
+			Sleep(1000/SCENE_HEIGHT);
+		}
+		break;
+	case LEFT:
+		for(j = 0; j<SCENE_WIDTH-1; ++j) {
+			for(int k=SCENE_WIDTH-2; k>=0; --k) {
+				for(i = 0; i<SCENE_HEIGHT; ++i) {
+					map[i*SCENE_WIDTH + k+1] = map[i*SCENE_WIDTH+k];
+				}
+			}
+
+			for(i = 0; i<SCENE_HEIGHT; ++i) {
+				map[i*SCENE_WIDTH] = newMap[i*SCENE_WIDTH + SCENE_WIDTH-j-1];
+			}
+
+			generateCallLevel();
+			Draw(tex_id,obj_id,false,nullptr,0,0);
+			int x, y; Link->GetPosition(&x, &y);
+			Link->SetPosition(x+BLOCK_SIZE,y);
+			Link->Draw(link_id, obj_id, false);
+			glutSwapBuffers();
+			Sleep(1000/SCENE_WIDTH);
+		}
+		break;
+	case RIGHT:
+		for(j = SCENE_WIDTH-1; j>0; --j) {
+			for(int k=1; k<SCENE_WIDTH; ++k) {
+				for(i = 0; i<SCENE_HEIGHT; ++i) {
+					map[i*SCENE_WIDTH + k-1] = map[i*SCENE_WIDTH+k];
+				}
+			}
+			for(i = 0; i<SCENE_HEIGHT; ++i) {
+				map[i*SCENE_WIDTH+SCENE_WIDTH-1] = newMap[i*SCENE_WIDTH + (SCENE_WIDTH-1)-j];
+			}
+
+			generateCallLevel();
+			Draw(tex_id,obj_id,false,nullptr,0,0);
+			int x, y; Link->GetPosition(&x, &y);
+			Link->SetPosition(x-BLOCK_SIZE,y);
+			Link->Draw(link_id, obj_id, false);
+			glutSwapBuffers();
+			Sleep(1000/SCENE_WIDTH);
+		}
+		break;
+	case UP:
+		for (int k = 0; k < SCENE_HEIGHT-1; k++){
+			for(i=1; i < SCENE_HEIGHT; i++) {
+				for(j=0; j<SCENE_WIDTH; ++j) {
+					map[(i-1)*SCENE_WIDTH+j] = map[i*SCENE_WIDTH+j];
+				}
+			}
+			for(j=0; j<SCENE_WIDTH; ++j) {
+				map[(i-1)*SCENE_WIDTH+j] = newMap[k*SCENE_WIDTH+j];
+			}
+			generateCallLevel();
+			Draw(tex_id,obj_id,false,nullptr,0,0);
+			int x, y; Link->GetPosition(&x, &y);
+			Link->SetPosition(x,y-BLOCK_SIZE);
+			Link->Draw(link_id, obj_id, false);
+			glutSwapBuffers();
+			Sleep(1000/SCENE_HEIGHT);
+		}
+		break;
+	}
 }
 
 void cScene::drawEnemies() {
