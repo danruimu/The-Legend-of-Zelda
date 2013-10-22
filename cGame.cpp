@@ -53,7 +53,7 @@ void cGame::drawInstructions(float r, float g, float b) {
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*7, "J or SPACE -> ATTACK/ENTER", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE-BLOCK_SIZE*8, "ESCAPE -> PAUSE", GLUT_BITMAP_HELVETICA_12, r, g, b);
 
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + BLOCK_SIZE, "Press 'SPACE' key to start or wait...", GLUT_BITMAP_HELVETICA_12, r, g, b);
+	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3.5, SCENE_Yo + BLOCK_SIZE, "Press 'SPACE' key to skip", GLUT_BITMAP_HELVETICA_12, r, g, b);
 	glutSwapBuffers();
 }
 
@@ -213,6 +213,7 @@ bool cGame::Init()
 	sounds[LOZ_LOW_HEALTH] = sound.addSound("sounds/LOZ_LowHealth.wav", true, EFFECT);
 	sounds[LOZ_TEXT] = sound.addSound("sounds/LOZ_Text.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_DEATH_MOUNTAIN] = sound.addSound("sounds/LOZ_MUSIC_Death_mountain_dungeon.wav", true, MUSIC);
+	sounds[LOZ_HIT] = sound.addSound("sounds/LOZ_Hit.wav", false, EFFECT);
 	sounds[LOZ_HURT] = sound.addSound("sounds/LOZ_Hurt.wav", false, EFFECT);
 	sounds[LOZ_GET_HEART] = sound.addSound("sounds/LOZ_Get_Heart.wav", false, EFFECT);
 	sounds[LOZ_UNLOCK] = sound.addSound("sounds/LOZ_Unlock.wav", false, EFFECT);
@@ -559,12 +560,6 @@ bool cGame::Process()
 					sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 				}
 				break;
-			case BLUE_HEART:
-				sound.playSound(sounds[LOZ_GET_HEART]);
-				if(Link.getHearts() > 2) {
-					sound.stopSound(sounds[LOZ_LOW_HEALTH]);
-				}
-				break;
 			case RUPY:
 				sound.playSound(sounds[LOZ_GET_RUPEE]);
 				break;
@@ -574,21 +569,14 @@ bool cGame::Process()
 			case KEY:
 				sound.playSound(sounds[LOZ_KEY]);
 				break;
-			case TRIFORCE_B:
-				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
-				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
-				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
-				Sleep(9000);
-				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
-				if(Link.getTriforces() == 3) {
-					return finalGame();
-				}
-				break;
 			case TRIFORCE_Y:
 				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
 				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
-				Sleep(9000);
+				for (int i = 0; i < 90; i++){
+					Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),true);
+					Sleep(100);
+				}
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				break;
 			case ROCK:
@@ -627,7 +615,9 @@ bool cGame::Process()
 			}
 
 			cRect swordBox = Link.getSwordBox();
-			Scene.processAttacks(swordBox);
+			if (Scene.processAttacks(swordBox)){
+				sound.playSound(sounds[LOZ_HIT]);
+			}
 			
 			return true;
 		}
@@ -775,7 +765,7 @@ void cGame::Render()
 		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM);
 	} else if (!gameOver) {//mainMenu= false
 		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0);
-		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS));
+		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),false);
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} else if(gameOver) {
 		glClear(GL_COLOR_BUFFER_BIT);

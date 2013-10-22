@@ -52,6 +52,7 @@ private:
 	float probShoot;
 	float probDropHeart;
 	float probDropRuppe;
+	float probDropKey;
 	int tex_id;
 	int IA;
 	int ratio;

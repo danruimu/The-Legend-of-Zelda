@@ -1,4 +1,4 @@
 life 2
 damage 1
-none 0
-heart 0.5 rupy 1.0
+42 0.0
+heart 0.2 rupy 0.3 key 0.15
