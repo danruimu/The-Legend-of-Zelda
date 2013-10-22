@@ -757,6 +757,13 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 	for (int i = 0; i < nObjects; i++){
 		if(objects[i] != nullptr){
 			alive = objects[i]->process();
+			if(objects[i]->isMovable()){
+				cRect c = objects[i]->getArea();
+				alive &= (whatsThereMonsterVersion(c.left,c.bottom) == WALKABLE);
+				alive &= (whatsThereMonsterVersion(c.right,c.bottom) == WALKABLE);
+				alive &= (whatsThereMonsterVersion(c.left,c.top) == WALKABLE);
+				alive &= (whatsThereMonsterVersion(c.right,c.top) == WALKABLE);
+			}
 			if(objects[i]->collides(linkBox)){
 				alive = false;
 				if(objects[i]->isCollectable()){
@@ -864,10 +871,9 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 	}
 }
 
-void cScene::processAttacks(cRect swordBox) {
+bool cScene::processAttacks(cRect swordBox) {
 	int right = swordBox.right-1, left = swordBox.left+1, bottom = swordBox.bottom+1, top = swordBox.top-1;
 	bool hitted = false;
-	//bottom-left corner
 	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
 			cRect target;
@@ -891,6 +897,8 @@ void cScene::processAttacks(cRect swordBox) {
 							objects[nObjects]->setCollectable(-1);
 							objects[nObjects]->setAnimated(vector,2,FRAME_DELAY*2);
 						break;
+						default:
+							break;
 					}
 					++nObjects;
 				}
@@ -901,6 +909,7 @@ void cScene::processAttacks(cRect swordBox) {
 			}
 		}
 	}
+	return hitted;
 }
 
 //void cScene::processAttacksDani(cRect swordBox) {

@@ -56,14 +56,25 @@ void cPlayer::Logic(bool pause){
 	}
 }
 
-void cPlayer::Draw(int tex_id,int obj_id){	
-	int posx,posy;
-	GetPosition(&posx,&posy);
+void cPlayer::Draw(int tex_id,int obj_id,bool trifuerza){
 	float bordeX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
 	float bordeY = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_HEIGHT;
 	float blockX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
 	float blockY = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_HEIGHT;
+	int posx,posy;
+	GetPosition(&posx,&posy);
 	float xo,yo;
+	if(trifuerza){
+		anim_trifuerza++;
+		yo= 150.0/185.0;
+		xo= (anim_trifuerza%2) * (blockX+bordeX);
+		DrawRect(tex_id,xo,yo + blockY,xo + blockX,yo);
+		DrawObject(obj_id,posx,posy+BLOCK_SIZE-5,anim_trifuerza%2?TRIFORCE_B:TRIFORCE_Y);
+		printInfo(obj_id);
+		return;
+	}else{
+		anim_trifuerza = 0;
+	}
 	int direction = GetDirection();
 	float state = GetState();
 	xo = direction*(blockX+bordeX);

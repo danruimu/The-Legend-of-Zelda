@@ -7,7 +7,7 @@ void cEnemy::readEnemyProps(FILE *propFile) {
 	fscanf(propFile, "%d", &typeProyectile);
 	fscanf(propFile, "%f", &probShoot);
 	char *proy = (char*) malloc(42);
-	fscanf(propFile, "%s%f%s%f", readed, &probDropHeart, proy, &probDropRuppe);
+	fscanf(propFile, "%s%f%s%f%s%f",readed, &probDropHeart, proy, &probDropRuppe,proy,&probDropKey);
 }
 
 int cEnemy::shoot(){
@@ -126,25 +126,29 @@ int cEnemy::Damage() {
 }
 
 int cEnemy::getDrop() {
-	bool heartDropped = false, ruppeDropped = false;
+	bool heartDropped = false, ruppeDropped = false, keyDropped = false;
 	float posHeart = (float)rand()/(float)RAND_MAX;
 	float posRuppe = (float)rand()/(float)RAND_MAX;
-	if(probDropHeart > 0.0) {
-		heartDropped = (probDropHeart - posHeart) > 0;
-	}
-	if(probDropRuppe > 0.0) {
-		ruppeDropped = (probDropRuppe - posRuppe) > 0;
-	}
-	if(heartDropped && ruppeDropped) {
-		if((probDropHeart - posHeart) >= (probDropRuppe - posRuppe)) { //drop heart
-			return RED_HEART;
-		} else { //drop ruppe
-			return RUPY;
-		}
-	} else if(heartDropped) {
-		return RED_HEART;
-	} else if(ruppeDropped) {
-		return RUPY;
-	}
+	float posKey = (float)rand()/(float)RAND_MAX;
+	if(posKey < probDropKey)return KEY;
+	if(posHeart < probDropHeart)return RED_HEART;
+	if(posRuppe < probDropRuppe)return RUPY;
+	//if(probDropHeart > 0.0) {
+	//	heartDropped = (probDropHeart - posHeart) > 0;
+	//}
+	//if(probDropRuppe > 0.0) {
+	//	ruppeDropped = (probDropRuppe - posRuppe) > 0;
+	//}
+	//if(heartDropped && ruppeDropped) {
+	//	if((probDropHeart - posHeart) >= (probDropRuppe - posRuppe)) { //drop heart
+	//		return RED_HEART;
+	//	} else { //drop ruppe
+	//		return RUPY;
+	//	}
+	//} else if(heartDropped) {
+	//	return RED_HEART;
+	//} else if(ruppeDropped) {
+	//	return RUPY;
+	//}
 	return -1;
 }

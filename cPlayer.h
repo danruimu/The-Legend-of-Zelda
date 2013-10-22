@@ -23,7 +23,7 @@ public:
 	cPlayer();
 	~cPlayer();
 
-	void Draw(int tex_id,int obj_id);
+	void Draw(int tex_id,int obj_id,bool trifuerza);
 	bool tirapalante(int *map);
 	int ataca();//0 = no ataca; 1 = ataca; 2 = ataca i dispara
 	int heal(int num_hearts);//-1 -> full recovery
@@ -60,4 +60,5 @@ private:
 	cObject *espasa;
 	bool godMode;
 	int godModeDuration;
+	int anim_trifuerza;
 };

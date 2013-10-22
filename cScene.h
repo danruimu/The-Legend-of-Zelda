@@ -63,7 +63,7 @@ public:
 	void freeEnemies();
 	void freeObjects();
 
-	void processAttacks(cRect swordBox);
+	bool processAttacks(cRect swordBox);
 	void processObjects(cPlayer *Link,int *n, int *vector);
 
 private:

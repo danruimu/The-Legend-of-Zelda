@@ -1,4 +1,4 @@
 life 2
 damage 1
 18 0.5
-heart 0.5 rupy 1.0
+heart 0.25 rupy 0.8 key 0.0
