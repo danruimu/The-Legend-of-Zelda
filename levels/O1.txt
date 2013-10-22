@@ -14,9 +14,5 @@
 market
 
 9
-fat_dog-o 1 6 6
-octorok-b 2 6 5 6 6
-octorok-b 3 6 5 6 4 6 6
-fat_dog-o 1 6 4
-fat_dog-o 1 6 6
-octorok-b 1 6 6
+octorok-b 6 6 4 6 6 6 6 6 5 6 6 6 5
+fat_dog-o 3 6 4 6 6 6 6

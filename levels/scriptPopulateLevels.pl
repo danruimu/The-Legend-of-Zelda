@@ -47,6 +47,8 @@ foreach $n (@numbers) {
 					}
 					if($b == 1) {
 						print MYFILE " ".$x." ".$y;
+						$xpositions[$xpositions+1] = $x;
+						$ypositions[$ypositions+1] = $y;
 						$how_many_next--;
 					}
 				}
