@@ -319,8 +319,8 @@ void cGame::ReadMouse(int button, int state, int x, int y)
 
 
 bool cGame::mainMenuProcess(){
-	if(keys['j'] || keys['\r'] || keys[' ']) {
-		keys['j'] = keys['\r'] = keys[' '] = false;
+	if(keys['j'] || keys['J'] || keys['\r'] || keys[' ']) {
+		keys['J'] = keys['j'] = keys['\r'] = keys[' '] = false;
 		if (!optMenu){//we are in the main menu
 			switch(currentOptMM){
 			case NEW_GAME:
@@ -366,21 +366,21 @@ bool cGame::mainMenuProcess(){
 			return true;
 		}
 	}
-	if(keys['d'] || specialKeys['f']) {
-		keys['d'] = specialKeys['f'] = false;
+	if(keys['d'] || keys['D'] || specialKeys[GLUT_KEY_RIGHT]) {
+		keys['D'] = keys['d'] = specialKeys[GLUT_KEY_RIGHT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM = (currentOptMM +1)%3;
 		return true;
 	}
-	if(keys['a'] || specialKeys['d']) {
-		keys['a'] = specialKeys['d'] = false;
+	if(keys['a'] || keys['A'] || specialKeys[GLUT_KEY_LEFT]) {
+		keys['A'] = keys['a'] = specialKeys[GLUT_KEY_LEFT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM--;
 		currentOptMM = currentOptMM<0?2:currentOptMM;
 		return true;
 	}
-	if (keys['w'] || specialKeys['e']) {
-		keys['w'] = specialKeys['e'] = false;
+	if (keys['w'] || keys['W'] || specialKeys[GLUT_KEY_UP]) {
+		keys['W'] = keys['w'] = specialKeys[GLUT_KEY_UP] = false;
 		if(optMenu) {//we are in the options menu
 			sound.playSound(sounds[LOZ_TEXT]);
 			if(currentOptMM == MUSIC_VOLUME) {
@@ -410,8 +410,8 @@ bool cGame::mainMenuProcess(){
 			}
 		}
 	}
-	if (keys['s'] || specialKeys['g']) {
-			keys['s'] = specialKeys['g'] = false;
+	if (keys['S'] || keys['s'] || specialKeys[GLUT_KEY_DOWN]) {
+			keys['S'] = keys['s'] = specialKeys[GLUT_KEY_DOWN] = false;
 			if(optMenu) {//we are in the options menu
 				sound.playSound(sounds[LOZ_TEXT]);
 				if(currentOptMM == MUSIC_VOLUME) {
@@ -461,8 +461,8 @@ bool cGame::Process()
 			sound.playSound(sounds[LOZ_TEXT]);
 			sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 			return true;
-		} else if(keys['w'] || specialKeys['e']) {
-			keys['w'] = specialKeys['e'] = false;
+		} else if(keys['W'] || keys['w'] || specialKeys[GLUT_KEY_UP]) {
+			keys['W'] = keys['w'] = specialKeys[GLUT_KEY_UP] = false;
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
 			--currentPauseOpt;
@@ -477,8 +477,8 @@ bool cGame::Process()
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
-		} else if(keys['s'] || specialKeys['g']) {
-			keys['s'] = specialKeys['g'] = false;
+		} else if(keys['S'] || keys['s'] || specialKeys[GLUT_KEY_DOWN]) {
+			keys['S'] = keys['s'] = specialKeys[GLUT_KEY_DOWN] = false;
 			sound.stopSound(sounds[LOZ_MUSIC_DEATH_MOUNTAIN]);
 
 			++currentPauseOpt;
@@ -493,8 +493,8 @@ bool cGame::Process()
 			sprintf(menuText[0], "<- MUSIC VOLUME -> %d%%", music);
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
-		} else if(keys['a'] || specialKeys['d']) {
-			keys['a'] = specialKeys['d'] = false;
+		} else if(keys['A'] || keys['a'] || specialKeys[GLUT_KEY_LEFT]) {
+			keys['A'] = keys['a'] = specialKeys[GLUT_KEY_LEFT] = false;
 			if(currentPauseOpt==0) {   //MUSIC
 				options.musicVolume = max(0.0,options.musicVolume-0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
@@ -515,8 +515,8 @@ bool cGame::Process()
 				sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			}
 			return true;
-		} else if(keys['d'] || specialKeys['f']) {
-			keys['d'] = specialKeys['f'] = false;
+		} else if(keys['D'] || keys['d'] || specialKeys[GLUT_KEY_RIGHT]) {
+			keys['D'] = keys['d'] = specialKeys[GLUT_KEY_RIGHT] = false;
 			if(currentPauseOpt==0) {   //MUSIC
 				options.musicVolume = min(1.0,options.musicVolume+0.1);
 				sound.setVolume(MUSIC, options.musicVolume);
@@ -537,8 +537,8 @@ bool cGame::Process()
 				sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			}
 			return true;
-		} else if(keys['j'] || keys['\r']) {
-			keys['j'] = keys['\r'] = false;
+		} else if(keys['J'] || keys['j'] || keys['\r']) {
+			keys['J'] = keys['j'] = keys['\r'] = false;
 			if(currentPauseOpt==2) {
 				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 				sound.playSound(sounds[LOZ_DIE]);
@@ -604,8 +604,8 @@ bool cGame::Process()
 			sprintf(menuText[1], "<- EFFECT VOLUME -> %d%%", effect);
 			return true;
 		}
-		if(keys['j'] || keys[' ']) {
-			keys['j'] = keys[' '] = false;
+		if(keys['J'] || keys['j'] || keys[' ']) {
+			keys['J'] = keys['j'] = keys[' '] = false;
 			int ataca=Link.ataca();
 			if (ataca==1) {
 				sound.playSound(sounds[LOZ_SWORD]);
@@ -624,31 +624,31 @@ bool cGame::Process()
 
 		/****************************************/
 		// TO BE REMOVED
-		if(keys['*']) {
-			keys['*'] = false;
+		if(keys[42]) {
+			keys[42] = false;
 			return finalGame();
 		}
 		/****************************************/
 
-		if (keys['w']||keys['s']||keys['d']||keys['a']){
+		if (keys['w']||keys['s']||keys['d']||keys['a']||keys['W']||keys['S']||keys['D']||keys['A']||specialKeys[GLUT_KEY_UP]||specialKeys[GLUT_KEY_DOWN]||specialKeys[GLUT_KEY_RIGHT]||specialKeys[GLUT_KEY_LEFT]){
 			int speed;
 			speed = Link.GetSpeed();
-			if(keys['w']) {
+			if(keys['w']||keys['W']||specialKeys[GLUT_KEY_UP]) {
 				if (Link.GetDirection()!=DIRECTION_UP)
 				Link.SetDirection(DIRECTION_UP);
 				linkBox.bottom+=speed;
 				linkBox.top+=speed;
-			} else if(keys['a']) {
+			} else if(keys['a']||keys['A']||specialKeys[GLUT_KEY_LEFT]) {
 				if (Link.GetDirection()!=DIRECTION_LEFT)
 				Link.SetDirection(DIRECTION_LEFT);
 				linkBox.left-=speed;
 				linkBox.right-=speed;
-			} else if(keys['s']) {
+			} else if(keys['s']||keys['S']||specialKeys[GLUT_KEY_DOWN]) {
 				if (Link.GetDirection()!=DIRECTION_DOWN)
 				Link.SetDirection(DIRECTION_DOWN);
 				linkBox.top-=speed;
 				linkBox.bottom-=speed;
-			} else if(keys['d']) {
+			} else if(keys['d']||keys['D']||specialKeys[GLUT_KEY_RIGHT]) {
 				if (Link.GetDirection()!=DIRECTION_RIGHT)
 				Link.SetDirection(DIRECTION_RIGHT);
 				linkBox.left+=speed;
@@ -786,6 +786,7 @@ void cGame::saveSettings() {
 	if (fd != NULL) {
 		fwrite(buffer, strlen(buffer), 1, fd);
 	}
+	fclose(fd);
 	free(buffer);
 }
 
@@ -797,4 +798,5 @@ void cGame::loadSettings() {
 		options.musicVolume = 1;
 		options.effectVolume = 1;
 	}
+	fclose(fd);
 }
