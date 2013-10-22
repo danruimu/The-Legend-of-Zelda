@@ -144,6 +144,7 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 	while (i<nObjects) {
 		if(objects[i]!=nullptr) {
 			free(objects[i]);
+			objects[i] = nullptr;
 		}
 		i++;
 	}
@@ -152,6 +153,7 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 	while (i<nEnemies) {
 		if(enemies[i]!=nullptr) {
 			free(enemies[i]);
+			enemies[i] = nullptr;
 		}
 		i++;
 	}
