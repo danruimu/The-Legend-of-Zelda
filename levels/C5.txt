@@ -12,5 +12,5 @@
 1
 market
 
-7
-octorok-b 7 15 6 2 6 9 9 9 1 12 9 13 4 9 2
+2
+octorok-b 2 3 7 12 2
