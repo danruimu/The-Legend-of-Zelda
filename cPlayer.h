@@ -37,6 +37,8 @@ public:
 	void sayonaraSword();
 	int getHearts();
 	int getTriforces();
+	char *toString();
+	void fromString(String data);
 
 	cRect getSwordBox();
 

@@ -62,9 +62,12 @@ public:
 
 	void freeEnemies();
 	void freeObjects();
+	bool isMarket();
 
 	bool processAttacks(cRect swordBox);
 	void processObjects(cPlayer *Link,int *n, int *vector);
+	char* getxDooryDoor();
+	void setxDooryDoor(int xDoor,int yDoor);
 
 private:
 	int findTextureId(String str, cData *data);

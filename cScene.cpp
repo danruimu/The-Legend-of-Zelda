@@ -85,6 +85,10 @@ cScene::~cScene(void){
 	freeObjects();
 }
 
+bool cScene::isMarket(){
+	return dungeon&&!prop[DUNGEON_PROP];
+}
+
 bool cScene::PrintMainMenu(int idMM) {
 	float xi,yi,xf,yf;
 	xi=0.5*(idMM%2);
@@ -216,9 +220,21 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 	return true;
 }
 
+char* cScene::getxDooryDoor(){
+	char* buffer = (char*) malloc(42);
+	sprintf(buffer,"%d %d",xDoor,yDoor);
+	return buffer;
+}
+
+void cScene::setxDooryDoor(int xDoor,int yDoor){
+	this->xDoor=xDoor;
+	this->yDoor=yDoor;
+}
+
 void cScene::setId(char Nid[]){
 	id[0] = Nid[0];
 	id[1] = Nid[1];
+	id[2] = '\0';
 }
 
 void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int currentText,int state)
@@ -241,6 +257,7 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 				objects[i]->Render(obj_id);
 			i++;
 		}
+		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE,0,"F5-->Save the game      F4-->Load last saved game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
 	}
 	glDisable(GL_TEXTURE_2D);
 
@@ -407,7 +424,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 				i++;
 			}
 		}
-		//LoadLevel(id,overridable, data);
+		if(!exitingDoor)
 		LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;

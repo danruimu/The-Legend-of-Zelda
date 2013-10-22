@@ -136,7 +136,7 @@ bool cGame::startGame() {
 
 	res = Data.LoadImage(IMG_OBJECTS,"sprites/treasures.png",GL_RGBA);
 	if(!res) return false;
-
+	Link = cPlayer();
 	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
@@ -154,7 +154,6 @@ void cGame::GameOver() {
 	Scene.freeEnemies();
 	Scene.freeObjects();
 	Link.sayonaraSword();
-	/*Link = *(new cPlayer());*/
 	mainMenu = false;
 	sprintf(menuText[0],"NEW GAME");
 	sprintf(menuText[1],"OPTIONS");
@@ -284,7 +283,7 @@ bool cGame::Loop()
 			Scene.freeEnemies();
 			Scene.freeObjects();
 			Link.sayonaraSword();
-			Link = *(new cPlayer());
+			Link = cPlayer();
 			sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
 			sprintf(menuText[0],"NEW GAME");
 			sprintf(menuText[1],"OPTIONS");
@@ -461,6 +460,69 @@ bool cGame::mainMenuProcess(){
 	return true;
 }
 
+void cGame::saveGame(){
+	if(Scene.isMarket()){
+		FILE* fd;
+		fd = fopen("save.loz","w");
+		if(fd == nullptr)return;
+		fprintf(fd,"%s %s",Scene.getId(),Link.toString());
+		int i=0;
+		while(unLockedLevels[i]!=nullptr){
+			fprintf(fd," %s",unLockedLevels[i]);
+			i++;
+		}
+		fprintf(fd," -");
+		i=0;
+		while(triforcesCollected[i]!=nullptr){
+			fprintf(fd," %s",triforcesCollected[i]);
+			i++;
+		}
+		fprintf(fd," - %s",Scene.getxDooryDoor()); 
+		fclose(fd);
+		printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Saved",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		sound.playSound(sounds[LOZ_TEXT]);
+		glutSwapBuffers();
+		Sleep(500);
+	}
+}
+
+void cGame::loadGame(){
+	if(Scene.isMarket()){
+		FILE* fd;
+		int x,y;
+		fd = fopen("save.loz","r");
+		if(fd == nullptr)return;
+		char* buffer = (char*)malloc(42);
+		fscanf(fd,"%s",buffer);
+		Scene.setId(buffer);
+		fscanf(fd,"%s",buffer);
+		Link.fromString(buffer);
+		int i=0;
+		fscanf(fd,"%s",buffer);
+		while(strcmp(buffer,"-")!=0){
+			unLockedLevels[i] = (String) malloc(42);
+			strcpy(unLockedLevels[i],buffer);
+			i++;
+			fscanf(fd,"%s",buffer);
+		}
+		fscanf(fd,"%s",buffer);
+		i=0;
+		while(strcmp(buffer,"-")!=0){
+			triforcesCollected[i] = (String) malloc(42);
+			strcpy(triforcesCollected[i],buffer);
+			i++;
+			fscanf(fd,"%s",buffer);
+		}
+		fscanf(fd,"%d %d",&x,&y);
+		Scene.setxDooryDoor(x,y);
+		fclose(fd);
+		printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Loaded",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		sound.playSound(sounds[LOZ_TEXT]);
+		glutSwapBuffers();
+		Sleep(500);
+	}
+}
+
 //Process
 bool cGame::Process()
 {
@@ -472,6 +534,14 @@ bool cGame::Process()
 	Link.Logic(pause);
 	int resProcessScene;
 	if(pause) {
+		if(specialKeys[GLUT_KEY_F5]){
+			saveGame();
+			return true;
+		}
+		if(specialKeys[GLUT_KEY_F4]){
+			loadGame();
+			return true;
+		}
 		if(keys[27]) {
 			keys[27] = false;
 			pause = false;
@@ -567,6 +637,14 @@ bool cGame::Process()
 		}
 
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
+		if(specialKeys[GLUT_KEY_F5]){
+			saveGame();
+			return true;
+		}
+		if(specialKeys[GLUT_KEY_F4]){
+			loadGame();
+			return true;
+		}
 		int vector[MAX_N_MONSTERS];
 		int n=MAX_N_MONSTERS;
 		char* buffer;
@@ -713,6 +791,7 @@ bool cGame::Process()
 						int restLifes = Link.damage(1);
 						if(restLifes == 0) {
 							GameOver();
+							Scene.setId("H8");
 							return true;
 						} else if(restLifes <= 2) {
 							sound.playSound(sounds[LOZ_LOW_HEALTH]);
@@ -733,6 +812,7 @@ bool cGame::Process()
 					int restLifes = Link.damage(1);
 					if(restLifes == 0) {
 						GameOver();
+						Scene.setId("H8");
 						return true;
 					}
 				}

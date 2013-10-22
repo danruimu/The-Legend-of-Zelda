@@ -132,6 +132,15 @@ void cPlayer::Draw(int tex_id,int obj_id,bool trifuerza){
 	printInfo(obj_id);
 }
 
+char* cPlayer::toString(){
+	char *buffer = (char*)malloc(42);
+	sprintf(buffer,"%d,%d,%d,%d,%d",points,keys,triforce,life,max_life);
+	return buffer;
+}
+
+void cPlayer::fromString(String data){
+	sscanf(data,"%d,%d,%d,%d,%d",&points,&keys,&triforce,&life,&max_life);
+}
 void cPlayer::DrawMuerto(int tex_id){
 	float blockY = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_HEIGHT;
 	float bordeX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;

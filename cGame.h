@@ -48,6 +48,8 @@ private:
 	void drawInstructions(float r, float g, float b);
 	void drawCredits(char *text[], float r, float g, float b);
 	bool finalGame();
+	void saveGame();
+	void loadGame();
 
 	unsigned char keys[256];
 	unsigned char specialKeys[256];
