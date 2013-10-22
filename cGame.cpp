@@ -129,6 +129,8 @@ bool cGame::startGame() {
 	res = Data.LoadImage(IMG_ENEMY_OCTOROK_B, "sprites/octorok-b.png", GL_RGBA);
 	if(!res) return false;
 
+	res = Data.LoadImage(IMG_BOSS, "sprites/pechotes.png", GL_RGBA);
+	if(!res) return false;
 
 	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);

@@ -665,6 +665,8 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 					ki++;
 				}
 				if(loadTriforce){
+					//TODO: create BOSS
+					cBoss boss;
 					objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
 					int vector[] = {TRIFORCE_Y,TRIFORCE_B};
 					objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
