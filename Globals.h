@@ -170,3 +170,4 @@
 //DROPS
 #define DROP_HEART	0
 #define DROP_RUPPE	1
+#define DROP_TRIFORCE 2

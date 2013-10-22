@@ -262,6 +262,9 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 	glDisable(GL_TEXTURE_2D);
 
 	this->drawEnemies();
+	if(bossAlive) {
+		boss.draw();
+	}
 }
 
 void cScene::newGameAnimation(int texID,int currentAnimation) {
@@ -327,6 +330,17 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 	cRect Box = *BoxOrg;
 	char *oldId = (char*) malloc(3);
 	oldId = getId();
+
+	if(bossAlive) {
+		int stateBoss = boss.process();
+		if(stateBoss == 1) {    //SHOOT
+			int xBoss,yBoss; boss.GetPosition(&xBoss,&yBoss);
+			objects[nObjects] = new cObject(xBoss,yBoss-BLOCK_SIZE,ARROW_B_DOWN);
+			objects[nObjects]->setMovable(BLOCK_SIZE/8,DIRECTION_DOWN,1);
+			++nObjects;
+		}
+	}
+
 	int i=0;
 	while (i<nEnemies){
 		if(enemies[i]!=nullptr){
@@ -424,8 +438,15 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 				i++;
 			}
 		}
+<<<<<<< HEAD
 		if(!exitingDoor)
 		LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
+=======
+		//LoadLevel(id,overridable, data);
+		if(!exitingDoor) {
+			LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
+		} else bossAlive = false;
+>>>>>>> 110d5d40b2dd51dd091eeb48059f2cde01a5e9f8
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;
 		BoxOrg->bottom = Box.bottom;
@@ -682,11 +703,16 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 					ki++;
 				}
 				if(loadTriforce){
-					objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
-					int vector[] = {TRIFORCE_Y,TRIFORCE_B};
-					objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
-					objects[0]->setCollectable(0);
-					nObjects=1;
+					//TODO: create BOSS
+					boss = *(new cBoss(data->GetID(IMG_BOSS)));
+					bossAlive = true;
+					if(!bossAlive) {
+						objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
+						int vector[] = {TRIFORCE_Y,TRIFORCE_B};
+						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+						objects[0]->setCollectable(0);
+						nObjects=1;
+					}
 				}
 			}
 			else{//market
@@ -756,7 +782,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_
 	FILE *fdNew;
 	char bufferNew[42];
 	char coma;
-	int i,j,tile,n;
+	int i,j,tile;
 	i=0;
 
 	freeEnemies();

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "cTexture.h"
 #include "cEnemy.h"
+#include "cBoss.h"
 #include "cObject.h"
 #include "cData.h"
 #include "cPlayer.h"
@@ -84,11 +85,12 @@ private:
 
 	int whatsThereMonsterVersion(int x,int y);
 
-
+	bool bossAlive;
 
 	cObject *objects[NUM_MAX_OBJECTS];
 	int nObjects;
 	cEnemy *enemies[N_MAX_ENEMIES];
 	int nEnemies;
 	char *enemyTypes[NUM_ENEMIES];
+	cBoss boss;
 };
