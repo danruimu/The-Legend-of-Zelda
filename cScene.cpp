@@ -651,11 +651,21 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 			BoxOrg->left = SCENE_Xo + 7*BLOCK_SIZE;
 			BoxOrg->right=BoxOrg->left+BLOCK_SIZE;
 			if(prop[DUNGEON_PROP]){//dungeon
-				objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
-				int vector[] = {TRIFORCE_Y,TRIFORCE_B};
-				objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
-				objects[0]->setCollectable(0);
-				nObjects=1;
+				int ki=0;
+				bool loadTriforce = true;
+				while(triforcesCollected[ki]!=nullptr && loadTriforce){
+					if(strcmp(triforcesCollected[ki],id) == 0){
+						loadTriforce=false;
+					}
+					ki++;
+				}
+				if(loadTriforce){
+					objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
+					int vector[] = {TRIFORCE_Y,TRIFORCE_B};
+					objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
+					objects[0]->setCollectable(0);
+					nObjects=1;
+				}
 			}
 			else{//market
 				objects[0] = new cObject(SCENE_Xo+4*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,KEY);
