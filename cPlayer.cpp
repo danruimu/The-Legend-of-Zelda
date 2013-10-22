@@ -6,8 +6,8 @@ cPlayer::cPlayer() {
 	espasa = nullptr;
 	life = 6;
 	max_life = 6;
-	points = 100;
-	keys = 3;
+	points = 0;
+	keys = 0;
 	triforce = 0;
 	max_triforces = 3;
 	godMode = false;

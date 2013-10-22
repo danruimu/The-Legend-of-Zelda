@@ -24,7 +24,7 @@ bool isWallkable(int tile) {
 	if (tile >=75 && tile <= 77 || tile >=81 && tile <= 83 || tile >=87 && tile <= 89) return true;  //desierto
 	if (tile >=93 && tile <= 95 || tile >=99 && tile <= 101 || tile >=105 && tile <= 107) return true;  //desierto
 	if (tile >=111 && tile <= 113 || tile >=117 && tile <= 119 || tile >=123 && tile <= 125) return true;  //desierto
-	if (tile ==  59 || tile == 65 ||tile == 71) return true;	//desierto
+	if (tile ==  58 || tile == 64 ||tile == 70) return true;	//desierto
 	if (tile ==  131 || tile == 137 ||tile == 143) return true;	//puente
 	return false;
 }
@@ -416,12 +416,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 	int numdoors = 0;
 	int numwalkables = 0;
 	int tiles[4];
-	//TODO: revisar altura de colision con puerta y que cuando salgas de puerta no ir parriba
-	//TODO: ser mas permisivos al entrar y desbloquear puertas
-	tiles[0] = whatsThere(Box.left+1,Box.top-21);
-	tiles[1] = whatsThere(Box.right-1,Box.top-21);
-	tiles[2] = whatsThere(Box.right-1,Box.bottom+1);
-	tiles[3] = whatsThere(Box.left+1,Box.bottom+1);
+	tiles[0] = whatsThere(Box.left+10,Box.top-21);
+	tiles[1] = whatsThere(Box.right-10,Box.top-21);
+	tiles[2] = whatsThere(Box.right-10,Box.bottom+1);
+	tiles[3] = whatsThere(Box.left+10,Box.bottom+1);
 	//TODO: solve problems with knockback
 	if (tiles[0] == HURT || tiles[1] == HURT || tiles[2] == HURT || tiles[3] == HURT) {
 		BoxOrg->bottom +=2; BoxOrg->left +=2; BoxOrg->top -=2; BoxOrg->right -=2;
@@ -622,6 +620,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 				BoxOrg->bottom -= BLOCK_SIZE; BoxOrg->top -= BLOCK_SIZE;
 			}
 		}
+		if(BoxOrg->bottom <= SCENE_Yo)  { BoxOrg->bottom = SCENE_Yo + BLOCK_SIZE; BoxOrg->top = SCENE_Yo + BLOCK_SIZE*2; }
+		if(BoxOrg->top >= SCENE_HEIGHT*BLOCK_SIZE+SCENE_Yo)  { BoxOrg->bottom = SCENE_HEIGHT*BLOCK_SIZE+SCENE_Yo -BLOCK_SIZE*2; BoxOrg->top = SCENE_HEIGHT*BLOCK_SIZE+SCENE_Yo -BLOCK_SIZE; }
+		if(BoxOrg->left <= SCENE_Xo)  { BoxOrg->left = SCENE_Yo + BLOCK_SIZE; BoxOrg->right = SCENE_Yo + BLOCK_SIZE; }
+		if(BoxOrg->right >= SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo)  { BoxOrg->left = SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo-BLOCK_SIZE; BoxOrg->right = SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo-BLOCK_SIZE*2; }
 		return HURT;
 	}
 	if (whatsThere(Box.left+BLOCK_SIZE/2,Box.top-21) == LOCKED_DOOR)numlockeddoors++;

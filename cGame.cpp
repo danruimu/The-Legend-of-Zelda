@@ -121,7 +121,7 @@ bool cGame::startGame() {
 	//Scene initialization
 	res = Data.LoadImage(IMG_BLOCKS,"sprites/blocks.png",GL_RGBA);
 	if(!res) return false;
-	res = Scene.LoadLevel("H8",false, &Data);
+	res = Scene.LoadLevel(Scene.getId(),false, &Data);
 	if(!res) return false;
 
 	res = Data.LoadImage(IMG_ENEMY_FAT_DOG_O, "sprites/fat-dog-o.png", GL_RGBA);
@@ -232,6 +232,8 @@ bool cGame::Init()
 	sounds[LOZ_MUSIC_GET_TRIFORCE] = sound.addSound("sounds/LOZ_MUSIC_Get_Triforce.wav", false, MUSIC);
 	sounds[LOZ_FANFARE] = sound.addSound("sounds/LOZ_Fanfare.wav", false, EFFECT);
 	sounds[LOZ_MUSIC_UNDERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Underworld_dungeon_theme.wav", true, MUSIC);
+	sounds[LOZ_GET_RUPEE] = sound.addSound("sounds/LOZ_Get_Rupee.wav", false, EFFECT);
+	sounds[LOZ_KEY] = sound.addSound("sounds/LOZ_Key.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -562,6 +564,7 @@ bool cGame::Process()
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
 		int vector[MAX_N_MONSTERS];
 		int n=MAX_N_MONSTERS;
+		char* buffer;
 		Scene.processObjects(&Link, &n, vector);
 		for(int i=0; i<n; ++i) {
 			switch(vector[i]) {
@@ -583,13 +586,12 @@ bool cGame::Process()
 			case TRIFORCE_Y:
 				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
-				char* buffer = Scene.getId();
+				buffer = Scene.getId();
 				while (triforcesCollected[i] != nullptr)i++;
 				triforcesCollected[i] = (char*) malloc(3);
 				triforcesCollected[i][0] = buffer[0];
 				triforcesCollected[i][1] = buffer[1];
 				triforcesCollected[i][1] = '\0';
-				//TODO: animación de Link cogiendo la triforce de 9 segundos de duración, por ahora sleep
 				for (int i = 0; i < 90; i++){
 					glClear(GL_COLOR_BUFFER_BIT);
 					Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),true);
@@ -791,6 +793,8 @@ void cGame::Render()
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 	}
+
+	printText(0,0, Scene.getId(), GLUT_BITMAP_TIMES_ROMAN_24, 1,1,1);
 
 	glutSwapBuffers();
 }
