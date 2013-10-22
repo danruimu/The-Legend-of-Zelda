@@ -317,7 +317,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 	if(bossAlive) {
 		int stateBoss = boss.process();
 		if(stateBoss == 1) {    //SHOOT
-			
+			int xBoss,yBoss; boss.GetPosition(&xBoss,&yBoss);
+			objects[nObjects] = new cObject(xBoss,yBoss-BLOCK_SIZE,ARROW_B_DOWN);
+			objects[nObjects]->setMovable(BLOCK_SIZE/8,DIRECTION_DOWN,1);
+			++nObjects;
 		}
 	}
 
