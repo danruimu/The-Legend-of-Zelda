@@ -726,6 +726,7 @@ bool cGame::Process()
 
 	if(gameOver) {
 		if(keys[' ']) {
+			keys[' '] = false;
 			sound.stopSound(sounds[LOZ_MUSIC_GAME_OVER]);
 			Init();
 		}
