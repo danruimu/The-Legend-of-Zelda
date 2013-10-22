@@ -154,7 +154,7 @@ void cGame::GameOver() {
 	Scene.freeEnemies();
 	Scene.freeObjects();
 	Link.sayonaraSword();
-	Link = *(new cPlayer());
+	/*Link = *(new cPlayer());*/
 	mainMenu = false;
 	sprintf(menuText[0],"NEW GAME");
 	sprintf(menuText[1],"OPTIONS");
@@ -163,11 +163,16 @@ void cGame::GameOver() {
 	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
 	sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 	sound.playSound(sounds[LOZ_MUSIC_GAME_OVER]);
-	glClear(GL_COLOR_BUFFER_BIT);
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-	printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
-	glutSwapBuffers();
-	Sleep(3000);
+
+	Link.SetBlock(SCENE_WIDTH/2,2);
+	for (int i = 0; i < 30; i++){
+		glClear(GL_COLOR_BUFFER_BIT);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
+		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+		Link.DrawMuerto(Data.GetID(IMG_PLAYER));
+		glutSwapBuffers();
+		Sleep(100);
+	}
 }
 
 bool cGame::Init()
@@ -586,12 +591,13 @@ bool cGame::Process()
 			case TRIFORCE_Y:
 				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
+				i=0;
 				buffer = Scene.getId();
 				while (triforcesCollected[i] != nullptr)i++;
 				triforcesCollected[i] = (char*) malloc(3);
 				triforcesCollected[i][0] = buffer[0];
 				triforcesCollected[i][1] = buffer[1];
-				triforcesCollected[i][1] = '\0';
+				triforcesCollected[i][2] = '\0';
 				for (int i = 0; i < 90; i++){
 					glClear(GL_COLOR_BUFFER_BIT);
 					Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),true);
@@ -792,6 +798,7 @@ void cGame::Render()
 		glClear(GL_COLOR_BUFFER_BIT);
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*3, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2, "GAME OVER", GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
+		Link.DrawMuerto(Data.GetID(IMG_PLAYER));
 	}
 
 	printText(0,0, Scene.getId(), GLUT_BITMAP_TIMES_ROMAN_24, 1,1,1);

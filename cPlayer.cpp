@@ -132,6 +132,18 @@ void cPlayer::Draw(int tex_id,int obj_id,bool trifuerza){
 	printInfo(obj_id);
 }
 
+void cPlayer::DrawMuerto(int tex_id){
+	float blockY = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_HEIGHT;
+	float bordeX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
+	float blockX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
+	float col = (float)rand()/(float)RAND_MAX;
+	glColor3f(col,col,col);
+	int direction = GetDirection();
+	int xo = direction*(blockX+bordeX);
+	DrawRect(tex_id,xo,blockY,xo + blockX,0);
+	SetDirection((direction + 1)%4);
+}
+
 int cPlayer::ataca(){
 	int posx,posy;
 	int state = GetState();
