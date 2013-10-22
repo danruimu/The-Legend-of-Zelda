@@ -137,11 +137,11 @@ void cPlayer::DrawMuerto(int tex_id){
 	float bordeX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
 	float blockX = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_WIDTH;
 	float col = (float)rand()/(float)RAND_MAX;
-	glColor3f(col,col,col);
-	int direction = GetDirection();
-	int xo = direction*(blockX+bordeX);
+	glColor3f(1.,col,0.);
+	float state = GetState();
+	float xo = state*(blockX+bordeX);
 	DrawRect(tex_id,xo,blockY,xo + blockX,0);
-	SetDirection((direction + 1)%4);
+	NextFrame(0,4,FRAME_DELAY*2);
 }
 
 int cPlayer::ataca(){
