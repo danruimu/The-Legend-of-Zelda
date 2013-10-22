@@ -54,7 +54,6 @@ public:
 
 private:
 	void readEnemyProps(FILE *propFile);
-	int life;
 	int maxLife;
 	char *type;
 	int damage;
@@ -70,5 +69,8 @@ private:
 	int movementSeq;
 	
 	int changeDirectionDelay;
+protected:
+	bool imBoss;
+	int life;
 };
 

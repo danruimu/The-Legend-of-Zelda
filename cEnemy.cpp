@@ -26,6 +26,7 @@ cEnemy::cEnemy(void)
 }
 
 cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
+	imBoss=false;
 	this->movementDelay=movementDelay;
 	movementSeq=0;
 	this->maxLife = 1;
@@ -62,6 +63,7 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 
 cEnemy::~cEnemy(void)
 {
+	if(!imBoss)
 	free(type);
 }
 

@@ -12,6 +12,7 @@ cBoss::cBoss(int tex_id)
 	setMovementDelay(FPS/2);
 	setTex_ID(tex_id);
 	SetState(0);
+	imBoss = true;
 }
 
 

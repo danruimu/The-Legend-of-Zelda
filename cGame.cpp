@@ -157,6 +157,7 @@ void cGame::GameOver() {
 	Scene.freeObjects();
 	Link.sayonaraSword();
 	/*Link = *(new cPlayer());*/
+	Scene.setId("H8");
 	mainMenu = false;
 	sprintf(menuText[0],"NEW GAME");
 	sprintf(menuText[1],"OPTIONS");
@@ -610,6 +611,10 @@ bool cGame::Process()
 				break;
 			case ROCK:
 				sound.playSound(sounds[LOZ_HURT]);
+				if(Link.getHearts() <= 0){
+					GameOver();
+					return true;
+				}
 				if(Link.getHearts() <= 2) {
 					sound.playSound(sounds[LOZ_LOW_HEALTH]);
 				}
