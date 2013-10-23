@@ -42,9 +42,18 @@ public:
 	int shoot();
 	int getDamage();
 
+	void setMaxLife(int lifes);
+	void setDamage(int damage);
+	void setTex_ID(int tex_id);
+	void setMovementDelay(int movDelay);
+	void setMovementSeq(int moveSeq);
+	int getTex_ID();
+	int getMovementDelay();
+	int getMovementSeq();
+	void setType(char *type);
+
 private:
 	void readEnemyProps(FILE *propFile);
-	int life;
 	int maxLife;
 	char *type;
 	int damage;
@@ -60,5 +69,8 @@ private:
 	int movementSeq;
 	
 	int changeDirectionDelay;
+protected:
+	bool imBoss;
+	int life;
 };
 

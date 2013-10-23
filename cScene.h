@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "cTexture.h"
 #include "cEnemy.h"
+#include "cBoss.h"
 #include "cObject.h"
 #include "cData.h"
 #include "cPlayer.h"
@@ -68,6 +69,7 @@ public:
 	void processObjects(cPlayer *Link,int *n, int *vector);
 	char* getxDooryDoor();
 	void setxDooryDoor(int xDoor,int yDoor);
+	bool getBossAlive();
 
 private:
 	int findTextureId(String str, cData *data);
@@ -84,11 +86,12 @@ private:
 
 	int whatsThereMonsterVersion(int x,int y);
 
-
+	bool bossAlive;
 
 	cObject *objects[NUM_MAX_OBJECTS];
 	int nObjects;
 	cEnemy *enemies[N_MAX_ENEMIES];
 	int nEnemies;
 	char *enemyTypes[NUM_ENEMIES];
+	cBoss boss;
 };

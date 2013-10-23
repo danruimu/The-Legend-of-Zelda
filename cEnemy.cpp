@@ -26,6 +26,7 @@ cEnemy::cEnemy(void)
 }
 
 cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
+	imBoss=false;
 	this->movementDelay=movementDelay;
 	movementSeq=0;
 	this->maxLife = 1;
@@ -62,6 +63,7 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 
 cEnemy::~cEnemy(void)
 {
+	if(!imBoss)
 	free(type);
 }
 
@@ -151,4 +153,40 @@ int cEnemy::getDrop() {
 	//	return RUPY;
 	//}
 	return -1;
+}
+
+void cEnemy::setMaxLife(int lifes) {
+	this->maxLife = this->life = lifes;
+}
+
+void cEnemy::setDamage(int damage) {
+	this->damage = damage;
+}
+
+void cEnemy::setTex_ID(int tex_id) {
+	this->tex_id = tex_id;
+}
+
+void cEnemy::setMovementDelay(int movDelay) {
+	this->movementDelay = movDelay;
+}
+
+void cEnemy::setMovementSeq(int moveSeq) {
+	this->movementSeq = moveSeq;
+}
+
+int cEnemy::getTex_ID() {
+	return tex_id;
+}
+
+int cEnemy::getMovementDelay() {
+	return movementDelay;
+}
+
+int cEnemy::getMovementSeq() {
+	return movementSeq;
+}
+
+void cEnemy::setType(char *type) {
+	strcpy(this->type, type);
 }

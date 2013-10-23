@@ -16,6 +16,27 @@ void Draw(int tex_id,int x,int y,int posx,int posy,int OBJECTS_HEIGHT,int OBJECT
 	glDisable(GL_TEXTURE_2D);
 }
 
+int drawBoss(int tex_id, int movDelay, int posx, int posy, int state) {
+	float txI, txF = 0.25, tyI, tyF = 0.5;
+	if(state < 3) tyI = 0.5;
+	else if(state > 2) tyI = 1.0;
+
+	if(state == 0 || state == 3) txI = 0.0;
+	else if(state == 1 || state == 4) txI = 0.25;
+	else if(state == 2) txI = 0.5;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,tex_id);
+	glBegin(GL_QUADS);	
+		glTexCoord2f(txI, tyI);	glVertex2i(posx  ,posy);
+		glTexCoord2f(txI+txF, tyI);	glVertex2i(posx+BLOCK_SIZE*2,posy);
+		glTexCoord2f(txI+txF, tyI - tyF);	glVertex2i(posx+BLOCK_SIZE*2,posy+BLOCK_SIZE*2);
+		glTexCoord2f(txI, tyI - tyF);	glVertex2i(posx  ,posy+BLOCK_SIZE*2);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	return --movDelay;
+}
+
 void DrawObject(int texture_id,int x,int y,int Obj){
 	Draw(texture_id,Obj%WIDTH_OBJECT_TEXTURE,Obj/WIDTH_OBJECT_TEXTURE,x,y,HEIGHT_OBJECT_TEXTURE,WIDTH_OBJECT_TEXTURE);
 }

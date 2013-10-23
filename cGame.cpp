@@ -129,6 +129,8 @@ bool cGame::startGame() {
 	res = Data.LoadImage(IMG_ENEMY_OCTOROK_B, "sprites/octorok-b.png", GL_RGBA);
 	if(!res) return false;
 
+	res = Data.LoadImage(IMG_BOSS, "sprites/pechotes.png", GL_RGBA);
+	if(!res) return false;
 
 	//Link Initialization
 	res = Data.LoadImage(IMG_PLAYER,"sprites/link-org.png",GL_RGBA);
@@ -154,6 +156,8 @@ void cGame::GameOver() {
 	Scene.freeEnemies();
 	Scene.freeObjects();
 	Link.sayonaraSword();
+	/*Link = *(new cPlayer());*/
+	Scene.setId("H8");
 	mainMenu = false;
 	sprintf(menuText[0],"NEW GAME");
 	sprintf(menuText[1],"OPTIONS");
@@ -238,6 +242,7 @@ bool cGame::Init()
 	sounds[LOZ_MUSIC_UNDERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Underworld_dungeon_theme.wav", true, MUSIC);
 	sounds[LOZ_GET_RUPEE] = sound.addSound("sounds/LOZ_Get_Rupee.wav", false, EFFECT);
 	sounds[LOZ_KEY] = sound.addSound("sounds/LOZ_Key.wav", false, EFFECT);
+	sounds[LOZ_BOSS_SCREAM_1] = sound.addSound("sounds/LOZ_Boss_Scream1.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -682,15 +687,24 @@ bool cGame::Process()
 					glutSwapBuffers();
 					Sleep(100);
 				}
+				Link.heal(-1);
+				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				break;
 			case ROCK:
 				sound.playSound(sounds[LOZ_HURT]);
+				if(Link.getHearts() <= 0){
+					GameOver();
+					return true;
+				}
 				if(Link.getHearts() <= 2) {
 					sound.playSound(sounds[LOZ_LOW_HEALTH]);
 				}
 			case HEART_CONTAINER:
 				sound.playSound(sounds[LOZ_FANFARE]);
+			case SWORD_DOWN:
+				if(!Scene.getBossAlive()) sound.playSound(sounds[LOZ_HIT]);
+				else sound.playSound(sounds[LOZ_BOSS_SCREAM_1]);
 			}
 		}
 		if(keys[27]) {
@@ -721,7 +735,8 @@ bool cGame::Process()
 
 			cRect swordBox = Link.getSwordBox();
 			if (Scene.processAttacks(swordBox)){
-				sound.playSound(sounds[LOZ_HIT]);
+				if(!Scene.getBossAlive()) sound.playSound(sounds[LOZ_HIT]);
+				else sound.playSound(sounds[LOZ_BOSS_SCREAM_1]);
 			}
 			
 			return true;
@@ -789,7 +804,7 @@ bool cGame::Process()
 						Link.setGodMode(true);
 						sound.playSound(sounds[LOZ_HURT]);
 						int restLifes = Link.damage(1);
-						if(restLifes == 0) {
+						if(restLifes <= 0) {
 							GameOver();
 							Scene.setId("H8");
 							return true;
@@ -810,7 +825,7 @@ bool cGame::Process()
 					Link.setGodMode(true);
 					sound.playSound(sounds[LOZ_HURT]);
 					int restLifes = Link.damage(1);
-					if(restLifes == 0) {
+					if(restLifes <= 0) {
 						GameOver();
 						Scene.setId("H8");
 						return true;
@@ -880,8 +895,6 @@ void cGame::Render()
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 		Link.DrawMuerto(Data.GetID(IMG_PLAYER));
 	}
-
-	printText(0,0, Scene.getId(), GLUT_BITMAP_TIMES_ROMAN_24, 1,1,1);
 
 	glutSwapBuffers();
 }
