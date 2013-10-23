@@ -918,8 +918,6 @@ void cGame::Render()
 		Link.DrawMuerto(Data.GetID(IMG_PLAYER));
 	}
 
-	printText(0,0, Scene.getId(), GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
-
 	glutSwapBuffers();
 }
 
