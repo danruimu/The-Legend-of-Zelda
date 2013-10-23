@@ -71,6 +71,8 @@ public:
 	void setxDooryDoor(int xDoor,int yDoor);
 	bool getBossAlive();
 
+	bool inDungeon();
+
 private:
 	int findTextureId(String str, cData *data);
 	int map[SCENE_WIDTH * SCENE_HEIGHT];	//scene

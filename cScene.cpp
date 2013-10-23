@@ -741,7 +741,7 @@ int cScene::whatsThere(int x,int y){
 			if (x >= target.left && x <=target.right && y >= target.bottom && y <= target.top) return HURT;
 		}
 	}
-	if(bossAlive){
+	if(bossAlive) {
 		cRect target;
 		boss.GetArea(&target);
 		if (x >= target.left && x <=target.right && y >= target.bottom && y <= target.top) return HURT;
@@ -1032,16 +1032,28 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 				}
 			}
 		}
-		if(bossAlive){
+		if(bossAlive) {
 			boss.GetArea(&enemyBox);
 			if(Link->hasMySwordHitAny(enemyBox)){
-				vector[*n]=SWORD_DOWN;
-				(*n)++;
-				if (boss.Damage() == 0){
+				int bossD = boss.Damage();
+				boss.setDamaged();
+				if (bossD == 0){
+					float r = 1.0, g = 0.0;
+					for(int k = 0; k<50; ++k) {
+						glColor3f(r,g,1.0);
+						boss.draw();
+						glColor3f(1.0,1.0,1.0);
+						glutSwapBuffers();
+						float aux = r; r=g; g=aux;
+						Sleep(20);
+					}
 					objects[nObjects] = boss.dropTriforce();
 					++nObjects;
 					bossAlive=false;
+					vector[*n]=SWORD_UP;
 				}
+				vector[*n]=SWORD_DOWN;
+				(*n)++;
 				Link->sayonaraSword();
 			}
 		}
@@ -1089,18 +1101,38 @@ bool cScene::processAttacks(cRect swordBox) {
 			}
 		}
 	}
-	if(bossAlive){
+	if(bossAlive) {
 		boss.GetArea(&target);
 		if(collides(target,swordBox)){
 			hitted = true;
-			if (boss.Damage() == 0){
+			/*if (boss.Damage() == 0){
 				objects[nObjects] = boss.dropTriforce();
 				++nObjects;
 				bossAlive=false;
+			}*/
+			int bossD = boss.Damage();
+			boss.setDamaged();
+			if (bossD == 0){
+				float r = 1.0, g = 0.0;
+				for(int k = 0; k<50; ++k) {
+					glColor3f(r,g,1.0);
+					boss.draw();
+					glColor3f(1.0,1.0,1.0);
+					glutSwapBuffers();
+					float aux = r; r=g; g=aux;
+					Sleep(20);
+				}
+			objects[nObjects] = boss.dropTriforce();
+			++nObjects;
+			bossAlive=false;
 			}
 		}
 	}
 	return hitted;
+}
+
+bool cScene::inDungeon() {
+	return dungeon && prop[DUNGEON_PROP];
 }
 
 //void cScene::processAttacksDani(cRect swordBox) {

@@ -14,6 +14,7 @@ cBoss::cBoss(int tex_id)
 	SetState(0);
 	imBoss = true;
 	life = 6;
+	damaged = false;
 }
 
 
@@ -35,7 +36,18 @@ void cBoss::draw() {
 	int posx,posy;
 	GetPosition(&posx,&posy);
 	int movDelay = getMovementDelay();
+	if(damaged) {
+		--damagedDuration;
+		if(damagedDuration > 0 && damagedDuration%2 == 0) {
+			glColor3f(1.0, 0.0, 0.0);
+		} else {
+			damaged = false;
+		}
+	}
 	setMovementDelay(drawBoss(getTex_ID(), movDelay, posx, posy, GetState()));
+	if(damaged) {
+		//glColor3f(1.0, 1.0, 1.0);
+	}
 }
 
 int cBoss::process() {
@@ -56,4 +68,17 @@ int cBoss::process() {
 		else if((x-BLOCK_SIZE)>SCENE_Xo+BLOCK_SIZE*2 )SetPosition(x-BLOCK_SIZE, y);
 	}
 	return shoot;
+}
+
+void cBoss::setDamaged() {
+	damaged = true;
+	damagedDuration = FPS;
+}
+
+int cBoss::Damage() {
+	int life = getLife();
+	if(!damaged) {
+		life = cEnemy::Damage();
+	}
+	return life;
 }

@@ -17,7 +17,10 @@ public:
 	void draw();
 	int process();
 	cObject* dropTriforce();
+	void setDamaged();
+	int Damage();
 private:
-	void bossShoot();
+	int damagedDuration;
+	bool damaged;
 };
 

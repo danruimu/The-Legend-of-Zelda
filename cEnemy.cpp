@@ -190,3 +190,7 @@ int cEnemy::getMovementSeq() {
 void cEnemy::setType(char *type) {
 	strcpy(this->type, type);
 }
+
+int cEnemy::getLife() {
+	return life;
+}

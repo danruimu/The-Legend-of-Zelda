@@ -243,6 +243,7 @@ bool cGame::Init()
 	sounds[LOZ_GET_RUPEE] = sound.addSound("sounds/LOZ_Get_Rupee.wav", false, EFFECT);
 	sounds[LOZ_KEY] = sound.addSound("sounds/LOZ_Key.wav", false, EFFECT);
 	sounds[LOZ_BOSS_SCREAM_1] = sound.addSound("sounds/LOZ_Boss_Scream1.wav", false, EFFECT);
+	sounds[LOZ_BOSS_SCREAM_2] = sound.addSound("sounds/LOZ_Boss_Scream2.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -255,6 +256,14 @@ bool cGame::Init()
 bool cGame::Loop()
 {
 	bool res=true;
+
+	if(Scene.inDungeon()) {
+		sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+		sound.playSound(sounds[LOZ_MUSIC_UNDERWORLD]);
+	} else if(!pause) {
+		sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
+		sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+	}
 
 	if(!instructions && !gameFinal) {
 		res = Process();
@@ -672,7 +681,7 @@ bool cGame::Process()
 				sound.playSound(sounds[LOZ_KEY]);
 				break;
 			case TRIFORCE_Y:
-				sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				sound.pauseSound(sounds[LOZ_MUSIC_UNDERWORLD]);
 				sound.playSound(sounds[LOZ_MUSIC_GET_TRIFORCE]);
 				i=0;
 				buffer = Scene.getId();
@@ -700,11 +709,17 @@ bool cGame::Process()
 				if(Link.getHearts() <= 2) {
 					sound.playSound(sounds[LOZ_LOW_HEALTH]);
 				}
+				break;
 			case HEART_CONTAINER:
 				sound.playSound(sounds[LOZ_FANFARE]);
+				break;
 			case SWORD_DOWN:
 				if(!Scene.getBossAlive()) sound.playSound(sounds[LOZ_HIT]);
 				else sound.playSound(sounds[LOZ_BOSS_SCREAM_1]);
+				break;
+			case SWORD_UP:
+				sound.playSound(sounds[LOZ_BOSS_SCREAM_2]);
+				break;
 			}
 		}
 		if(keys[27]) {
@@ -895,6 +910,8 @@ void cGame::Render()
 		printText(SCENE_Xo + SCENE_WIDTH*BLOCK_SIZE/2 - BLOCK_SIZE*4, SCENE_Yo + SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, "PRESS 'SPACE KEY' TO RETURN TO MAIN MENU", GLUT_BITMAP_TIMES_ROMAN_10, 1.0, 1.0, 1.0);
 		Link.DrawMuerto(Data.GetID(IMG_PLAYER));
 	}
+
+	printText(0,0, Scene.getId(), GLUT_BITMAP_TIMES_ROMAN_24, 1.0, 1.0, 1.0);
 
 	glutSwapBuffers();
 }

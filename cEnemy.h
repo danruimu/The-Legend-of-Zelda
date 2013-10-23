@@ -51,6 +51,7 @@ public:
 	int getMovementDelay();
 	int getMovementSeq();
 	void setType(char *type);
+	int getLife();
 
 private:
 	void readEnemyProps(FILE *propFile);
