@@ -946,8 +946,8 @@ void cGame::saveSettings() {
 	sprintf(buffer, "%f\n%f\n", options.musicVolume, options.effectVolume); 
 	if (fd != NULL) {
 		fwrite(buffer, strlen(buffer), 1, fd);
+		fclose(fd);
 	}
-	fclose(fd);
 	free(buffer);
 }
 
@@ -955,11 +955,11 @@ void cGame::loadSettings() {
 	FILE *fd = fopen(OPT_FILE, "r");
 	if(fd != NULL) {
 		fscanf(fd, "%f%f", &options.musicVolume, &options.effectVolume);
+		fclose(fd);
 	} else { //default
 		options.musicVolume = 1;
 		options.effectVolume = 1;
 	}
-	fclose(fd);
 }
 
 bool cGame::checkSavedGame() {
