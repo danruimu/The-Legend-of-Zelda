@@ -66,6 +66,7 @@ public:
 
 	bool processAttacks(cRect swordBox);
 	void processObjects(cPlayer *Link,int *n, int *vector);
+	bool getBossAlive();
 
 private:
 	int findTextureId(String str, cData *data);

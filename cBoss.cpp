@@ -13,11 +13,22 @@ cBoss::cBoss(int tex_id)
 	setTex_ID(tex_id);
 	SetState(0);
 	imBoss = true;
+	life = 6;
 }
 
 
 cBoss::~cBoss(void)
 {
+}
+
+cObject* cBoss::dropTriforce(){
+	int posx,posy;
+	GetPosition(&posx,&posy);
+	cObject* triforce = new cObject(posx,posy-BLOCK_SIZE,TRIFORCE_Y);
+	int vector[] = {TRIFORCE_Y,TRIFORCE_B};
+	triforce->setAnimated(vector,2,FRAME_DELAY);
+	triforce->setCollectable(0);
+	return triforce;
 }
 
 void cBoss::draw() {

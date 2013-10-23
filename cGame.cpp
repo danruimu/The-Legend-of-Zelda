@@ -138,7 +138,7 @@ bool cGame::startGame() {
 
 	res = Data.LoadImage(IMG_OBJECTS,"sprites/treasures.png",GL_RGBA);
 	if(!res) return false;
-
+	Link = cPlayer();
 	Link.setAlive(true);
 	Link.SetWidthHeight(BLOCK_SIZE,BLOCK_SIZE);
 	Link.SetBlock(PLAYER_START_CX,PLAYER_START_CY);
@@ -242,6 +242,7 @@ bool cGame::Init()
 	sounds[LOZ_MUSIC_UNDERWORLD] = sound.addSound("sounds/LOZ_MUSIC_Underworld_dungeon_theme.wav", true, MUSIC);
 	sounds[LOZ_GET_RUPEE] = sound.addSound("sounds/LOZ_Get_Rupee.wav", false, EFFECT);
 	sounds[LOZ_KEY] = sound.addSound("sounds/LOZ_Key.wav", false, EFFECT);
+	sounds[LOZ_BOSS_SCREAM_1] = sound.addSound("sounds/LOZ_Boss_Scream1.wav", false, EFFECT);
 	
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
@@ -607,6 +608,8 @@ bool cGame::Process()
 					glutSwapBuffers();
 					Sleep(100);
 				}
+				Link.heal(-1);
+				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 				break;
 			case ROCK:
@@ -620,6 +623,9 @@ bool cGame::Process()
 				}
 			case HEART_CONTAINER:
 				sound.playSound(sounds[LOZ_FANFARE]);
+			case SWORD_DOWN:
+				if(!Scene.getBossAlive()) sound.playSound(sounds[LOZ_HIT]);
+				else sound.playSound(sounds[LOZ_BOSS_SCREAM_1]);
 			}
 		}
 		if(keys[27]) {
@@ -650,7 +656,8 @@ bool cGame::Process()
 
 			cRect swordBox = Link.getSwordBox();
 			if (Scene.processAttacks(swordBox)){
-				sound.playSound(sounds[LOZ_HIT]);
+				if(!Scene.getBossAlive()) sound.playSound(sounds[LOZ_HIT]);
+				else sound.playSound(sounds[LOZ_BOSS_SCREAM_1]);
 			}
 			
 			return true;
@@ -718,7 +725,7 @@ bool cGame::Process()
 						Link.setGodMode(true);
 						sound.playSound(sounds[LOZ_HURT]);
 						int restLifes = Link.damage(1);
-						if(restLifes == 0) {
+						if(restLifes <= 0) {
 							GameOver();
 							return true;
 						} else if(restLifes <= 2) {
@@ -738,7 +745,7 @@ bool cGame::Process()
 					Link.setGodMode(true);
 					sound.playSound(sounds[LOZ_HURT]);
 					int restLifes = Link.damage(1);
-					if(restLifes == 0) {
+					if(restLifes <= 0) {
 						GameOver();
 						return true;
 					}

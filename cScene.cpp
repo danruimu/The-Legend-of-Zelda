@@ -141,6 +141,7 @@ bool cScene::LoadLevel(char level[],bool overrided, cData *data)
 	char coma;
 	int i,j,tile,n;
 	i=0;
+	bossAlive = false;
 	while (i<nObjects) {
 		if(objects[i]!=nullptr) {
 			free(objects[i]);
@@ -226,6 +227,9 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
 	if(mainMenu) {
+		dungeon=false;
+		exitingDoor = false;
+		bossAlive=false;
 		PrintMainMenu(state);
 		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18,0,0,0);
 		currentText = (currentText + 1)%3;
@@ -241,13 +245,14 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 				objects[i]->Render(obj_id);
 			i++;
 		}
+		this->drawEnemies();
+		if(bossAlive) {
+			boss.draw();
+		}
 	}
 	glDisable(GL_TEXTURE_2D);
 
-	this->drawEnemies();
-	if(bossAlive) {
-		boss.draw();
-	}
+	
 }
 
 void cScene::newGameAnimation(int texID,int currentAnimation) {
@@ -379,6 +384,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 		}
 		i++;
 	}
+
 	int out = BoxOut(Box);
 	if(out != -1){
 		bool overridable = false;
@@ -424,7 +430,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 		//LoadLevel(id,overridable, data);
 		if(!exitingDoor) {
 			LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
-		} else bossAlive = false;
+		}
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;
 		BoxOrg->bottom = Box.bottom;
@@ -645,6 +651,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 		if(BoxOrg->right >= SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo)  { BoxOrg->left = SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo-BLOCK_SIZE; BoxOrg->right = SCENE_WIDTH*BLOCK_SIZE+SCENE_Xo-BLOCK_SIZE*2; }
 		return HURT;
 	}
+
 	if (whatsThere(Box.left+BLOCK_SIZE/2,Box.top-21) == LOCKED_DOOR)numlockeddoors++;
 	if (whatsThere(Box.left+BLOCK_SIZE/2,Box.top-21) == DOOR)numdoors++;
 	if(exitingDoor){
@@ -681,16 +688,8 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 					ki++;
 				}
 				if(loadTriforce){
-					//TODO: create BOSS
-					boss = *(new cBoss(data->GetID(IMG_BOSS)));
+					boss = cBoss(data->GetID(IMG_BOSS));
 					bossAlive = true;
-					if(!bossAlive) {
-						objects[0] = new cObject(SCENE_Xo+8*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,TRIFORCE_Y);
-						int vector[] = {TRIFORCE_Y,TRIFORCE_B};
-						objects[0]->setAnimated(vector,2,FRAME_DELAY*2);
-						objects[0]->setCollectable(0);
-						nObjects=1;
-					}
 				}
 			}
 			else{//market
@@ -721,6 +720,11 @@ int cScene::whatsThere(int x,int y){
 			enemies[i]->GetArea(&target);
 			if (x >= target.left && x <=target.right && y >= target.bottom && y <= target.top) return HURT;
 		}
+	}
+	if(bossAlive){
+		cRect target;
+		boss.GetArea(&target);
+		if (x >= target.left && x <=target.right && y >= target.bottom && y <= target.top) return HURT;
 	}
 	int bx,by;
 	bx = (x-SCENE_Xo)/BLOCK_SIZE;
@@ -1008,15 +1012,31 @@ void cScene::processObjects(cPlayer *Link,int *n,int *vector){
 				}
 			}
 		}
+		if(bossAlive){
+			boss.GetArea(&enemyBox);
+			if(Link->hasMySwordHitAny(enemyBox)){
+				vector[*n]=SWORD_DOWN;
+				(*n)++;
+				if (boss.Damage() == 0){
+					objects[nObjects] = boss.dropTriforce();
+					++nObjects;
+					bossAlive=false;
+				}
+				Link->sayonaraSword();
+			}
+		}
 	}
 }
 
+bool cScene::getBossAlive(){
+	return bossAlive;
+}
+
 bool cScene::processAttacks(cRect swordBox) {
-	int right = swordBox.right-1, left = swordBox.left+1, bottom = swordBox.bottom+1, top = swordBox.top-1;
+	cRect target;
 	bool hitted = false;
 	for (int i = 0; i < nEnemies && !hitted; i++) {
 		if(enemies[i] != nullptr) {
-			cRect target;
 			enemies[i]->GetArea(&target);
 			if (collides(swordBox,target)){
 				int drop = enemies[i]->getDrop();
@@ -1046,6 +1066,17 @@ bool cScene::processAttacks(cRect swordBox) {
 				free(enemies[i]);
 				enemies[i] = nullptr;
 				hitted = true;
+			}
+		}
+	}
+	if(bossAlive){
+		boss.GetArea(&target);
+		if(collides(target,swordBox)){
+			hitted = true;
+			if (boss.Damage() == 0){
+				objects[nObjects] = boss.dropTriforce();
+				++nObjects;
+				bossAlive=false;
 			}
 		}
 	}

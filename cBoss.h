@@ -1,6 +1,7 @@
 #pragma once
 #include "cEnemy.h"
 #include "utils.h"
+#include "cObject.h"
 
 #define BOSS_WIDTH BLOCK_SIZE*2
 #define BOSS_HEIGHT BLOCK_SIZE*2
@@ -15,9 +16,8 @@ public:
 
 	void draw();
 	int process();
-
+	cObject* dropTriforce();
 private:
-	void dropTriforce();
 	void bossShoot();
 };
 
