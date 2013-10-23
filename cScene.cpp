@@ -272,7 +272,7 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 			i++;
 		}
 
-		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE*SCENE_WIDTH/2-BLOCK_SIZE*3,0,"F5-->Save the game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE*SCENE_WIDTH/2-BLOCK_SIZE*3,BLOCK_SIZE/4,"F5-->Save the game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
 
 		this->drawEnemies();
 		if(bossAlive) {
