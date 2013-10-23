@@ -164,6 +164,7 @@ void cGame::GameOver() {
 	sprintf(menuText[2],"EXIT");
 
 	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
+	sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
 	sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 	sound.playSound(sounds[LOZ_MUSIC_GAME_OVER]);
 
