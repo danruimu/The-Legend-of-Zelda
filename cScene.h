@@ -50,7 +50,7 @@ public:
 	void LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_id,int tex_id, cPlayer *Link, int link_id);
 	void loadMarket(cData *data);
 	bool PrintMainMenu(int idMM);
-	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state);
+	void Draw(int tex_id, int obj_id, bool mainMenu, char* text[], int currentText,int state, bool existSavedGame);
 	void newGameAnimation(int texID,int currentAnimation);
 	int *GetMap();
 	char *getId();

@@ -11,8 +11,10 @@
 #define TRANS_MAINMENU	7
 
 #define NEW_GAME		0
+#define LOAD_GAME		3
 #define OPTIONS			1
 #define EXIT			2
+
 
 #define MUSIC_VOLUME	0
 #define EFFECTS_VOLUME	1
@@ -50,6 +52,7 @@ private:
 	bool finalGame();
 	void saveGame();
 	void loadGame();
+	bool checkSavedGame();
 
 	unsigned char keys[256];
 	unsigned char specialKeys[256];
@@ -64,7 +67,7 @@ private:
 	int nTransMM;
 	int currentMM;
 	bool up;
-	String menuText[3];
+	String menuText[4];
 	String unLockedLevels[NUM_MAX_GATES];
 	String triforcesCollected[NUM_MAX_GATES];
 	int currentOptMM;
@@ -86,4 +89,6 @@ private:
 
 	char *credits[18];	//3 lines per 6 views
 	int actualCreditView;
+	
+	bool existsSavedGame;
 };

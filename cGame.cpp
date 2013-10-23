@@ -180,6 +180,8 @@ void cGame::GameOver() {
 
 bool cGame::Init()
 {
+	existsSavedGame = checkSavedGame();
+
 	this->loadSettings();
 	bool res=true;
 	mainMenu = true;
@@ -197,6 +199,10 @@ bool cGame::Init()
 	sprintf(menuText[0],"NEW GAME");
 	sprintf(menuText[1],"OPTIONS");
 	sprintf(menuText[2],"EXIT");
+	if(existsSavedGame) {
+		menuText[3] = (char*)malloc(42);
+		sprintf(menuText[3], "LOAD GAME");
+	}
 	currentOptMM = 0;
 	currentPauseOpt = 0;
 
@@ -376,6 +382,14 @@ bool cGame::mainMenuProcess(){
 				sprintf(menuText[2],"BACK");				
 				return true;
 				break;
+			case LOAD_GAME:
+				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
+				sound.playSound(sounds[LOZ_MUSIC_WHISTLE]);
+				loadGame();
+				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU),currentMM);
+				startGame();
+				return true;
+				break;
 			case EXIT:
 				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 				sound.playSound(sounds[LOZ_DIE]);
@@ -400,14 +414,16 @@ bool cGame::mainMenuProcess(){
 	if(keys['d'] || keys['D'] || specialKeys[GLUT_KEY_RIGHT]) {
 		keys['D'] = keys['d'] = specialKeys[GLUT_KEY_RIGHT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
-		currentOptMM = (currentOptMM +1)%3;
+		if(!existsSavedGame) currentOptMM = (currentOptMM +1)%3;
+		else currentOptMM = (currentOptMM +1)%4;
 		return true;
 	}
 	if(keys['a'] || keys['A'] || specialKeys[GLUT_KEY_LEFT]) {
 		keys['A'] = keys['a'] = specialKeys[GLUT_KEY_LEFT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM--;
-		currentOptMM = currentOptMM<0?2:currentOptMM;
+		if(!existsSavedGame) currentOptMM = currentOptMM<0?2:currentOptMM;
+		else currentOptMM = currentOptMM<0?3:currentOptMM;
 		return true;
 	}
 	if (keys['w'] || keys['W'] || specialKeys[GLUT_KEY_UP]) {
@@ -493,7 +509,7 @@ void cGame::saveGame(){
 		}
 		fprintf(fd," - %s",Scene.getxDooryDoor()); 
 		fclose(fd);
-		printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Saved",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		printText(SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH*2-BLOCK_SIZE*2,SCENE_HEIGHT*BLOCK_SIZE/2,"Game Saved!",GLUT_BITMAP_TIMES_ROMAN_24,0,0,0);
 		sound.playSound(sounds[LOZ_TEXT]);
 		glutSwapBuffers();
 		Sleep(500);
@@ -530,7 +546,7 @@ void cGame::loadGame(){
 	fscanf(fd,"%d %d",&x,&y);
 	Scene.setxDooryDoor(x,y);
 	fclose(fd);
-	printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Loaded",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+	printText(SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH*2-BLOCK_SIZE*2,SCENE_HEIGHT*BLOCK_SIZE/2,"Game Loaded!",GLUT_BITMAP_TIMES_ROMAN_24,0,0,0);
 	sound.playSound(sounds[LOZ_TEXT]);
 	glutSwapBuffers();
 	Sleep(500);
@@ -549,10 +565,6 @@ bool cGame::Process()
 	if(pause) {
 		if(specialKeys[GLUT_KEY_F5]){
 			saveGame();
-			return true;
-		}
-		if(specialKeys[GLUT_KEY_F4]){
-			loadGame();
 			return true;
 		}
 		if(keys[27]) {
@@ -652,10 +664,6 @@ bool cGame::Process()
 	} else if(!mainMenu && !gameOver) {    //NOT IN PAUSE and NOT IN MAIN MENU
 		if(specialKeys[GLUT_KEY_F5]){
 			saveGame();
-			return true;
-		}
-		if(specialKeys[GLUT_KEY_F4]){
-			loadGame();
 			return true;
 		}
 		int vector[MAX_N_MONSTERS];
@@ -898,9 +906,9 @@ void cGame::Render()
 				nTransMM++;
 			}
 		}
-		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM);
+		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM, existsSavedGame);
 	} else if (!gameOver) {//mainMenu= false
-		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0);
+		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0,false);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),false);
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} else if(gameOver) {
@@ -938,4 +946,12 @@ void cGame::loadSettings() {
 		options.effectVolume = 1;
 	}
 	fclose(fd);
+}
+
+bool cGame::checkSavedGame() {
+	FILE* fd;
+	fd = fopen("save.loz","r");
+	if(fd == nullptr) return false;
+	fclose(fd);
+	return true;
 }

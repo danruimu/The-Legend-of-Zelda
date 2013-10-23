@@ -238,7 +238,7 @@ void cScene::setId(char Nid[]){
 	id[2] = '\0';
 }
 
-void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int currentText,int state)
+void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int currentText,int state, bool existSavedGame)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,tex_id);
@@ -247,11 +247,21 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 		exitingDoor = false;
 		bossAlive=false;
 		PrintMainMenu(state);
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18,0,0,0);
-		currentText = (currentText + 1)%3;
-		printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
-		currentText = (currentText + 1)%3;
-		printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+		if(!existSavedGame) {
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18,0,0,0);
+			currentText = (currentText + 1)%3;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+			currentText = (currentText + 1)%3;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+		} else {
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1.5, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE, text[currentText], GLUT_BITMAP_HELVETICA_18,0,0,0);
+			currentText = (currentText + 1)%4;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+			currentText = (currentText + 1)%4;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+			currentText = (currentText + 1)%4;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*3, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+		}
 	}
 	else{
 		glCallList(id_DL);
@@ -262,7 +272,7 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 			i++;
 		}
 
-		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE,0,"F5-->Save the game      F4-->Load last saved game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE*SCENE_WIDTH/2-BLOCK_SIZE*3,0,"F5-->Save the game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
 
 		this->drawEnemies();
 		if(bossAlive) {
@@ -832,7 +842,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_
 				map[j] = newMap[k*SCENE_WIDTH+j];
 			}
 			generateCallLevel();
-			Draw(tex_id,obj_id,false,nullptr,0,0);
+			Draw(tex_id,obj_id,false,nullptr,0,0, false);
 			int x, y; Link->GetPosition(&x, &y);
 			Link->SetPosition(x,y+BLOCK_SIZE);
 			Link->Draw(link_id, obj_id, false);
@@ -853,7 +863,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_
 			}
 
 			generateCallLevel();
-			Draw(tex_id,obj_id,false,nullptr,0,0);
+			Draw(tex_id,obj_id,false,nullptr,0,0,false);
 			int x, y; Link->GetPosition(&x, &y);
 			Link->SetPosition(x+BLOCK_SIZE,y);
 			Link->Draw(link_id, obj_id, false);
@@ -873,7 +883,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_
 			}
 
 			generateCallLevel();
-			Draw(tex_id,obj_id,false,nullptr,0,0);
+			Draw(tex_id,obj_id,false,nullptr,0,0,false);
 			int x, y; Link->GetPosition(&x, &y);
 			Link->SetPosition(x-BLOCK_SIZE,y);
 			Link->Draw(link_id, obj_id, false);
@@ -892,7 +902,7 @@ void cScene::LoadLevelAnimation(char *oldLevel, char *newLevel, int dir,int obj_
 				map[(i-1)*SCENE_WIDTH+j] = newMap[k*SCENE_WIDTH+j];
 			}
 			generateCallLevel();
-			Draw(tex_id,obj_id,false,nullptr,0,0);
+			Draw(tex_id,obj_id,false,nullptr,0,0,false);
 			int x, y; Link->GetPosition(&x, &y);
 			Link->SetPosition(x,y-BLOCK_SIZE);
 			Link->Draw(link_id, obj_id, false);
