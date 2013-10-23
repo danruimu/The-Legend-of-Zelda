@@ -91,4 +91,6 @@ private:
 	int actualCreditView;
 	
 	bool existsSavedGame;
+	float textVisiblity;
+	String text;
 };

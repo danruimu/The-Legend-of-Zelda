@@ -31,6 +31,9 @@ cGame::cGame(void)
 	credits[15] = "THANK YOU!";
 	credits[16] = "Remember that donations";
 	credits[17] = "will be very appreciated :-D";
+
+	text = (char*) malloc(42);
+	textVisiblity=1;
 }
 
 cGame::~cGame(void){
@@ -164,6 +167,7 @@ void cGame::GameOver() {
 	sprintf(menuText[2],"EXIT");
 
 	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
+	sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
 	sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 	sound.playSound(sounds[LOZ_MUSIC_GAME_OVER]);
 
@@ -385,9 +389,10 @@ bool cGame::mainMenuProcess(){
 			case LOAD_GAME:
 				sound.stopSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 				sound.playSound(sounds[LOZ_MUSIC_WHISTLE]);
-				loadGame();
 				Scene.newGameAnimation(Data.GetID(IMG_MAINMENU),currentMM);
 				startGame();
+				loadGame();
+							
 				return true;
 				break;
 			case EXIT:
@@ -509,10 +514,10 @@ void cGame::saveGame(){
 		}
 		fprintf(fd," - %s",Scene.getxDooryDoor()); 
 		fclose(fd);
-		printText(SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH*2-BLOCK_SIZE*2,SCENE_HEIGHT*BLOCK_SIZE/2,"Game Saved!",GLUT_BITMAP_TIMES_ROMAN_24,0,0,0);
+		text = (String) malloc(42);
+		sprintf(text,"Game saved!");
 		sound.playSound(sounds[LOZ_TEXT]);
 		glutSwapBuffers();
-		Sleep(500);
 	}
 }
 
@@ -546,7 +551,8 @@ void cGame::loadGame(){
 	fscanf(fd,"%d %d",&x,&y);
 	Scene.setxDooryDoor(x,y);
 	fclose(fd);
-	printText(SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH*2-BLOCK_SIZE*2,SCENE_HEIGHT*BLOCK_SIZE/2,"Game Loaded!",GLUT_BITMAP_TIMES_ROMAN_24,0,0,0);
+	text = (String) malloc(42);
+	sprintf(text,"Game loaded!");
 	sound.playSound(sounds[LOZ_TEXT]);
 	glutSwapBuffers();
 	Sleep(500);
@@ -910,6 +916,16 @@ void cGame::Render()
 	} else if (!gameOver) {//mainMenu= false
 		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0,false);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),false);
+		if(text!=nullptr){
+			printText(SCENE_Xo+BLOCK_SIZE*SCENE_WIDTH*2-BLOCK_SIZE*2,SCENE_HEIGHT*BLOCK_SIZE/2,text,GLUT_BITMAP_TIMES_ROMAN_24,textVisiblity,textVisiblity,textVisiblity);
+			textVisiblity-=0.01;
+			if(textVisiblity<=0){
+				textVisiblity=1;
+				free(text);
+				text=nullptr;
+			}
+		}
+		
 		if (pause)Scene.drawPauseMenu(menuText[0],menuText[1], menuText[2], currentPauseOpt);
 	} else if(gameOver) {
 		glClear(GL_COLOR_BUFFER_BIT);
