@@ -448,8 +448,10 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 			}
 		}
 
-		if(!exitingDoor)
-		LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
+		//LoadLevel(id,overridable, data);
+		if(!exitingDoor) {
+			LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
+		} else bossAlive = false;
 
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;
