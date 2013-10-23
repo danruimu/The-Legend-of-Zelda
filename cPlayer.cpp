@@ -133,13 +133,17 @@ void cPlayer::Draw(int tex_id,int obj_id,bool trifuerza){
 }
 
 char* cPlayer::toString(){
+	int posx,posy;
+	GetPosition(&posx,&posy);
 	char *buffer = (char*)malloc(42);
-	sprintf(buffer,"%d,%d,%d,%d,%d",points,keys,triforce,life,max_life);
+	sprintf(buffer,"%d,%d,%d,%d,%d,%d,%d",posx,posy,points,keys,triforce,life,max_life);
 	return buffer;
 }
 
 void cPlayer::fromString(String data){
-	sscanf(data,"%d,%d,%d,%d,%d",&points,&keys,&triforce,&life,&max_life);
+	int posx,posy;
+	sscanf(data,"%d,%d,%d,%d,%d,%d,%d",&posx,&posy,&points,&keys,&triforce,&life,&max_life);
+	SetPosition(posx,posy);
 }
 void cPlayer::DrawMuerto(int tex_id){
 	float blockY = (0.+LINK_SIZE)/LINK_SCENE_TEXTURES_HEIGHT;

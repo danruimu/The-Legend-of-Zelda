@@ -447,12 +447,9 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 				i++;
 			}
 		}
-
-		//LoadLevel(id,overridable, data);
 		if(!exitingDoor) {
 			LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
-		} else bossAlive = false;
-
+		} else bossAlive=false;
 		LoadLevel(id,overridable, data);
 		BoxOrg->top = Box.top;
 		BoxOrg->bottom = Box.bottom;
@@ -733,6 +730,22 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 		return OK;
 	}
 	return COLLIDES;
+}
+
+void cScene::loadMarket(cData *data){
+	dungeon = true;
+	exitingDoor = true;
+	LoadLevel("market",false, data);
+	prop[DUNGEON_PROP]=false;
+	objects[0] = new cObject(SCENE_Xo+4*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,KEY);
+	objects[0]->setCollectable(30);
+	objects[1] = new cObject(SCENE_Xo+7*BLOCK_SIZE,SCENE_Yo + 6*BLOCK_SIZE,RED_HEART);
+	objects[1]->setCollectable(15);
+	int vector[] = {RED_HEART,BLUE_HEART};
+	objects[1]->setAnimated(vector,2,FRAME_DELAY*2);
+	objects[2] = new cObject(SCENE_Xo+10*BLOCK_SIZE,SCENE_Yo + 5*BLOCK_SIZE,HEART_CONTAINER);
+	objects[2]->setCollectable(60);
+	nObjects=3;	
 }
 
 int cScene::whatsThere(int x,int y){
