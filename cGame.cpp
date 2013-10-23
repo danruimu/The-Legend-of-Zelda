@@ -489,40 +489,39 @@ void cGame::saveGame(){
 }
 
 void cGame::loadGame(){
-	if(Scene.isMarket()){
-		FILE* fd;
-		int x,y;
-		fd = fopen("save.loz","r");
-		if(fd == nullptr)return;
-		char* buffer = (char*)malloc(42);
+	FILE* fd;
+	int x,y;
+	Scene.loadMarket(&Data);
+	fd = fopen("save.loz","r");
+	if(fd == nullptr)return;
+	char* buffer = (char*)malloc(42);
+	fscanf(fd,"%s",buffer);
+	Scene.setId(buffer);
+	fscanf(fd,"%s",buffer);
+	Link.fromString(buffer);
+	int i=0;
+	fscanf(fd,"%s",buffer);
+	while(strcmp(buffer,"-")!=0){
+		unLockedLevels[i] = (String) malloc(42);
+		strcpy(unLockedLevels[i],buffer);
+		i++;
 		fscanf(fd,"%s",buffer);
-		Scene.setId(buffer);
-		fscanf(fd,"%s",buffer);
-		Link.fromString(buffer);
-		int i=0;
-		fscanf(fd,"%s",buffer);
-		while(strcmp(buffer,"-")!=0){
-			unLockedLevels[i] = (String) malloc(42);
-			strcpy(unLockedLevels[i],buffer);
-			i++;
-			fscanf(fd,"%s",buffer);
-		}
-		fscanf(fd,"%s",buffer);
-		i=0;
-		while(strcmp(buffer,"-")!=0){
-			triforcesCollected[i] = (String) malloc(42);
-			strcpy(triforcesCollected[i],buffer);
-			i++;
-			fscanf(fd,"%s",buffer);
-		}
-		fscanf(fd,"%d %d",&x,&y);
-		Scene.setxDooryDoor(x,y);
-		fclose(fd);
-		printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Loaded",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
-		sound.playSound(sounds[LOZ_TEXT]);
-		glutSwapBuffers();
-		Sleep(500);
 	}
+	fscanf(fd,"%s",buffer);
+	i=0;
+	while(strcmp(buffer,"-")!=0){
+		triforcesCollected[i] = (String) malloc(42);
+		strcpy(triforcesCollected[i],buffer);
+		i++;
+		fscanf(fd,"%s",buffer);
+	}
+	fscanf(fd,"%d %d",&x,&y);
+	Scene.setxDooryDoor(x,y);
+	fclose(fd);
+	printText(SCENE_Xo,SCENE_HEIGHT*BLOCK_SIZE,"Game Loaded",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+	sound.playSound(sounds[LOZ_TEXT]);
+	glutSwapBuffers();
+	Sleep(500);
 }
 
 //Process
