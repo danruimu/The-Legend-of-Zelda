@@ -54,6 +54,9 @@ private:
 	void loadGame();
 	bool checkSavedGame();
 
+	void loadPathSaveGame();
+	void loadPathSaveOptions();
+
 	unsigned char keys[256];
 	unsigned char specialKeys[256];
 	cScene Scene;
@@ -91,4 +94,7 @@ private:
 	int actualCreditView;
 	
 	bool existsSavedGame;
+
+	char *pathSaveGame;
+	char *pathSaveOptions;
 };

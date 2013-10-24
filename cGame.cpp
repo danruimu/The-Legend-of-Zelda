@@ -493,66 +493,6 @@ bool cGame::mainMenuProcess(){
 	return true;
 }
 
-void cGame::saveGame(){
-	if(Scene.isMarket()){
-		FILE* fd;
-		fd = fopen("save.loz","w");
-		if(fd == nullptr)return;
-		fprintf(fd,"%s %s",Scene.getId(),Link.toString());
-		int i=0;
-		while(unLockedLevels[i]!=nullptr){
-			fprintf(fd," %s",unLockedLevels[i]);
-			i++;
-		}
-		fprintf(fd," -");
-		i=0;
-		while(triforcesCollected[i]!=nullptr){
-			fprintf(fd," %s",triforcesCollected[i]);
-			i++;
-		}
-		fprintf(fd," - %s",Scene.getxDooryDoor()); 
-		fclose(fd);
-		Scene.setText("Game saved!");
-		sound.playSound(sounds[LOZ_TEXT]);
-		glutSwapBuffers();
-	}
-}
-
-void cGame::loadGame(){
-	FILE* fd;
-	int x,y;
-	Scene.loadMarket(&Data);
-	fd = fopen("save.loz","r");
-	if(fd == nullptr)return;
-	char* buffer = (char*)malloc(42);
-	fscanf(fd,"%s",buffer);
-	Scene.setId(buffer);
-	fscanf(fd,"%s",buffer);
-	Link.fromString(buffer);
-	int i=0;
-	fscanf(fd,"%s",buffer);
-	while(strcmp(buffer,"-")!=0){
-		unLockedLevels[i] = (String) malloc(42);
-		strcpy(unLockedLevels[i],buffer);
-		i++;
-		fscanf(fd,"%s",buffer);
-	}
-	fscanf(fd,"%s",buffer);
-	i=0;
-	while(strcmp(buffer,"-")!=0){
-		triforcesCollected[i] = (String) malloc(42);
-		strcpy(triforcesCollected[i],buffer);
-		i++;
-		fscanf(fd,"%s",buffer);
-	}
-	fscanf(fd,"%d %d",&x,&y);
-	Scene.setxDooryDoor(x,y);
-	fclose(fd);
-	Scene.setText("Game loaded!");
-	sound.playSound(sounds[LOZ_TEXT]);
-	glutSwapBuffers();
-	Sleep(500);
-}
 
 //Process
 bool cGame::Process()
@@ -923,11 +863,14 @@ void cGame::Render()
 	glutSwapBuffers();
 }
 
+#include <shlobj.h>
+
 void cGame::saveSettings() {
-	if(!folderExists(OPT_DIR)) {
-		CreateDirectory(OPT_DIR, NULL);
-	}
-	FILE *fd = fopen(OPT_FILE, "w+");
+	FILE *fd;
+	char *file = (char*) malloc(42*10);
+	SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, file);
+	sprintf(file, "%s/The Legend of Zelda/options.txt", file);
+	fd = fopen(file, "w+");
 	char *buffer = (char *) malloc(42);
 	sprintf(buffer, "%f\n%f\n", options.musicVolume, options.effectVolume); 
 	if (fd != NULL) {
@@ -938,7 +881,11 @@ void cGame::saveSettings() {
 }
 
 void cGame::loadSettings() {
-	FILE *fd = fopen(OPT_FILE, "r");
+	FILE *fd;
+	char *file = (char*) malloc(42*10);
+	SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, file);
+	sprintf(file, "%s/The Legend of Zelda/options.txt", file);
+	fd = fopen(file, "r");
 	if(fd != NULL) {
 		fscanf(fd, "%f%f", &options.musicVolume, &options.effectVolume);
 		fclose(fd);
@@ -950,8 +897,79 @@ void cGame::loadSettings() {
 
 bool cGame::checkSavedGame() {
 	FILE* fd;
-	fd = fopen("save.loz","r");
+	char *file = (char*) malloc(42*10);
+	SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, file);
+	sprintf(file, "%s/The Legend of Zelda/save.loz", file);
+	fd = fopen(file,"r");
 	if(fd == nullptr) return false;
 	fclose(fd);
 	return true;
+}
+
+
+void cGame::saveGame(){
+	if(Scene.isMarket()){
+		FILE* fd;
+		char *file = (char*) malloc(42*10);
+		SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, file);
+		sprintf(file, "%s/The Legend of Zelda/save.loz", file);
+		fd = fopen(file,"w");
+		if(fd == nullptr)return;
+		fprintf(fd,"%s %s",Scene.getId(),Link.toString());
+		int i=0;
+		while(unLockedLevels[i]!=nullptr){
+			fprintf(fd," %s",unLockedLevels[i]);
+			i++;
+		}
+		fprintf(fd," -");
+		i=0;
+		while(triforcesCollected[i]!=nullptr){
+			fprintf(fd," %s",triforcesCollected[i]);
+			i++;
+		}
+		fprintf(fd," - %s",Scene.getxDooryDoor()); 
+		fclose(fd);
+		Scene.setText("Game saved!");
+		sound.playSound(sounds[LOZ_TEXT]);
+		glutSwapBuffers();
+	}
+}
+
+void cGame::loadGame(){
+	FILE* fd;
+	int x,y;
+	Scene.loadMarket(&Data);
+	char *file = (char*) malloc(42*10);
+	SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, file);
+	sprintf(file, "%s/The Legend of Zelda/save.loz", file);
+	fd = fopen(file,"r");
+	if(fd == nullptr)return;
+	char* buffer = (char*)malloc(42);
+	fscanf(fd,"%s",buffer);
+	Scene.setId(buffer);
+	fscanf(fd,"%s",buffer);
+	Link.fromString(buffer);
+	int i=0;
+	fscanf(fd,"%s",buffer);
+	while(strcmp(buffer,"-")!=0){
+		unLockedLevels[i] = (String) malloc(42);
+		strcpy(unLockedLevels[i],buffer);
+		i++;
+		fscanf(fd,"%s",buffer);
+	}
+	fscanf(fd,"%s",buffer);
+	i=0;
+	while(strcmp(buffer,"-")!=0){
+		triforcesCollected[i] = (String) malloc(42);
+		strcpy(triforcesCollected[i],buffer);
+		i++;
+		fscanf(fd,"%s",buffer);
+	}
+	fscanf(fd,"%d %d",&x,&y);
+	Scene.setxDooryDoor(x,y);
+	fclose(fd);
+	Scene.setText("Game loaded!");
+	sound.playSound(sounds[LOZ_TEXT]);
+	glutSwapBuffers();
+	Sleep(500);
 }
