@@ -418,7 +418,7 @@ bool cGame::mainMenuProcess(){
 		keys['D'] = keys['d'] = specialKeys[GLUT_KEY_RIGHT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM++;
-		if(!existsSavedGame) currentOptMM = currentOptMM%3;
+		if(!existsSavedGame || optMenu) currentOptMM = currentOptMM%3;
 		else currentOptMM = currentOptMM%4;
 		return true;
 	}
@@ -426,7 +426,7 @@ bool cGame::mainMenuProcess(){
 		keys['A'] = keys['a'] = specialKeys[GLUT_KEY_LEFT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
 		currentOptMM--;
-		if(!existsSavedGame) currentOptMM = currentOptMM<0?2:currentOptMM;
+		if(!existsSavedGame || optMenu) currentOptMM = currentOptMM<0?2:currentOptMM;
 		else currentOptMM = currentOptMM<0?3:currentOptMM;
 		return true;
 	}
@@ -849,7 +849,7 @@ void cGame::Render()
 				nTransMM++;
 			}
 		}
-		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM, existsSavedGame);
+		Scene.Draw(Data.GetID(IMG_MAINMENU),Data.GetID(IMG_OBJECTS), mainMenu, menuText, currentOptMM,currentMM, existsSavedGame && !optMenu);
 	} else if (!gameOver) {//mainMenu= false
 		Scene.Draw(Data.GetID(IMG_BLOCKS),Data.GetID(IMG_OBJECTS), mainMenu, NULL, 0,0,false);
 		Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),false);	
