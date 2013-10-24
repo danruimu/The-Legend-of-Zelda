@@ -7,7 +7,7 @@ cPlayer::cPlayer() {
 	life = 6;
 	max_life = 6;
 	points = 0;
-	keys = 1;
+	keys = 0;
 	triforce = 0;
 	max_triforces = 3;
 	godMode = false;
