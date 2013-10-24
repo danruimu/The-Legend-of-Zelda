@@ -52,6 +52,7 @@ void printText( int x, int y, char *st, void *font,float r,float g,float b){
 	glColor3f(1.0, 1.0, 1.0);
 }
 
+
 void printChar (int x, int y, char c, void *font, float r, float g,  float b) {
 	glColor3f(r,g,b);
 	glRasterPos2i( x, y);

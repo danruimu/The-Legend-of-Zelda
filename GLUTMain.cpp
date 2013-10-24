@@ -89,7 +89,7 @@ void main(int argc, char** argv)
 	pos_y = (res_y>>1)-(GAME_HEIGHT>>1);
 
 	if(argc > 1){
-		if(argv[1]=="TRUE"){
+		if(strcmp(argv[1],"fullScreen") == 0){
 			fullScreen = true;
 			createWindow(true,res_x,res_y);
 		}
@@ -114,7 +114,7 @@ void main(int argc, char** argv)
 	if (!Game.Init()){
 		int msgboxID = MessageBox(
 			NULL,
-			"Error in the pene",
+			"Error in the application",
 			"Error",
 			MB_OKCANCEL | MB_ICONERROR
 		);

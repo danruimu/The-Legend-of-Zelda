@@ -73,6 +73,7 @@ public:
 	bool getBossAlive();
 
 	bool inDungeon();
+	void setText(String text);
 
 private:
 	int findTextureId(String str, cData *data);
@@ -90,6 +91,9 @@ private:
 	int whatsThereMonsterVersion(int x,int y);
 
 	bool bossAlive;
+
+	float textVisiblity;
+	String text;
 
 	cObject *objects[NUM_MAX_OBJECTS];
 	int nObjects;

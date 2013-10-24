@@ -74,7 +74,8 @@ cScene::cScene(void)
 
 	nEnemies = 0;
 	nObjects = 0;
-
+	text =nullptr;
+	textVisiblity=1;
 	//Enemy Types;
 	enemyTypes[0] = OCTOROK_B;
 	enemyTypes[1] = FAT_DOG_O;
@@ -272,13 +273,23 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 			i++;
 		}
 
-		if(dungeon && !prop[DUNGEON_PROP])printText(BLOCK_SIZE*SCENE_WIDTH/2-BLOCK_SIZE*3,BLOCK_SIZE/4,"F5-->Save the game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		if(dungeon && !prop[DUNGEON_PROP]){
+			printText(BLOCK_SIZE*SCENE_WIDTH/2-BLOCK_SIZE*3,BLOCK_SIZE/4,"F5-->Save the game",GLUT_BITMAP_TIMES_ROMAN_24,1,1,1);
+		}
 
 		this->drawEnemies();
 		if(bossAlive) {
 			boss.draw();
 		}
-
+	}
+	if(this->text != nullptr){
+		printText(SCENE_Xo+BLOCK_SIZE*2,SCENE_Yo+BLOCK_SIZE*SCENE_HEIGHT-3*BLOCK_SIZE+BLOCK_SIZE/2,this->text,GLUT_BITMAP_TIMES_ROMAN_24,textVisiblity,textVisiblity,textVisiblity);
+		textVisiblity-=0.01;
+		if(textVisiblity<0){
+			textVisiblity=1;
+			free(this->text);
+			this->text=nullptr;
+		}
 	}
 	glDisable(GL_TEXTURE_2D);
 
@@ -458,6 +469,7 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 			}
 		}
 		if(!exitingDoor) {
+			link->sayonaraSword();
 			LoadLevelAnimation(oldId, id, out,data->GetID(IMG_OBJECTS),data->GetID(IMG_BLOCKS), link, data->GetID(IMG_PLAYER));
 		} else bossAlive=false;
 		LoadLevel(id,overridable, data);
@@ -1158,6 +1170,12 @@ bool cScene::processAttacks(cRect swordBox) {
 
 bool cScene::inDungeon() {
 	return dungeon && prop[DUNGEON_PROP];
+}
+
+void cScene::setText(char* text){
+	this->text= (String)malloc(42);
+	strcpy(this->text,text);
+	textVisiblity=1;
 }
 
 //void cScene::processAttacksDani(cRect swordBox) {
