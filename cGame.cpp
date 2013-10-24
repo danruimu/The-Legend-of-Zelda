@@ -255,6 +255,7 @@ bool cGame::Init()
 	sound.setVolume(MUSIC, options.musicVolume);
 	sound.setVolume(EFFECT, options.effectVolume);
 
+	sound.stopSound(sounds[LOZ_MUSIC_OVERWORLD]);
 	sound.playSound(sounds[LOZ_MUSIC_MAIN_MENU]);
 
 	return res;
@@ -267,7 +268,7 @@ bool cGame::Loop()
 	if(Scene.inDungeon()) {
 		sound.pauseSound(sounds[LOZ_MUSIC_OVERWORLD]);
 		sound.playSound(sounds[LOZ_MUSIC_UNDERWORLD]);
-	} else if(!pause) {
+	} else if(!pause && !mainMenu && !gameOver && !gameFinal) {
 		sound.stopSound(sounds[LOZ_MUSIC_UNDERWORLD]);
 		sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
 	}

@@ -66,7 +66,7 @@ void createWindow(bool fullScreen,int x,int y){
 		HWND windowHandle = FindWindow(NULL,"The Legend of Zelda");
 		HICON hIcon = (HICON)LoadImage(NULL, "images\\/window_logo.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
 		SendMessage(windowHandle,WM_SETICON, ICON_BIG, (LPARAM)hIcon );
-		//EnableCloseButton(windowHandle, FALSE);
+		EnableCloseButton(windowHandle, FALSE);
 	}
 }
 
