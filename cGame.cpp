@@ -640,6 +640,8 @@ bool cGame::Process()
 				triforcesCollected[i][0] = buffer[0];
 				triforcesCollected[i][1] = buffer[1];
 				triforcesCollected[i][2] = '\0';
+				Link.heal(-1);
+				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 				for (int i = 0; i < 90; i++){
 					glClear(GL_COLOR_BUFFER_BIT);
 					Link.Draw(Data.GetID(IMG_PLAYER),Data.GetID(IMG_OBJECTS),true);

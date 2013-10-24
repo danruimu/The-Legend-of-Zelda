@@ -29,8 +29,9 @@ cEnemy::cEnemy(int x, int y, char *type, int tex_id,int movementDelay) {
 	imBoss=false;
 	this->movementDelay=movementDelay;
 	movementSeq=0;
-	this->maxLife = 1;
-	this->life = maxLife;
+	this->maxLife = 2;
+	this->life = 1;
+	if(strcmp(type,FAT_DOG_O)==0)this->life++;
 	SetPosition(x,y);
 	this->type = (char*) malloc(42);
 	strcpy(this->type, type);
