@@ -366,10 +366,38 @@ int cScene::Process(cRect *BoxOrg,String unlockedDoors[],String triforcesCollect
 	if(bossAlive) {
 		int stateBoss = boss.process();
 		if(stateBoss == 1) {    //SHOOT
-			int xBoss,yBoss; boss.GetPosition(&xBoss,&yBoss);
-			objects[nObjects] = new cObject(xBoss,yBoss-BLOCK_SIZE,ARROW_B_DOWN);
-			objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_DOWN,1);
-			++nObjects;
+			cRect box;
+			boss.GetArea(&box);
+			if(BoxOrg->bottom >= box.bottom){
+				if(box.right >= BoxOrg->right){
+					objects[nObjects] = new cObject(box.left-BLOCK_SIZE,box.bottom-5,ARROW_B_DOWN);
+					objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_LEFT,1);
+					++nObjects;
+					if(rand()<(RAND_MAX/2)){
+						objects[nObjects] = new cObject(box.left-BLOCK_SIZE,box.bottom+BLOCK_SIZE-5,ARROW_B_DOWN);
+						objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_LEFT,1);
+						++nObjects;
+					}
+				}else{
+					objects[nObjects] = new cObject(box.right+BLOCK_SIZE,box.bottom-5,ARROW_B_DOWN);
+					objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_RIGHT,1);
+					++nObjects;
+					if(rand()<(RAND_MAX/2)){
+						objects[nObjects] = new cObject(box.right+BLOCK_SIZE,box.bottom+BLOCK_SIZE-5,ARROW_B_DOWN);
+						objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_RIGHT,1);
+						++nObjects;
+					}
+				}
+			}else{
+				objects[nObjects] = new cObject(box.left+BLOCK_SIZE,box.bottom-BLOCK_SIZE,ARROW_B_DOWN);
+				objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_DOWN,1);
+				++nObjects;
+				if(rand()<(RAND_MAX/2)){
+					objects[nObjects] = new cObject(box.left,box.bottom-BLOCK_SIZE,ARROW_B_DOWN);
+					objects[nObjects]->setMovable(STEP_LENGTH*2,DIRECTION_DOWN,1);
+					++nObjects;
+				}
+			}
 		}
 	}
 
