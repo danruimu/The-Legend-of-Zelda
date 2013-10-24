@@ -649,6 +649,9 @@ bool cGame::Process()
 				Link.heal(-1);
 				sound.stopSound(sounds[LOZ_LOW_HEALTH]);
 				sound.resumeSound(sounds[LOZ_MUSIC_OVERWORLD]);
+				if(Link.getTriforces() == 3) {
+					return finalGame();
+				}
 				break;
 			case ROCK:
 				sound.playSound(sounds[LOZ_HURT]);
