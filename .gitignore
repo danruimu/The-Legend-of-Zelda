@@ -1,4 +1,7 @@
 *
+resource.h
+resource1.h
+resource2.h
 *.db
 */*.db
 !.gitignore
