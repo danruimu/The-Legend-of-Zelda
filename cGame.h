@@ -6,6 +6,7 @@
 #include "cSound.h"
 #include "utils.h"
 #include <map>
+#include <shlobj.h>
 
 
 #define TRANS_MAINMENU	7
