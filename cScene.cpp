@@ -92,10 +92,13 @@ bool cScene::isMarket(){
 
 bool cScene::PrintMainMenu(int idMM) {
 	float xi,yi,xf,yf;
-	xi=0.5*(idMM%2);
-	yi=(idMM<<1)*0.5;
+	int aux;
+	aux = idMM%2;
+	xi=(aux)/2.0;
+	aux = idMM/2;
+	yi=(aux)/2.0;
 	xf=xi+0.5;
-	yf=0.5+yi;
+	yf=yi+0.5;
 	glBegin(GL_QUADS);
 		glTexCoord2f(xi, yi);	glVertex2i(0, GAME_HEIGHT);
 		glTexCoord2f(xf, yi);	glVertex2i(GAME_WIDTH, GAME_HEIGHT);
@@ -259,9 +262,9 @@ void cScene::Draw(int tex_id, int obj_id,bool mainMenu, char* text[], int curren
 			currentText = (currentText + 1)%4;
 			printText(SCENE_WIDTH*BLOCK_SIZE/2+BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
 			currentText = (currentText + 1)%4;
-			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
-			currentText = (currentText + 1)%4;
 			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*1, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*3, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
+			currentText = (currentText + 1)%4;
+			printText(SCENE_WIDTH*BLOCK_SIZE/2-BLOCK_SIZE*3, SCENE_HEIGHT*BLOCK_SIZE/2-BLOCK_SIZE*2, text[currentText], GLUT_BITMAP_HELVETICA_12,0,0,0);
 		}
 	}
 	else{

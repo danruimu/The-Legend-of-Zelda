@@ -417,8 +417,9 @@ bool cGame::mainMenuProcess(){
 	if(keys['d'] || keys['D'] || specialKeys[GLUT_KEY_RIGHT]) {
 		keys['D'] = keys['d'] = specialKeys[GLUT_KEY_RIGHT] = false;
 		sound.playSound(sounds[LOZ_TEXT]);
-		if(!existsSavedGame) currentOptMM = (currentOptMM +1)%3;
-		else currentOptMM = (currentOptMM +1)%4;
+		currentOptMM++;
+		if(!existsSavedGame) currentOptMM = currentOptMM%3;
+		else currentOptMM = currentOptMM%4;
 		return true;
 	}
 	if(keys['a'] || keys['A'] || specialKeys[GLUT_KEY_LEFT]) {
@@ -865,8 +866,6 @@ void cGame::Render()
 
 	glutSwapBuffers();
 }
-
-#include <shlobj.h>
 
 void cGame::saveSettings() {
 	FILE *fd;
